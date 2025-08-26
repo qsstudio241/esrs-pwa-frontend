@@ -145,6 +145,74 @@ function Checklist({ audit, onUpdate }) {
       onUpdate({ stato: 'chiuso' });
     }
   };
+const generateReport = () => {
+  // Costruisci la tabella delle risposte
+  const selections = Object.keys(checklist).map(key => {
+    const [category, item] = key.split('-');
+    return {
+      category,
+      item,
+      checked: !!checklist[key],
+      comment: comments[key] || '',
+      photo: photos[key] || '',
+      terminato: !!completed[key]
+    };
+  });
+
+  // Costruisci il corpo HTML
+  let html = `
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Report Audit ESG - ${audit.azienda}</title>
+      <style>
+        body { font-family: Arial; }
+        h1 { color: #1a4d8f; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 6px; }
+        th { background: #f0f0f0; }
+        img { max-width: 200px; }
+      </style>
+    </head>
+    <body>
+      <h1>Report Audit ESG</h1>
+      <p><b>Azienda:</b> ${audit.azienda}</p>
+      <p><b>Dimensione:</b> ${audit.dimensione}</p>
+      <p><b>Data avvio:</b> ${audit.dataAvvio}</p>
+      <p><b>Stato audit:</b> ${audit.stato}</p>
+      <table>
+        <tr>
+          <th>Categoria</th>
+          <th>Domanda</th>
+          <th>Completata</th>
+          <th>Risposta</th>
+          <th>Evidenze</th>
+          <th>Foto</th>
+        </tr>
+        ${selections.map(sel => `
+          <tr>
+            <td>${sel.category}</td>
+            <td>${sel.item}</td>
+            <td>${sel.terminato ? '✔️' : ''}</td>
+            <td>${sel.checked ? '✔️' : ''}</td>
+            <td>${sel.comment.replace(/\n/g, "<br/>")}</td>
+            <td>${sel.photo ? `<img src="${sel.photo}" alt="evidenza"/>` : ''}</td>
+          </tr>
+        `).join('')}
+      </table>
+    </body>
+    </html>
+  `;
+
+  // Download diretto
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `report_audit_${audit.azienda}_${audit.id}.html`;
+  link.click();
+  window.URL.revokeObjectURL(url);
+};
 
   return (
     <div>
@@ -166,7 +234,8 @@ function Checklist({ audit, onUpdate }) {
         Mostra solo punti aperti
       </label>
       <button onClick={exportSelections} style={{ margin: '10px' }}>Export Selections</button>
-      {audit.stato === 'in corso' && (
+      <button onClick={generateReport} style={{ margin: '10px' }}>Genera Report HTML</button>
+       {audit.stato === 'in corso' && (
         <button onClick={handleCloseAudit} style={{ margin: '10px', background: 'orange' }}>
           Chiudi audit
         </button>

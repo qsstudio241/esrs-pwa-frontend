@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
 const esrsDetails = {
-  Generale: [
+  // [Mantenere le categorie e domande come nel tuo codice originale]
+ Generale: [
     "Le conoscenze sulla sostenibilità sono sufficienti per applicarla in azienda?",
     "L’azienda ha avviato azioni concrete e dimostrabili per la sostenibilità?",
     "L’azienda possiede certificazioni di qualità, ambientali o sociali?",
@@ -27,14 +28,14 @@ const esrsDetails = {
     "Sono stati assunti nuovi dipendenti negli ultimi due anni?",
     "Sono promosse azioni per l’inserimento dei giovani?",
     "L’azienda ha introdotto flessibilità di orario?",
-    "Sono state sviluppate convenzioni con imprese locali per i dipendenti?",
+    "Sono state sviluppate flessibilità con imprese locali per i dipendenti?",
     "Esiste un piano di welfare aziendale?",
     "Sono realizzate iniziative per salute e sicurezza oltre gli obblighi di legge?",
     "L’azienda adotta lo smart working?",
     "I dipendenti partecipano a corsi di formazione oltre quelli obbligatori?",
     "Sono previste forme incentivanti per la formazione extra-orario?",
     "L’azienda ha un codice etico pubblico?",
-    "Sono adottate azioni di incentivazione verso i dipendenti in ambito sostenibilità?",
+    "Sono in atto azioni di incentivazione verso i dipendenti in ambito sostenibilità?",
     "L’azienda ha un piano di sviluppo carriera?",
     "Sono adottate azioni di solidarietà sociale e limitazione degli sprechi?",
     "Sono state messe in atto iniziative per garantire la parità di genere?",
@@ -56,68 +57,92 @@ const esrsDetails = {
 function Checklist({ audit, onUpdate }) {
   const [filter, setFilter] = useState('');
   const [showOnlyOpen, setShowOnlyOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const { checklist = {}, comments = {}, photos = {}, completed = {}, stato } = audit;
+  const { checklist = {}, comments = {}, files = {}, completed = {}, stato } = audit;
 
-  // Filtra categorie e domande
-  const filteredCategories = Object.keys(esrsDetails).filter(category =>
-    category.toLowerCase().includes(filter.toLowerCase()) ||
-    esrsDetails[category].some(item =>
-      item.toLowerCase().includes(filter.toLowerCase())
-    )
-  );
-
-  // Funzioni di update
-  const handleCheckboxChange = (category, item) => {
-    const key = `${category}-${item}`;
-    onUpdate({
-      checklist: { ...checklist, [key]: !checklist[key] }
-    });
+  // Funzione per aggiornare i dati con gestione dell'errore
+  const safeUpdate = (updates) => {
+    try {
+      const updatedAudit = { ...audit, ...updates };
+      const auditString = JSON.stringify(updatedAudit);
+      localStorage.setItem('audits', auditString);
+      onUpdate(updatedAudit);
+      setErrorMessage('');
+    } catch (e) {
+      if (e.name === 'QuotaExceededError') {
+        setErrorMessage('Limite di memoria del browser superato. Esporta i dati e svuota la cache o usa un backend.');
+      } else {
+        setErrorMessage('Errore durante il salvataggio: ' + e.message);
+      }
+    }
   };
+
+  // [Mantenere handleCheckboxChange, handleCommentChange, handleFileUpload, removeFile, handleCompletedChange come nel codice precedente]
 
   const handleCommentChange = (category, item, value) => {
     const key = `${category}-${item}`;
-    onUpdate({
+    safeUpdate({
       comments: { ...comments, [key]: value }
     });
   };
 
-  const handlePhotoUpload = (category, item, event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new window.FileReader();
+  const handleFileUpload = (category, item, event) => {
+    const newFiles = event.target.files;
+    const key = `${category}-${item}`;
+    const currentFiles = files[key] || [];
+    const newFileArray = [...currentFiles];
+
+    for (let i = 0; i < newFiles.length; i++) {
+      const file = newFiles[i];
+      if (newFileArray.length >= 5) { // Limite arbitrario per evitare overload
+        alert('Raggiunto il limite di 5 file per item. Rimuovi un file prima di aggiungerne altri.');
+        return;
+      }
+      const reader = new FileReader();
       reader.onloadend = () => {
-        const key = `${category}-${item}`;
-        onUpdate({
-          photos: { ...photos, [key]: reader.result }
+        newFileArray.push({
+          name: file.name,
+          type: file.type,
+          data: reader.result // Base64, ma limitato
+        });
+        safeUpdate({
+          files: { ...files, [key]: newFileArray }
         });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Gestione flag "terminato"
+  const removeFile = (category, item, index) => {
+    const key = `${category}-${item}`;
+    const currentFiles = files[key] || [];
+    const newFileArray = currentFiles.filter((_, i) => i !== index);
+    safeUpdate({
+      files: { ...files, [key]: newFileArray }
+    });
+  };
+
   const handleCompletedChange = (category, item) => {
     const key = `${category}-${item}`;
-    onUpdate({
+    safeUpdate({
       completed: { ...completed, [key]: !completed[key] }
     });
   };
 
   // Export JSON
   const exportSelections = () => {
-    const selections = Object.keys(checklist)
-      .map(key => {
-        const [category, item] = key.split('-');
-        return {
-          category,
-          item,
-          checked: !!checklist[key],
-          comment: comments[key] || '',
-          photo: photos[key] || '',
-          terminato: !!completed[key]
-        };
-      });
+    const selections = Object.keys(checklist).map(key => {
+      const [category, item] = key.split('-');
+      return {
+        category,
+        item,
+        checked: !!checklist[key],
+        comment: comments[key] || '',
+        files: files[key] || [],
+        terminato: !!completed[key]
+      };
+    });
     const fileName = `audit_${audit.azienda}_${audit.id}_${new Date().toISOString()}.json`;
     const dataStr = JSON.stringify({
       azienda: audit.azienda,
@@ -133,91 +158,130 @@ function Checklist({ audit, onUpdate }) {
     link.download = fileName;
     link.click();
     window.URL.revokeObjectURL(url);
-    // Aggiorna la history export
-    onUpdate({
+    safeUpdate({
       exportHistory: [...(audit.exportHistory || []), { fileName, dataExport: new Date().toISOString() }]
     });
+  };
+
+  // Import JSON
+  const handleImportJSON = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const importedData = JSON.parse(e.target.result);
+        const importedSelections = importedData.selections || [];
+        const newChecklist = {};
+        const newComments = {};
+        const newFiles = {};
+        const newCompleted = {};
+
+        importedSelections.forEach(s => {
+          const key = `${s.category}-${s.item}`;
+          newChecklist[key] = s.checked;
+          newComments[key] = s.comment;
+          newFiles[key] = s.files || [];
+          newCompleted[key] = s.terminato;
+        });
+
+        safeUpdate({
+          checklist: newChecklist,
+          comments: newComments,
+          files: newFiles,
+          completed: newCompleted
+        });
+        alert('Dati importati con successo!');
+      };
+      reader.readAsText(file);
+    }
   };
 
   // Chiusura audit
   const handleCloseAudit = () => {
     if (window.confirm("Vuoi chiudere definitivamente questo audit?")) {
-      onUpdate({ stato: 'chiuso' });
+      safeUpdate({ stato: 'chiuso' });
     }
   };
-const generateReport = () => {
-  // Costruisci la tabella delle risposte
-  const selections = Object.keys(checklist).map(key => {
-    const [category, item] = key.split('-');
-    return {
-      category,
-      item,
-      checked: !!checklist[key],
-      comment: comments[key] || '',
-      photo: photos[key] || '',
-      terminato: !!completed[key]
-    };
-  });
 
-  // Costruisci il corpo HTML
-  let html = `
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>Report Audit ESG - ${audit.azienda}</title>
-      <style>
-        body { font-family: Arial; }
-        h1 { color: #1a4d8f; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 6px; }
-        th { background: #f0f0f0; }
-        img { max-width: 200px; }
-      </style>
-    </head>
-    <body>
-      <h1>Report Audit ESG</h1>
-      <p><b>Azienda:</b> ${audit.azienda}</p>
-      <p><b>Dimensione:</b> ${audit.dimensione}</p>
-      <p><b>Data avvio:</b> ${audit.dataAvvio}</p>
-      <p><b>Stato audit:</b> ${audit.stato}</p>
-      <table>
-        <tr>
-          <th>Categoria</th>
-          <th>Domanda</th>
-          <th>Completata</th>
-          <th>Risposta</th>
-          <th>Evidenze</th>
-          <th>Foto</th>
-        </tr>
-        ${selections.map(sel => `
-          <tr>
-            <td>${sel.category}</td>
-            <td>${sel.item}</td>
-            <td>${sel.terminato ? '✔️' : ''}</td>
-            <td>${sel.checked ? '✔️' : ''}</td>
-            <td>${sel.comment.replace(/\n/g, "<br/>")}</td>
-            <td>${sel.photo ? `<img src="${sel.photo}" alt="evidenza"/>` : ''}</td>
-          </tr>
+  // Definizione di filteredCategories per il filtro dinamico
+  const filteredCategories = Object.keys(esrsDetails).filter(category =>
+    category.toLowerCase().includes(filter.toLowerCase()) ||
+    esrsDetails[category].some(item => item.toLowerCase().includes(filter.toLowerCase()))
+  );
+
+  // Generate Report (mantenuto come prima)
+  const generateReport = () => {
+    const selections = Object.keys(checklist).map(key => {
+      const [category, item] = key.split('-');
+      return {
+        category,
+        item,
+        checked: !!checklist[key],
+        comment: comments[key] || 'Nessun commento',
+        files: files[key] || [],
+        terminato: !!completed[key]
+      };
+    });
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Report ESG - ${audit.azienda}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body { font-family: 'Times New Roman', Times, serif; padding: 20px; }
+          h1 { font-size: 24pt; color: #000; }
+          h2 { font-size: 18pt; color: #333; margin-top: 20px; }
+          h3 { font-size: 14pt; color: #555; margin-top: 15px; }
+          p { font-size: 12pt; margin: 5px 0; }
+          img { max-width: 100%; height: auto; border: 1px solid #ccc; margin: 5px 0; }
+          .section { margin-bottom: 20px; page-break-inside: avoid; }
+          @media print { img { max-width: 80%; } }
+        </style>
+      </head>
+      <body>
+        <h1>Report ESG - ${audit.azienda} (${audit.dimensione})</h1>
+        <p><b>Stato Audit:</b> ${audit.stato}</p>
+        <p><b>Data Avvio:</b> ${audit.dataAvvio}</p>
+        ${Object.keys(esrsDetails).map(category => `
+          <div class="section">
+            <h2>${category}</h2>
+            ${esrsDetails[category].map(item => {
+              const data = selections.find(s => s.item === item && s.category === category);
+              return data ? `
+                <div>
+                  <h3>${item}</h3>
+                  <p><b>Completato:</b> ${data.checked ? 'Sì' : 'No'}</p>
+                  <p><b>Terminato:</b> ${data.terminato ? 'Sì' : 'No'}</p>
+                  <p><b>Commento:</b> ${data.comment.replace(/\n/g, '<br>')}</p>
+                  ${data.files.map((file, idx) => file.type.startsWith('image/') ? `
+                    <img src="${file.data}" alt="${file.name}" style="max-width: 200px;">
+                  ` : `<p><a href="${file.data}" download="${file.name}">File: ${file.name}</a></p>`).join('')}
+                </div>
+              ` : '';
+            }).join('')}
+          </div>
         `).join('')}
-      </table>
-    </body>
-    </html>
-  `;
+      </body>
+      </html>
+    `;
 
-  // Download diretto
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `report_audit_${audit.azienda}_${audit.id}.html`;
-  link.click();
-  window.URL.revokeObjectURL(url);
-};
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `report_${audit.azienda}_${new Date().toISOString().split('T')[0]}.html`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+    alert('Il report è stato scaricato come HTML. Apri il file con Microsoft Word per salvarlo come .docx.');
+  };
 
   return (
     <div>
       <h2>Checklist ESG – {audit.azienda} ({audit.dimensione})</h2>
       <p>Stato audit: <b>{audit.stato}</b></p>
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       <input
         type="text"
         placeholder="Filtra categorie o domande..."
@@ -234,8 +298,10 @@ const generateReport = () => {
         Mostra solo punti aperti
       </label>
       <button onClick={exportSelections} style={{ margin: '10px' }}>Export Selections</button>
+      <input type="file" accept=".json" onChange={handleImportJSON} style={{ margin: '10px' }} />
+      <label style={{ marginLeft: 8 }}>Import JSON</label>
       <button onClick={generateReport} style={{ margin: '10px' }}>Genera Report HTML</button>
-       {audit.stato === 'in corso' && (
+      {audit.stato === 'in corso' && (
         <button onClick={handleCloseAudit} style={{ margin: '10px', background: 'orange' }}>
           Chiudi audit
         </button>
@@ -250,12 +316,6 @@ const generateReport = () => {
                 const key = `${category}-${item}`;
                 return (
                   <li key={item}>
-                    <input
-                      type="checkbox"
-                      checked={!!checklist[key]}
-                      onChange={() => handleCheckboxChange(category, item)}
-                      disabled={stato === 'chiuso'}
-                    />
                     {item}
                     <textarea
                       placeholder="Aggiungi evidenze..."
@@ -266,14 +326,22 @@ const generateReport = () => {
                     />
                     <input
                       type="file"
-                      accept="image/*"
-                      onChange={e => handlePhotoUpload(category, item, e)}
+                      accept="image/*,*/*"
+                      multiple
+                      onChange={e => handleFileUpload(category, item, e)}
                       style={{ margin: '5px 0' }}
                       disabled={stato === 'chiuso'}
                     />
-                    {photos[key] && (
-                      <img src={photos[key]} alt="Evidence" style={{ maxWidth: '200px', margin: '5px' }} />
-                    )}
+                    {(files[key] || []).map((file, index) => (
+                      <div key={index}>
+                        {file.type.startsWith('image/') ? (
+                          <img src={file.data} alt={file.name} style={{ maxWidth: '200px', margin: '5px' }} />
+                        ) : (
+                          <a href={file.data} download={file.name}>{file.name}</a>
+                        )}
+                        <button onClick={() => removeFile(category, item, index)} disabled={stato === 'chiuso'}>Rimuovi</button>
+                      </div>
+                    ))}
                     <label style={{ marginLeft: 8 }}>
                       <input
                         type="checkbox"

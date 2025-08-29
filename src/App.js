@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Checklist from './Checklist';
+import { StorageProvider } from './storage/StorageContext';
 
 // Utility per generare un ID univoco
 const generateId = () => 'audit_' + Date.now();
@@ -75,8 +76,13 @@ function AuditSelector({ audits, onSelectAudit, onCreateAudit, showClosed, setSh
 
 function App() {
   const [audits, setAudits] = useState(() => {
-    const saved = localStorage.getItem('audits');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('audits');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error('Failed to parse audits from localStorage:', e);
+      return [];
+    }
   });
   const [currentAuditId, setCurrentAuditId] = useState('');
   const [showClosed, setShowClosed] = useState(false);
@@ -103,21 +109,23 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <AuditSelector
-        audits={audits}
-        onSelectAudit={handleSelectAudit}
-        onCreateAudit={handleCreateAudit}
-        showClosed={showClosed}
-        setShowClosed={setShowClosed}
-      />
-      {currentAudit && (
-        <Checklist
-          audit={currentAudit}
-          onUpdate={updateCurrentAudit}
+    <StorageProvider>
+      <div className="App">
+        <AuditSelector
+          audits={audits}
+          onSelectAudit={handleSelectAudit}
+          onCreateAudit={handleCreateAudit}
+          showClosed={showClosed}
+          setShowClosed={setShowClosed}
         />
-      )}
-    </div>
+        {currentAudit && (
+          <Checklist
+            audit={currentAudit}
+            onUpdate={updateCurrentAudit}
+          />
+        )}
+      </div>
+    </StorageProvider>
   );
 }
 

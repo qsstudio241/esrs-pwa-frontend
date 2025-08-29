@@ -1,56 +1,123 @@
 import React, { useState } from 'react';
+import { useStorage } from './storage/StorageContext';
 
 const esrsDetails = {
-  // [Mantenere le categorie e domande come nel tuo codice originale]
- Generale: [
-    "Le conoscenze sulla sostenibilità sono sufficienti per applicarla in azienda?",
-    "L’azienda ha avviato azioni concrete e dimostrabili per la sostenibilità?",
-    "L’azienda possiede certificazioni di qualità, ambientali o sociali?",
-    "L’azienda ha un bilancio di sostenibilità che rendiconta impatti ambientali, economici e sociali?",
-    "Gli stakeholder chiedono informazioni sulla sostenibilità?",
-    "Sono noti e applicati i 17 SDGs dell’Agenda ONU 2030?",
-    "L’azienda ha in programma di implementare o aumentare la sostenibilità nei prossimi 12/24 mesi?",
-    "Anche gli istituti finanziari considerano la gestione della sostenibilità per l’accesso al credito?",
-    "L’azienda ha ricevuto richieste di informazioni sulla sostenibilità da stakeholder?"
+  Generale: [
+    "Categorie di principi di rendicontazione di sostenibilità, ambiti di rendicontazione e convenzioni redazionali",
+    "Caratteristiche qualitative delle informazioni",
+    "Doppia rilevanza come base per l'informativa sulla sostenibilità",
+    "Dovere di diligenza",
+    "Catena del valore",
+    "Orizzonti temporali",
+    "Redazione e presentazione delle informazioni sulla sostenibilità",
+    "Struttura della dichiarazione di sostenibilità",
+    "Collegamenti con altre parti della rendicontazione societaria e informazioni collegate",
+    "Disposizioni transitorie"
   ],
-  Ambientale: [
-    "Sono state adottate azioni per ridurre le emissioni di CO2?",
-    "Sono stati introdotti strumenti per ridurre il consumo idrico?",
-    "Sono state realizzate iniziative per ridurre rifiuti e materiali di scarto?",
-    "Sono presenti politiche di acquisto green?",
-    "L’azienda produce o utilizza energia rinnovabile?",
-    "Sono presenti spazi verdi o azioni per la biodiversità?",
-    "Sono promossi programmi di formazione ambientale?",
-    "L’azienda ha un piano di gestione della mobilità per ridurre l’impatto dei trasporti?",
-    "Sono adottate politiche per favorire mezzi di trasporto a basso impatto?"
+  E1: [
+    "Cambiamenti climatici",
+    "Piano di transizione per la mitigazione dei cambiamenti climatici",
+    "Politiche per la mitigazione e l'adattamento ai cambiamenti climatici",
+    "Azioni e risorse per la mitigazione e l'adattamento ai cambiamenti climatici",
+    "Obiettivi per la mitigazione e l'adattamento ai cambiamenti climatici",
+    "Consumo di energia e mix energetico",
+    "Emissioni di GHG",
+    "Rimozione e crediti GHG",
+    "Prezzi interni del carbonio",
+    "Effetti finanziari potenziali derivanti dai rischi e dalle opportunità materiali dei cambiamenti climatici"
   ],
-  Sociale: [
-    "Sono stati assunti nuovi dipendenti negli ultimi due anni?",
-    "Sono promosse azioni per l’inserimento dei giovani?",
-    "L’azienda ha introdotto flessibilità di orario?",
-    "Sono state sviluppate flessibilità con imprese locali per i dipendenti?",
-    "Esiste un piano di welfare aziendale?",
-    "Sono realizzate iniziative per salute e sicurezza oltre gli obblighi di legge?",
-    "L’azienda adotta lo smart working?",
-    "I dipendenti partecipano a corsi di formazione oltre quelli obbligatori?",
-    "Sono previste forme incentivanti per la formazione extra-orario?",
-    "L’azienda ha un codice etico pubblico?",
-    "Sono in atto azioni di incentivazione verso i dipendenti in ambito sostenibilità?",
-    "L’azienda ha un piano di sviluppo carriera?",
-    "Sono adottate azioni di solidarietà sociale e limitazione degli sprechi?",
-    "Sono state messe in atto iniziative per garantire la parità di genere?",
-    "L’azienda ha intrapreso il percorso di certificazione per la parità di genere?"
+  E2: [
+    "Inquinamento",
+    "Politiche per la prevenzione, il controllo e la riduzione dell'inquinamento",
+    "Azioni e risorse per la prevenzione, il controllo e la riduzione dell'inquinamento",
+    "Obiettivi per la prevenzione, il controllo e la riduzione dell'inquinamento",
+    "Inquinamento dell'aria, dell'acqua e del suolo",
+    "Sostanze preoccupanti"
   ],
-  Governance: [
-    "Esiste un modello di gestione del rischio aggiornato?",
-    "Sono presenti azioni per la cultura dell’equità di genere?",
-    "L’azienda partecipa a partnership pubblico-private per la sostenibilità?",
-    "Il titolare o i rappresentanti hanno svolto corsi di gestione aziendale?",
-    "Sono in atto processi di digitalizzazione?",
-    "Sono presenti procedure di trasparenza, rendicontazione e risk assessment?",
-    "L’azienda monitora i rischi climatici, di compliance, privacy, concorrenza?",
-    "Sono implementate procedure di whistleblowing e prevenzione della corruzione?",
-    "La governance coinvolge attivamente gli stakeholder nelle decisioni strategiche?"
+  E3: [
+    "Acque e risorse marine",
+    "Politiche per la gestione degli impatti materiali, rischi e opportunità legati alle acque e alle risorse marine",
+    "Azioni e risorse per la gestione degli impatti materiali, rischi e opportunità legati alle acque e alle risorse marine",
+    "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati alle acque e alle risorse marine",
+    "Consumo di acqua"
+  ],
+  E4: [
+    "Biodiversità ed ecosistemi",
+    "Piano di transizione per la biodiversità e gli ecosistemi",
+    "Politiche per la gestione degli impatti materiali, rischi e opportunità legati alla biodiversità e agli ecosistemi",
+    "Azioni e risorse per la gestione degli impatti materiali, rischi e opportunità legati alla biodiversità e agli ecosistemi",
+    "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati alla biodiversità e agli ecosistemi",
+    "Pressioni sulla biodiversità e sugli ecosistemi",
+    "Metriche di impatto su biodiversità ed ecosistemi"
+  ],
+  E5: [
+    "Uso delle risorse ed economia circolare",
+    "Politiche per la gestione degli impatti materiali, rischi e opportunità legati all'uso delle risorse e all'economia circolare",
+    "Azioni e risorse per la gestione degli impatti materiali, rischi e opportunità legati all'uso delle risorse e all'economia circolare",
+    "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati all'uso delle risorse e all'economia circolare",
+    "Afflussi di risorse",
+    "Deflussi di risorse e rifiuti"
+  ],
+  S1: [
+    "Lavoro propria",
+    "Politiche per la gestione degli impatti materiali, rischi e opportunità legati alla forza lavoro propria",
+    "Processi per l'impegno con la forza lavoro propria e i rappresentanti dei lavoratori riguardo agli impatti materiali",
+    "Processi per rimediare agli impatti negativi materiali e canali per la forza lavoro propria per esprimere preoccupazioni",
+    "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per la forza lavoro propria",
+    "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati alla forza lavoro propria",
+    "Caratteristiche della forza lavoro propria dell'impresa",
+    "Caratteristiche dei lavoratori non dipendenti nella forza lavoro propria dell'impresa",
+    "Copertura della contrattazione collettiva e dialogo sociale",
+    "Diversità",
+    "Salari adeguati",
+    "Protezione sociale",
+    "Persone con disabilità",
+    "Formazione e sviluppo delle competenze",
+    "Salute e sicurezza",
+    "Equilibrio tra lavoro e vita privata",
+    "Salari adeguati",
+    "Dialogo sociale",
+    "Lavoro infantile",
+    "Lavoro forzato",
+    "Alloggi adeguati",
+    "Privacy"
+  ],
+  S2: [
+    "Lavoratori nella catena del valore",
+    "Politiche per la gestione degli impatti materiali, rischi e opportunità legati ai lavoratori nella catena del valore",
+    "Processi per l'impegno con i lavoratori nella catena del valore e i loro rappresentanti riguardo agli impatti materiali",
+    "Processi per rimediare agli impatti negativi materiali e canali per i lavoratori nella catena del valore per esprimere preoccupazioni",
+    "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per i lavoratori nella catena del valore",
+    "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati ai lavoratori nella catena del valore"
+  ],
+  S3: [
+    "Comunità interessate",
+    "Politiche per la gestione degli impatti materiali, rischi e opportunità legati alle comunità interessate",
+    "Processi per l'impegno con le comunità interessate riguardo agli impatti materiali",
+    "Processi per rimediare agli impatti negativi materiali e canali per le comunità interessate per esprimere preoccupazioni",
+    "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per le comunità interessate",
+    "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati alle comunità interessate"
+  ],
+  S4: [
+    "Consumatori e utilizzatori finali",
+    "Politiche per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali",
+    "Processi per l'impegno con i consumatori e gli utilizzatori finali riguardo agli impatti materiali",
+    "Processi per rimediare agli impatti negativi materiali e canali per i consumatori e gli utilizzatori finali per esprimere preoccupazioni",
+    "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per i consumatori e gli utilizzatori finali",
+    "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali"
+  ],
+  G1: [
+    "Condotta delle imprese",
+    "Politiche per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+    "Processi per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+    "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per la condotta delle imprese",
+    "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+    "Cultura aziendale",
+    "Gestione dei rapporti con i fornitori",
+    "Formazione e sensibilizzazione su anti-corruzione e anti-bribery",
+    "Incidenti di corruzione o bribery",
+    "Attività di lobbying",
+    "Pratiche di pagamento"
   ]
 };
 
@@ -58,10 +125,9 @@ function Checklist({ audit, onUpdate }) {
   const [filter, setFilter] = useState('');
   const [showOnlyOpen, setShowOnlyOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { comments = {}, files = {}, completed = {}, stato } = audit;
+  const storage = useStorage(); // Single useStorage call
 
-  const { checklist = {}, comments = {}, files = {}, completed = {}, stato } = audit;
-
-  // Funzione per aggiornare i dati con gestione dell'errore
   const safeUpdate = (updates) => {
     try {
       const updatedAudit = { ...audit, ...updates };
@@ -78,8 +144,6 @@ function Checklist({ audit, onUpdate }) {
     }
   };
 
-  // [Mantenere handleCheckboxChange, handleCommentChange, handleFileUpload, removeFile, handleCompletedChange come nel codice precedente]
-
   const handleCommentChange = (category, item, value) => {
     const key = `${category}-${item}`;
     safeUpdate({
@@ -87,15 +151,14 @@ function Checklist({ audit, onUpdate }) {
     });
   };
 
-  const handleFileUpload = (category, item, event) => {
+  const handleFileUpload = (key, event) => {
     const newFiles = event.target.files;
-    const key = `${category}-${item}`;
     const currentFiles = files[key] || [];
     const newFileArray = [...currentFiles];
 
     for (let i = 0; i < newFiles.length; i++) {
       const file = newFiles[i];
-      if (newFileArray.length >= 5) { // Limite arbitrario per evitare overload
+      if (newFileArray.length >= 5) {
         alert('Raggiunto il limite di 5 file per item. Rimuovi un file prima di aggiungerne altri.');
         return;
       }
@@ -104,7 +167,7 @@ function Checklist({ audit, onUpdate }) {
         newFileArray.push({
           name: file.name,
           type: file.type,
-          data: reader.result // Base64, ma limitato
+          data: reader.result
         });
         safeUpdate({
           files: { ...files, [key]: newFileArray }
@@ -114,8 +177,7 @@ function Checklist({ audit, onUpdate }) {
     }
   };
 
-  const removeFile = (category, item, index) => {
-    const key = `${category}-${item}`;
+  const removeFile = (key, index) => {
     const currentFiles = files[key] || [];
     const newFileArray = currentFiles.filter((_, i) => i !== index);
     safeUpdate({
@@ -130,14 +192,15 @@ function Checklist({ audit, onUpdate }) {
     });
   };
 
-  // Export JSON
   const exportSelections = () => {
-    const selections = Object.keys(checklist).map(key => {
+    const selections = Object.keys(comments).filter(key => {
+      const comment = comments[key] || '';
+      return comment.trim().length > 0;
+    }).map(key => {
       const [category, item] = key.split('-');
       return {
         category,
         item,
-        checked: !!checklist[key],
         comment: comments[key] || '',
         files: files[key] || [],
         terminato: !!completed[key]
@@ -163,7 +226,6 @@ function Checklist({ audit, onUpdate }) {
     });
   };
 
-  // Import JSON
   const handleImportJSON = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -171,21 +233,18 @@ function Checklist({ audit, onUpdate }) {
       reader.onload = (e) => {
         const importedData = JSON.parse(e.target.result);
         const importedSelections = importedData.selections || [];
-        const newChecklist = {};
         const newComments = {};
         const newFiles = {};
         const newCompleted = {};
 
         importedSelections.forEach(s => {
           const key = `${s.category}-${s.item}`;
-          newChecklist[key] = s.checked;
           newComments[key] = s.comment;
           newFiles[key] = s.files || [];
           newCompleted[key] = s.terminato;
         });
 
         safeUpdate({
-          checklist: newChecklist,
           comments: newComments,
           files: newFiles,
           completed: newCompleted
@@ -196,27 +255,26 @@ function Checklist({ audit, onUpdate }) {
     }
   };
 
-  // Chiusura audit
   const handleCloseAudit = () => {
     if (window.confirm("Vuoi chiudere definitivamente questo audit?")) {
       safeUpdate({ stato: 'chiuso' });
     }
   };
 
-  // Definizione di filteredCategories per il filtro dinamico
   const filteredCategories = Object.keys(esrsDetails).filter(category =>
     category.toLowerCase().includes(filter.toLowerCase()) ||
     esrsDetails[category].some(item => item.toLowerCase().includes(filter.toLowerCase()))
   );
 
-  // Generate Report (mantenuto come prima)
   const generateReport = () => {
-    const selections = Object.keys(checklist).map(key => {
+    const selections = Object.keys(comments).filter(key => {
+      const comment = comments[key] || '';
+      return comment.trim().length > 0;
+    }).map(key => {
       const [category, item] = key.split('-');
       return {
         category,
         item,
-        checked: !!checklist[key],
         comment: comments[key] || 'Nessun commento',
         files: files[key] || [],
         terminato: !!completed[key]
@@ -248,11 +306,11 @@ function Checklist({ audit, onUpdate }) {
           <div class="section">
             <h2>${category}</h2>
             ${esrsDetails[category].map(item => {
+              const key = `${category}-${item}`;
               const data = selections.find(s => s.item === item && s.category === category);
               return data ? `
                 <div>
                   <h3>${item}</h3>
-                  <p><b>Completato:</b> ${data.checked ? 'Sì' : 'No'}</p>
                   <p><b>Terminato:</b> ${data.terminato ? 'Sì' : 'No'}</p>
                   <p><b>Commento:</b> ${data.comment.replace(/\n/g, '<br>')}</p>
                   ${data.files.map((file, idx) => file.type.startsWith('image/') ? `
@@ -277,10 +335,69 @@ function Checklist({ audit, onUpdate }) {
     alert('Il report è stato scaricato come HTML. Apri il file con Microsoft Word per salvarlo come .docx.');
   };
 
+  async function pickAuditDirectory() {
+    try {
+      await storage.initAuditTree({ id: audit.id });
+      alert('Cartella audit collegata.');
+    } catch (err) {
+      alert('Errore: ' + err.message);
+    }
+  }
+
+  async function handleFileUploadFS(key, event) {
+    if (!storage.ready()) {
+      alert('Seleziona prima la cartella audit');
+      return;
+    }
+    const list = [...(files[key] ?? [])];
+    for (const file of event.target.files) {
+      if (list.length >= 5) {
+        alert('Limite 5 file per item');
+        break;
+      }
+      const meta = await storage.saveEvidence(key, file);
+      list.push({ name: meta.name, type: meta.type, path: meta.path });
+    }
+    safeUpdate({ files: { ...files, [key]: list } });
+  }
+
+  async function exportSelectionsFS() {
+    if (!storage.ready()) {
+      alert('Seleziona la cartella audit');
+      return;
+    }
+    const selections = Object.keys(comments).map(key => {
+      const [category, item] = key.split('-');
+      return {
+        category,
+        item,
+        comment: (comments[key] ?? '').trim(),
+        files: (files[key] ?? []).map(f => ({ name: f.name, type: f.type, path: f.path })),
+        completed: !!completed[key]
+      };
+    });
+    const payload = {
+      meta: {
+        azienda: audit.azienda,
+        id: audit.id,
+        dimensione: audit.dimensione,
+        dataAvvio: audit.dataAvvio,
+        stato: audit.stato,
+        esrsVersion: 'ESRS 2024-12',
+        exportedAt: new Date().toISOString()
+      },
+      selections
+    };
+    const { fileName } = await storage.saveExport(payload);
+    safeUpdate({
+      exportHistory: [...(audit.exportHistory ?? []), { fileName, dataExport: new Date().toISOString() }]
+    });
+    alert(`Export salvato: ${fileName}`);
+  }
+
   return (
     <div>
       <h2>Checklist ESG – {audit.azienda} ({audit.dimensione})</h2>
-      <p>Stato audit: <b>{audit.stato}</b></p>
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       <input
         type="text"
@@ -293,11 +410,13 @@ function Checklist({ audit, onUpdate }) {
         <input
           type="checkbox"
           checked={showOnlyOpen}
-          onChange={e => setShowOnlyOpen(e.target.checked)}
+          onChange={(e) => setShowOnlyOpen(e.target.checked)}
         />
         Mostra solo punti aperti
       </label>
-      <button onClick={exportSelections} style={{ margin: '10px' }}>Export Selections</button>
+      <button onClick={exportSelectionsFS} style={{ margin: '10px' }}>
+        Salva Export in cartella
+      </button>
       <input type="file" accept=".json" onChange={handleImportJSON} style={{ margin: '10px' }} />
       <label style={{ marginLeft: 8 }}>Import JSON</label>
       <button onClick={generateReport} style={{ margin: '10px' }}>Genera Report HTML</button>
@@ -306,16 +425,23 @@ function Checklist({ audit, onUpdate }) {
           Chiudi audit
         </button>
       )}
-      {filteredCategories.map(category => (
+      <button onClick={() => { localStorage.clear(); alert('localStorage svuotato!'); }} style={{ margin: '10px', background: '#ff4444' }}>
+        Svuota localStorage
+      </button>
+      <button onClick={pickAuditDirectory} style={{ margin: '10px', background: '#0078d4', color: '#fff' }}>
+        Seleziona cartella audit…
+      </button>
+
+      {filteredCategories.map((category, categoryIndex) => (
         <div key={category}>
           <h3>{category}</h3>
-          <ul>
+          <ol start={categoryIndex * 10 + 1}>
             {esrsDetails[category]
               .filter(item => !showOnlyOpen || !completed[`${category}-${item}`])
-              .map(item => {
+              .map((item, itemIndex) => {
                 const key = `${category}-${item}`;
                 return (
-                  <li key={item}>
+                  <li key={item} value={itemIndex + 1}>
                     {item}
                     <textarea
                       placeholder="Aggiungi evidenze..."
@@ -328,7 +454,7 @@ function Checklist({ audit, onUpdate }) {
                       type="file"
                       accept="image/*,*/*"
                       multiple
-                      onChange={e => handleFileUpload(category, item, e)}
+                      onChange={e => handleFileUpload(key, e)}
                       style={{ margin: '5px 0' }}
                       disabled={stato === 'chiuso'}
                     />
@@ -339,7 +465,7 @@ function Checklist({ audit, onUpdate }) {
                         ) : (
                           <a href={file.data} download={file.name}>{file.name}</a>
                         )}
-                        <button onClick={() => removeFile(category, item, index)} disabled={stato === 'chiuso'}>Rimuovi</button>
+                        <button onClick={() => removeFile(key, index)} disabled={stato === 'chiuso'}>Rimuovi</button>
                       </div>
                     ))}
                     <label style={{ marginLeft: 8 }}>
@@ -353,7 +479,7 @@ function Checklist({ audit, onUpdate }) {
                   </li>
                 );
               })}
-          </ul>
+          </ol>
         </div>
       ))}
       <div style={{ marginTop: 24 }}>

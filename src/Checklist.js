@@ -103,7 +103,7 @@ const esrsDetails = {
     "Politiche per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali",
     "Processi per l'impegno con i consumatori e gli utilizzatori finali riguardo agli impatti materiali",
     "Processi per rimediare agli impatti negativi materiali e canali per i consumatori e gli utilizzatori finali per esprimere preoccupazioni",
-    "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per i consumatori e gli utilizzatori finali",
+    "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per i consumatori e agli utilizzatori finali",
     "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali"
   ],
   G1: [
@@ -126,7 +126,7 @@ function Checklist({ audit, onUpdate }) {
   const [showOnlyOpen, setShowOnlyOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { comments = {}, files = {}, completed = {}, stato } = audit;
-  const storage = useStorage(); // Single useStorage call
+  const storage = useStorage();
 
   const safeUpdate = (updates) => {
     try {
@@ -175,6 +175,23 @@ function Checklist({ audit, onUpdate }) {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleFileUploadFS = async (key, event) => {
+    if (!storage.ready()) {
+      alert('Seleziona prima la cartella audit');
+      return;
+    }
+    const list = [...(files[key] ?? [])];
+    for (const file of event.target.files) {
+      if (list.length >= 5) {
+        alert('Limite 5 file per item');
+        break;
+      }
+      const meta = await storage.saveEvidence(key, file);
+      list.push({ name: meta.name, type: meta.type, path: meta.path });
+    }
+    safeUpdate({ files: { ...files, [key]: list } });
   };
 
   const removeFile = (key, index) => {
@@ -226,30 +243,68 @@ function Checklist({ audit, onUpdate }) {
     });
   };
 
+  const exportSelectionsFS = async () => {
+    if (!storage.ready()) {
+      alert('Seleziona la cartella audit');
+      return;
+    }
+    const selections = Object.keys(comments).map(key => {
+      const [category, item] = key.split('-');
+      return {
+        category,
+        item,
+        comment: (comments[key] ?? '').trim(),
+        files: (files[key] ?? []).map(f => ({ name: f.name, type: f.type, path: f.path })),
+        completed: !!completed[key]
+      };
+    });
+    const payload = {
+      meta: {
+        azienda: audit.azienda,
+        id: audit.id,
+        dimensione: audit.dimensione,
+        dataAvvio: audit.dataAvvio,
+        stato: audit.stato,
+        esrsVersion: 'ESRS 2024-12',
+        exportedAt: new Date().toISOString()
+      },
+      selections
+    };
+    const { fileName } = await storage.saveExport(payload);
+    safeUpdate({
+      exportHistory: [...(audit.exportHistory ?? []), { fileName, dataExport: new Date().toISOString() }]
+    });
+    alert(`Export salvato: ${fileName}`);
+  };
+
   const handleImportJSON = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const importedData = JSON.parse(e.target.result);
-        const importedSelections = importedData.selections || [];
-        const newComments = {};
-        const newFiles = {};
-        const newCompleted = {};
+        try {
+          const importedData = JSON.parse(e.target.result);
+          const importedSelections = importedData.selections || [];
+          const newComments = {};
+          const newFiles = {};
+          const newCompleted = {};
 
-        importedSelections.forEach(s => {
-          const key = `${s.category}-${s.item}`;
-          newComments[key] = s.comment;
-          newFiles[key] = s.files || [];
-          newCompleted[key] = s.terminato;
-        });
+          importedSelections.forEach(s => {
+            const key = `${s.category}-${s.item}`;
+            newComments[key] = s.comment;
+            newFiles[key] = s.files || [];
+            newCompleted[key] = s.terminato;
+          });
 
-        safeUpdate({
-          comments: newComments,
-          files: newFiles,
-          completed: newCompleted
-        });
-        alert('Dati importati con successo!');
+          safeUpdate({
+            comments: newComments,
+            files: newFiles,
+            completed: newCompleted
+          });
+          alert('Dati importati con successo!');
+        } catch (error) {
+          alert('Errore durante l\'importazione del file JSON: ' + error.message);
+        }
       };
       reader.readAsText(file);
     }
@@ -261,10 +316,14 @@ function Checklist({ audit, onUpdate }) {
     }
   };
 
-  const filteredCategories = Object.keys(esrsDetails).filter(category =>
-    category.toLowerCase().includes(filter.toLowerCase()) ||
-    esrsDetails[category].some(item => item.toLowerCase().includes(filter.toLowerCase()))
-  );
+  const pickAuditDirectory = async () => {
+    try {
+      await storage.initAuditTree({ id: audit.id });
+      alert('Cartella audit collegata.');
+    } catch (err) {
+      alert('Errore: ' + err.message);
+    }
+  };
 
   const generateReport = () => {
     const selections = Object.keys(comments).filter(key => {
@@ -306,16 +365,17 @@ function Checklist({ audit, onUpdate }) {
           <div class="section">
             <h2>${category}</h2>
             ${esrsDetails[category].map(item => {
-              const key = `${category}-${item}`;
               const data = selections.find(s => s.item === item && s.category === category);
               return data ? `
                 <div>
                   <h3>${item}</h3>
                   <p><b>Terminato:</b> ${data.terminato ? 'Sì' : 'No'}</p>
                   <p><b>Commento:</b> ${data.comment.replace(/\n/g, '<br>')}</p>
-                  ${data.files.map((file, idx) => file.type.startsWith('image/') ? `
+                  ${data.files.map((file, idx) => file.path ? `
+                    <p><a href="#" onclick="alert('File salvato in ${file.path}. Apri la cartella audit per visualizzarlo.');">${file.name}</a></p>
+                  ` : `
                     <img src="${file.data}" alt="${file.name}" style="max-width: 200px;">
-                  ` : `<p><a href="${file.data}" download="${file.name}">File: ${file.name}</a></p>`).join('')}
+                  `).join('')}
                 </div>
               ` : '';
             }).join('')}
@@ -335,65 +395,10 @@ function Checklist({ audit, onUpdate }) {
     alert('Il report è stato scaricato come HTML. Apri il file con Microsoft Word per salvarlo come .docx.');
   };
 
-  async function pickAuditDirectory() {
-    try {
-      await storage.initAuditTree({ id: audit.id });
-      alert('Cartella audit collegata.');
-    } catch (err) {
-      alert('Errore: ' + err.message);
-    }
-  }
-
-  async function handleFileUploadFS(key, event) {
-    if (!storage.ready()) {
-      alert('Seleziona prima la cartella audit');
-      return;
-    }
-    const list = [...(files[key] ?? [])];
-    for (const file of event.target.files) {
-      if (list.length >= 5) {
-        alert('Limite 5 file per item');
-        break;
-      }
-      const meta = await storage.saveEvidence(key, file);
-      list.push({ name: meta.name, type: meta.type, path: meta.path });
-    }
-    safeUpdate({ files: { ...files, [key]: list } });
-  }
-
-  async function exportSelectionsFS() {
-    if (!storage.ready()) {
-      alert('Seleziona la cartella audit');
-      return;
-    }
-    const selections = Object.keys(comments).map(key => {
-      const [category, item] = key.split('-');
-      return {
-        category,
-        item,
-        comment: (comments[key] ?? '').trim(),
-        files: (files[key] ?? []).map(f => ({ name: f.name, type: f.type, path: f.path })),
-        completed: !!completed[key]
-      };
-    });
-    const payload = {
-      meta: {
-        azienda: audit.azienda,
-        id: audit.id,
-        dimensione: audit.dimensione,
-        dataAvvio: audit.dataAvvio,
-        stato: audit.stato,
-        esrsVersion: 'ESRS 2024-12',
-        exportedAt: new Date().toISOString()
-      },
-      selections
-    };
-    const { fileName } = await storage.saveExport(payload);
-    safeUpdate({
-      exportHistory: [...(audit.exportHistory ?? []), { fileName, dataExport: new Date().toISOString() }]
-    });
-    alert(`Export salvato: ${fileName}`);
-  }
+  const filteredCategories = Object.keys(esrsDetails).filter(category =>
+    category.toLowerCase().includes(filter.toLowerCase()) ||
+    esrsDetails[category].some(item => item.toLowerCase().includes(filter.toLowerCase()))
+  );
 
   return (
     <div>
@@ -416,6 +421,9 @@ function Checklist({ audit, onUpdate }) {
       </label>
       <button onClick={exportSelectionsFS} style={{ margin: '10px' }}>
         Salva Export in cartella
+      </button>
+      <button onClick={exportSelections} style={{ margin: '10px' }}>
+        Esporta come JSON
       </button>
       <input type="file" accept=".json" onChange={handleImportJSON} style={{ margin: '10px' }} />
       <label style={{ marginLeft: 8 }}>Import JSON</label>
@@ -454,16 +462,22 @@ function Checklist({ audit, onUpdate }) {
                       type="file"
                       accept="image/*,*/*"
                       multiple
-                      onChange={e => handleFileUpload(key, e)}
+                      onChange={e => handleFileUploadFS(key, e)}
                       style={{ margin: '5px 0' }}
                       disabled={stato === 'chiuso'}
                     />
                     {(files[key] || []).map((file, index) => (
                       <div key={index}>
-                        {file.type.startsWith('image/') ? (
-                          <img src={file.data} alt={file.name} style={{ maxWidth: '200px', margin: '5px' }} />
+                        {file.path ? (
+                          <a href="#" onClick={() => alert(`File salvato in ${file.path}. Apri la cartella audit per visualizzarlo.`)}>
+                            {file.name}
+                          </a>
                         ) : (
-                          <a href={file.data} download={file.name}>{file.name}</a>
+                          file.type.startsWith('image/') ? (
+                            <img src={file.data} alt={file.name} style={{ maxWidth: '200px', margin: '5px' }} />
+                          ) : (
+                            <a href={file.data} download={file.name}>{file.name}</a>
+                          )
                         )}
                         <button onClick={() => removeFile(key, index)} disabled={stato === 'chiuso'}>Rimuovi</button>
                       </div>

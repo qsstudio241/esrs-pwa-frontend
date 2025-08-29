@@ -10,7 +10,7 @@ function AuditSelector({ audits, onSelectAudit, onCreateAudit, showClosed, setSh
   const [dimensione, setDimensione] = useState('Micro');
   const [showNew, setShowNew] = useState(false);
 
-  const auditsToShow = audits.filter(a => showClosed || a.stato === 'in corso');
+  const auditsToShow = Array.isArray(audits) ? audits.filter(a => showClosed || a.stato === 'in corso') : [];
 
   return (
     <div style={{ marginBottom: 24 }}>
@@ -78,7 +78,11 @@ function App() {
   const [audits, setAudits] = useState(() => {
     try {
       const saved = localStorage.getItem('audits');
-      return saved ? JSON.parse(saved) : [];
+      console.log('Raw localStorage audits:', saved); // Debug: Log raw data
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      console.log('Parsed audits:', parsed); // Debug: Log parsed data
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
       console.error('Failed to parse audits from localStorage:', e);
       return [];
@@ -88,24 +92,39 @@ function App() {
   const [showClosed, setShowClosed] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('audits', JSON.stringify(audits));
+    try {
+      localStorage.setItem('audits', JSON.stringify(audits));
+    } catch (e) {
+      console.error('Failed to save audits to localStorage:', e);
+    }
   }, [audits]);
 
-  const currentAudit = audits.find(a => a.id === currentAuditId);
+  // Safeguard: Ensure audits is an array before calling find
+  const currentAudit = Array.isArray(audits) ? audits.find(a => a.id === currentAuditId) : null;
 
   const handleSelectAudit = (id) => setCurrentAuditId(id);
 
   const handleCreateAudit = (newAudit) => {
-    setAudits(prev => [...prev, newAudit]);
+    setAudits(prev => {
+      if (!Array.isArray(prev)) {
+        console.error('audits is not an array:', prev);
+        return [newAudit];
+      }
+      return [...prev, newAudit];
+    });
     setCurrentAuditId(newAudit.id);
   };
 
   const updateCurrentAudit = (data) => {
-    setAudits(prev =>
-      prev.map(a =>
+    setAudits(prev => {
+      if (!Array.isArray(prev)) {
+        console.error('audits is not an array:', prev);
+        return [];
+      }
+      return prev.map(a =>
         a.id === currentAuditId ? { ...a, ...data } : a
-      )
-    );
+      );
+    });
   };
 
   return (
@@ -118,11 +137,13 @@ function App() {
           showClosed={showClosed}
           setShowClosed={setShowClosed}
         />
-        {currentAudit && (
+        {currentAudit ? (
           <Checklist
             audit={currentAudit}
             onUpdate={updateCurrentAudit}
           />
+        ) : (
+          <p>Seleziona un audit per iniziare.</p>
         )}
       </div>
     </StorageProvider>

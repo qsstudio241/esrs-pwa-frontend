@@ -151,31 +151,31 @@ function Checklist({ audit, onUpdate }) {
     });
   };
 
-  const handleFileUpload = (key, event) => {
-    const newFiles = event.target.files;
-    const currentFiles = files[key] || [];
-    const newFileArray = [...currentFiles];
-
-    for (let i = 0; i < newFiles.length; i++) {
-      const file = newFiles[i];
-      if (newFileArray.length >= 5) {
-        alert('Raggiunto il limite di 5 file per item. Rimuovi un file prima di aggiungerne altri.');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        newFileArray.push({
-          name: file.name,
-          type: file.type,
-          data: reader.result
-        });
-        safeUpdate({
-          files: { ...files, [key]: newFileArray }
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  //const handleFileUpload = (key, event) => {
+  //  const newFiles = event.target.files;
+  //  const currentFiles = files[key] || [];
+  //  const newFileArray = [...currentFiles];
+//
+  //  for (let i = 0; i < newFiles.length; i++) {
+  //    const file = newFiles[i];
+  //    if (newFileArray.length >= 5) {
+  //      alert('Raggiunto il limite di 5 file per item. Rimuovi un file prima di aggiungerne altri.');
+  //      return;
+  //    }
+  //    const reader = new FileReader();
+  //    reader.onloadend = () => {
+  //      newFileArray.push({
+  //        name: file.name,
+  //        type: file.type,
+  //        data: reader.result
+  //      });
+  //      safeUpdate({
+  //        files: { ...files, [key]: newFileArray }
+  //      });
+  //    };
+  //    reader.readAsDataURL(file);
+  //  }
+  //};
 
   const handleFileUploadFS = async (key, event) => {
     if (!storage.ready()) {
@@ -389,7 +389,7 @@ const handleImportJSON = async (event) => {
                   <p><b>Terminato:</b> ${data.terminato ? 'Sì' : 'No'}</p>
                   <p><b>Commento:</b> ${data.comment.replace(/\n/g, '<br>')}</p>
                   ${data.files.map((file, idx) => file.path ? `
-                    <p><button type="button" style="background:none;border:none;color:#007bff;text-decoration:underline;cursor:pointer;padding:0" onclick="alert('File salvato in ${file.path}. Apri la cartella audit per visualizzarlo.');">${file.name}</button></p>
+                    <p><a href="#" onclick="alert('File salvato in ${file.path}. Apri la cartella audit per visualizzarlo.');">${file.name}</a></p>
                   ` : `
                     <img src="${file.data}" alt="${file.name}" style="max-width: 200px;">
                   `).join('')}

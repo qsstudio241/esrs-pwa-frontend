@@ -277,38 +277,55 @@ function Checklist({ audit, onUpdate }) {
     alert(`Export salvato: ${fileName}`);
   };
 
-  const handleImportJSON = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const importedData = JSON.parse(e.target.result);
-          const importedSelections = importedData.selections || [];
-          const newComments = {};
-          const newFiles = {};
-          const newCompleted = {};
+ const checkFileAccess = async (file) => {
+  try {
+    const handle = await window.showDirectoryPicker(); // oppure usa handle già salvato
+    const fileHandle = await handle.getFileHandle(file.path, { create: false });
+    await fileHandle.getFile(); // verifica accesso
+    return file;
+  } catch (error) {
+    return { ...file, status: "non trovato - spostato" };
+  }
+};
 
-          importedSelections.forEach(s => {
-            const key = `${s.category}-${s.item}`;
-            newComments[key] = s.comment;
-            newFiles[key] = s.files || [];
-            newCompleted[key] = s.terminato;
-          });
+const handleImportJSON = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
-          safeUpdate({
-            comments: newComments,
-            files: newFiles,
-            completed: newCompleted
-          });
-          alert('Dati importati con successo!');
-        } catch (error) {
-          alert('Errore durante l\'importazione del file JSON: ' + error.message);
-        }
-      };
-      reader.readAsText(file);
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      const importedSelections = importedData.selections ?? [];
+      const newComments = {};
+      const newFiles = {};
+      const newCompleted = {};
+
+      for (const s of importedSelections) {
+        const key = `${s.category}-${s.item}`;
+        newComments[key] = s.comment;
+        newCompleted[key] = s.terminato;
+
+        const checkedFiles = await Promise.all(
+          (s.files ?? []).map(checkFileAccess)
+        );
+        newFiles[key] = checkedFiles;
+      }
+
+      safeUpdate({
+        comments: newComments,
+        files: newFiles,
+        completed: newCompleted
+      });
+
+      alert("Dati importati con verifica accessibilità file.");
+    } catch (error) {
+      alert("Errore durante l'importazione del file JSON: " + error.message);
     }
   };
+
+  reader.readAsText(file);
+};
 
   const handleCloseAudit = () => {
     if (window.confirm("Vuoi chiudere definitivamente questo audit?")) {
@@ -372,7 +389,7 @@ function Checklist({ audit, onUpdate }) {
                   <p><b>Terminato:</b> ${data.terminato ? 'Sì' : 'No'}</p>
                   <p><b>Commento:</b> ${data.comment.replace(/\n/g, '<br>')}</p>
                   ${data.files.map((file, idx) => file.path ? `
-                    <p><a href="#" onclick="alert('File salvato in ${file.path}. Apri la cartella audit per visualizzarlo.');">${file.name}</a></p>
+                    <p><button type="button" style="background:none;border:none;color:#007bff;text-decoration:underline;cursor:pointer;padding:0" onclick="alert('File salvato in ${file.path}. Apri la cartella audit per visualizzarlo.');">${file.name}</button></p>
                   ` : `
                     <img src="${file.data}" alt="${file.name}" style="max-width: 200px;">
                   `).join('')}
@@ -469,11 +486,20 @@ function Checklist({ audit, onUpdate }) {
                     {(files[key] || []).map((file, index) => (
                       <div key={index}>
                         {file.path ? (
-                          <a href="#" onClick={() => alert(`File salvato in ${file.path}. Apri la cartella audit per visualizzarlo.`)}>
-                            {file.name}
-                          </a>
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => alert(`File salvato in ${file.path}. Apri la cartella audit per visualizzarlo.`)}
+                              style={{ background: 'none', border: 'none', color: '#007bff', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}
+                            >
+                              {file.name}
+                            </button>
+                            {file.status === "non trovato - spostato" && (
+                              <span style={{ color: 'red', marginLeft: '8px' }}>⚠️ {file.status}</span>
+                            )}
+                          </>
                         ) : (
-                          file.type.startsWith('image/') ? (
+                          file.type && file.type.startsWith('image/') ? (
                             <img src={file.data} alt={file.name} style={{ maxWidth: '200px', margin: '5px' }} />
                           ) : (
                             <a href={file.data} download={file.name}>{file.name}</a>

@@ -38,7 +38,7 @@ export class LocalFsProvider {
 
   async saveEvidence(key, file) {
     if (!this.subDirs?.evidenze) throw new Error('Cartella audit non inizializzata');
-    const safeKey = key.replace(/[^\w\-]+/g, '_').slice(0, 60);
+    const safeKey = key.replace(/[^\w-]+/g, '_').slice(0, 60);
     const stamp = new Date().toISOString().replace(/[:.]/g, '');
     const fname = `${safeKey}__${stamp}__${file.name}`;
     await this.writeBlob(this.subDirs.evidenze, fname, file);

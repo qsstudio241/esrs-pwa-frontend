@@ -1,0 +1,10 @@
+[build]
+# Esegue lo script "build" dal package.json
+command = "npm run build"
+
+# Cartella generata da React/CRACO da pubblicare
+publish = "build"
+
+[build.environment]
+# Versione Node stabile
+NODE_VERSION = "18"

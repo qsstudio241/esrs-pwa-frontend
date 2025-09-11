@@ -2,8 +2,8 @@
 # Esegue lo script "build" dal package.json
 command = "npm run build"
 
-# Cartella generata da React/CRACO da pubblicare
-publish = "build"
+# Cartella generata da React/CRACO da pubblicare (relativa a frontend/)
+publish = "../build"
 
 [build.environment]
 # Versione Node stabile

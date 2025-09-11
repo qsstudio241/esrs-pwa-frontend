@@ -1,0 +1,224 @@
+{
+  "metadata": {
+    "name": "ESRS Base Checklist",
+    "version": "1.0",
+    "standard": "ESRS",
+    "description": "Checklist elementi base ESRS per audit di sostenibilità",
+    "lastUpdated": "2025-09-10",
+    "author": "QS Studio",
+    "compatibleWith": ["Micro", "Piccola", "Media", "Grande"],
+    "totalItems": 27
+  },
+  "categories": {
+    "Generale": {
+      "title": "Principi Generali ESRS",
+      "description": "Principi fondamentali di rendicontazione di sostenibilità",
+      "code": "ESRS-1",
+      "items": [
+        {
+          "id": "G001",
+          "text": "Categorie di principi di rendicontazione di sostenibilità, ambiti di rendicontazione e convenzioni redazionali",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G002",
+          "text": "Caratteristiche qualitative delle informazioni",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G003",
+          "text": "Doppia rilevanza come base per l'informativa sulla sostenibilità",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G004",
+          "text": "Dovere di diligenza",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G005",
+          "text": "Catena del valore",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G006",
+          "text": "Orizzonti temporali",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G007",
+          "text": "Redazione e presentazione delle informazioni sulla sostenibilità",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G008",
+          "text": "Struttura della dichiarazione di sostenibilità",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G009",
+          "text": "Collegamenti con altre parti della rendicontazione societaria e informazioni collegate",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G010",
+          "text": "Disposizioni transitorie",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        }
+      ]
+    },
+    "S4": {
+      "title": "Consumatori e Utilizzatori Finali",
+      "description": "Standard sociale su consumatori e utilizzatori finali",
+      "code": "ESRS-S4",
+      "items": [
+        {
+          "id": "S4001",
+          "text": "Consumatori e utilizzatori finali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4"
+        },
+        {
+          "id": "S4002",
+          "text": "Politiche per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4"
+        },
+        {
+          "id": "S4003",
+          "text": "Processi per l'impegno con i consumatori e gli utilizzatori finali riguardo agli impatti materiali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4"
+        },
+        {
+          "id": "S4004",
+          "text": "Processi per rimediare agli impatti negativi materiali e canali per i consumatori e gli utilizzatori finali per esprimere preoccupazioni",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4"
+        },
+        {
+          "id": "S4005",
+          "text": "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per i consumatori e agli utilizzatori finali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4"
+        },
+        {
+          "id": "S4006",
+          "text": "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4"
+        }
+      ]
+    },
+    "G1": {
+      "title": "Condotta Aziendale",
+      "description": "Standard di governance sulla condotta aziendale",
+      "code": "ESRS-G1",
+      "items": [
+        {
+          "id": "G1001",
+          "text": "Condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1002",
+          "text": "Politiche per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1003",
+          "text": "Processi per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1004",
+          "text": "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per la condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1005",
+          "text": "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1006",
+          "text": "Cultura aziendale",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1007",
+          "text": "Gestione dei rapporti con i fornitori",
+          "applicability": ["Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1008",
+          "text": "Formazione e sensibilizzazione su anti-corruzione e anti-bribery",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1009",
+          "text": "Incidenti di corruzione o bribery",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1010",
+          "text": "Attività di lobbying",
+          "applicability": ["Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        },
+        {
+          "id": "G1011",
+          "text": "Pratiche di pagamento",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1"
+        }
+      ]
+    }
+  }
+}

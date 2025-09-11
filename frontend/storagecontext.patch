@@ -1,0 +1,245 @@
+diff --git a/src/LocalFsProvider.js b/src/LocalFsProvider.js
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/src/LocalFsProvider.js
+@@
++// src/LocalFsProvider.js
++export class LocalFsProvider {
++  constructor() {
++    this.directoryHandle = null;
++  }
++
++  ready() {
++    return !!this.directoryHandle;
++  }
++
++  async connect(handle) {
++    this.directoryHandle = handle;
++    return this.ensurePermission('readwrite');
++  }
++
++  async ensurePermission(mode = 'readwrite') {
++    if (!this.directoryHandle) throw new Error('Directory non selezionata');
++    const q = await this.directoryHandle.queryPermission({ mode });
++    if (q === 'granted') return true;
++    const r = await this.directoryHandle.requestPermission({ mode });
++    return r === 'granted';
++  }
++
++  async initAuditTree(arg, categories = []) {
++    let handle = null;
++    if (arg && typeof arg === 'object' && 'handle' in arg) {
++      handle = arg.handle;
++    }
++    if (handle) {
++      await this.connect(handle);
++    }
++    if (!this.ready()) throw new Error('Directory non selezionata');
++
++    const evidenzeDir = await this.directoryHandle.getDirectoryHandle('Evidenze', { create: true });
++    await this.directoryHandle.getDirectoryHandle('Export', { create: true });
++
++    if (Array.isArray(categories) && categories.length > 0) {
++      for (const category of categories) {
++        await evidenzeDir.getDirectoryHandle(category, { create: true });
++      }
++    }
++    return { base: { evidenze: 'Evidenze', export: 'Export' } };
++  }
++
++  async #fileExists(dirHandle, name) {
++    try {
++      await dirHandle.getFileHandle(name, { create: false });
++      return true;
++    } catch {
++      return false;
++    }
++  }
++
++  async #uniqueName(dirHandle, name) {
++    const dot = name.lastIndexOf('.');
++    const base = dot > 0 ? name.slice(0, dot) : name;
++    const ext = dot > 0 ? name.slice(dot) : '';
++    let i = 1;
++    let candidate = name;
++    while (await this.#fileExists(dirHandle, candidate)) {
++      candidate = `${base} (${i})${ext}`;
++      i++;
++    }
++    return candidate;
++  }
++
++  async saveEvidence(arg1, file, categoryOpt, opts = {}) {
++    if (!this.ready()) throw new Error('Directory non selezionata');
++    const options = { onConflict: 'rename', ...opts };
++
++    let fileName, category;
++    if (
++      typeof arg1 === 'string' &&
++      file instanceof File &&
++      (categoryOpt === undefined || categoryOpt === null) &&
++      arg1.includes('-') &&
++      !arg1.includes('.')
++    ) {
++      fileName = file.name;
++      category = arg1.split('-')[0];
++    } else {
++      fileName = arg1;
++      category = categoryOpt || 'Generale';
++    }
++
++    const evidenzeDir = await this.directoryHandle.getDirectoryHandle('Evidenze', { create: true });
++    const categoryDir = await evidenzeDir.getDirectoryHandle(category, { create: true });
++
++    let finalName = fileName;
++    const exists = await this.#fileExists(categoryDir, finalName);
++    if (exists) {
++      if (options.onConflict === 'skip') {
++        return { name: fileName, type: file.type || '', path: `Evidenze/${category}/${fileName}`, skipped: true };
++      }
++      if (options.onConflict === 'rename') {
++        finalName = await this.#uniqueName(categoryDir, finalName);
++      }
++    }
++
++    const fileHandle = await categoryDir.getFileHandle(finalName, { create: true });
++    const writable = await fileHandle.createWritable();
++    await writable.write(file);
++    await writable.close();
++
++    return { name: finalName, type: file.type || '', path: `Evidenze/${category}/${finalName}` };
++  }
++
++  async deleteEvidence(categoryOrPath, fileNameOpt) {
++    if (!this.ready()) throw new Error('Directory non selezionata');
++
++    let category, fileName;
++    if (fileNameOpt) {
++      category = categoryOrPath;
++      fileName = fileNameOpt;
++    } else {
++      const path = categoryOrPath.startsWith('Evidenze/')
++        ? categoryOrPath
++        : `Evidenze/${categoryOrPath}`;
++      const parts = path.split('/');
++      if (parts.length < 3) throw new Error('Percorso non valido');
++      category = parts[1];
++      fileName = parts.slice(2).join('/');
++    }
++
++    const evidenzeDir = await this.directoryHandle.getDirectoryHandle('Evidenze', { create: true });
++    const categoryDir = await evidenzeDir.getDirectoryHandle(category, { create: false });
++    await categoryDir.removeEntry(fileName, { recursive: false });
++    return true;
++  }
++
++  async listEvidence(category) {
++    if (!this.ready()) throw new Error('Directory non selezionata');
++    const evidenzeDir = await this.directoryHandle.getDirectoryHandle('Evidenze', { create: true });
++    const categoryDir = await evidenzeDir.getDirectoryHandle(category, { create: true });
++    const out = [];
++    for await (const [name, handle] of categoryDir.entries()) {
++      out.push({ name, kind: handle.kind });
++    }
++    return out;
++  }
++
++  async saveExport(payload) {
++    if (!this.ready()) throw new Error('Directory non selezionata');
++    const exportDir = await this.directoryHandle.getDirectoryHandle('Export', { create: true });
++    const ts = new Date().toISOString().replace(/[:]/g, '-');
++    const id = payload?.meta?.id || 'audit';
++    const fileName = `export_${id}_${ts}.json`;
++
++    const fileHandle = await exportDir.getFileHandle(fileName, { create: true });
++    const writable = await fileHandle.createWritable();
++    await writable.write(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
++    await writable.close();
++
++    return { fileName, path: `Export/${fileName}` };
++  }
++}
+diff --git a/src/utils/directoryStorage.js b/src/utils/directoryStorage.js
+new file mode 100644
+index 0000000..2222222
+--- /dev/null
++++ b/src/utils/directoryStorage.js
+@@
++const DB_NAME = 'esrs-dir-db';
++const STORE = 'handles';
++
++function openDb() {
++  return new Promise((resolve, reject) => {
++    const req = indexedDB.open(DB_NAME, 1);
++    req.onupgradeneeded = () => {
++      const db = req.result;
++      if (!db.objectStoreNames.contains(STORE)) {
++        db.createObjectStore(STORE);
++      }
++    };
++    req.onsuccess = () => resolve(req.result);
++    req.onerror = () => reject(req.error);
++  });
++}
++
++async function withStore(mode, fn) {
++  const db = await openDb();
++  return new Promise((resolve, reject) => {
++    const tx = db.transaction(STORE, mode);
++    const store = tx.objectStore(STORE);
++    const res = fn(store);
++    tx.oncomplete = () => resolve(res);
++    tx.onerror = () => reject(tx.error);
++  });
++}
++
++export async function saveDirectoryHandle(auditId, handle) {
++  await handle.requestPermission({ mode: 'readwrite' });
++  return withStore('readwrite', (store) => store.put(handle, `audit:${auditId}`));
++}
++
++export async function getDirectoryHandle(auditId) {
++  return withStore('readonly', (store) => store.get(`audit:${auditId}`));
++}
++
++export async function forgetDirectoryHandle(auditId) {
++  return withStore('readwrite', (store) => store.delete(`audit:${auditId}`));
++}
+diff --git a/src/StorageContext.js b/src/StorageContext.js
+index abcdef1..3333333 100644
+--- a/src/StorageContext.js
++++ b/src/StorageContext.js
+@@
+-import React, { createContext, useContext, useState } from 'react';
+-import { LocalFsProvider } from './LocalFsProvider';
+-const StorageCtx = createContext(null);
+-export function StorageProvider({ children }) {
+- const [provider] = useState(() => new LocalFsProvider());
+- return <StorageCtx.Provider value={provider}>{children}</StorageCtx.Provider>;
+-}
+-export const useStorage = () => useContext(StorageCtx);
++import React, { createContext, useContext, useState } from 'react';
++import { LocalFsProvider } from './LocalFsProvider';
++
++const StorageCtx = createContext(null);
++
++export function StorageProvider({ children }) {
++  const [provider] = useState(() => new LocalFsProvider());
++  return <StorageCtx.Provider value={provider}>{children}</StorageCtx.Provider>;
++}
++
++export function useStorage() {
++  const ctx = useContext(StorageCtx);
++  if (!ctx) throw new Error('useStorage must be used within StorageProvider');
++  return {
++    ready: () => ctx.ready(),
++    connect: (h) => ctx.connect(h),
++    initAuditTree: (arg, categories) => ctx.initAuditTree(arg, categories),
++    saveEvidence: (a1, f, c, opts) => ctx.saveEvidence(a1, f, c, opts),
++    deleteEvidence: (cOrP, f) => ctx.deleteEvidence(cOrP, f),
++    listEvidence: (cat) => ctx.listEvidence(cat),
++    saveExport: (payload) => ctx.saveExport(payload),
++    ensurePermission: (mode) => ctx.ensurePermission(mode),
++  };
++}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import requisitiDimensioni from "./requisiti_dimensioni_esrs.json";
 import Checklist from "./Checklist";
 import { StorageProvider } from "./storage/StorageContext";
+import { calcolaDimensioneAzienda } from "./utils/auditBusinessLogic";
 
 // Utility per generare un ID univoco
 const generateId = () => "audit_" + Date.now();
@@ -202,11 +203,11 @@ function AuditSelector({
               setFatturato(formatVal(fatturato.replace(/[^0-9]/g, "")));
               setTotaleAttivo(formatVal(totaleAttivo.replace(/[^0-9]/g, "")));
               // Calcolo la dimensione
-              const dimPreview = calcolaDimensione(
-                fatturato.replace(/[^0-9]/g, ""),
-                dipendenti,
-                totaleAttivo.replace(/[^0-9]/g, "")
-              );
+              const dimPreview = calcolaDimensioneAzienda({
+                fatturato: Number(fatturato.replace(/[^0-9]/g, "")),
+                dipendenti: Number(dipendenti),
+                attivo: Number(totaleAttivo.replace(/[^0-9]/g, "")),
+              });
               setDimensionePreview(dimPreview ? dimPreview : "—");
             }}
           >
@@ -226,11 +227,11 @@ function AuditSelector({
                 }
 
                 // Calcolo automatico dimensione
-                const dimCalcolata = calcolaDimensione(
-                  fatturato,
-                  dipendenti,
-                  totaleAttivo
-                );
+                const dimCalcolata = calcolaDimensioneAzienda({
+                  fatturato: Number(fatturato.replace(/[^0-9]/g, "")),
+                  dipendenti: Number(dipendenti),
+                  attivo: Number(totaleAttivo.replace(/[^0-9]/g, "")),
+                });
                 if (!dimCalcolata) {
                   alert(
                     "Inserisci almeno due valori tra fatturato, dipendenti e totale attivo per calcolare la dimensione aziendale."
@@ -348,32 +349,4 @@ function App() {
 
 export default App;
 
-// Determina la dimensione aziendale in base a soglie presenti in requisiti_dimensioni_esrs.json
-function calcolaDimensione(fatturato, dipendenti, totaleAttivo) {
-  const clean = (v) =>
-    v === "" || v === null || v === undefined ? null : Number(v);
-  const f = clean(fatturato);
-  const d = clean(dipendenti);
-  const t = clean(totaleAttivo);
-
-  const provided = [f, d, t].filter((x) => x != null).length;
-  if (provided < 2) return null; // servono almeno 2 dati per classificare
-
-  const dim = requisitiDimensioni.dimensioni_aziendali;
-
-  const meets = (sizeKey) => {
-    const c = dim[sizeKey].criteri;
-    let count = 0;
-    if (f != null && (c.fatturato_max == null || f <= c.fatturato_max)) count++;
-    if (d != null && (c.dipendenti_max == null || d <= c.dipendenti_max))
-      count++;
-    if (t != null && (c.totale_attivo_max == null || t <= c.totale_attivo_max))
-      count++;
-    return count >= 2; // regola 2 su 3
-  };
-
-  if (meets("micro")) return "Micro";
-  if (meets("piccola")) return "Piccola";
-  if (meets("media")) return "Media";
-  return "Grande";
-}
+// ...existing code...

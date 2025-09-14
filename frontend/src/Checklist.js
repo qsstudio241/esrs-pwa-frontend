@@ -3,6 +3,7 @@ import { useStorage } from "./storage/StorageContext";
 import { generateWordReport } from "./utils/wordExport";
 import requisitiDimensioni from "./requisiti_dimensioni_esrs.json";
 import ChecklistLoader from "./utils/checklistLoader";
+import { generaExportJSON } from "./utils/auditBusinessLogic";
 
 const esrsDetails = {
   Generale: [
@@ -923,52 +924,19 @@ function Checklist({ audit, onUpdate }) {
   };
 
   const exportSelections = () => {
-    const selections = Object.keys(comments)
-      .filter((key) => {
-        const comment = comments[key] || "";
-        return comment.trim().length > 0;
-      })
-      .map((key) => {
-        const [category, item] = key.split("-");
-        return {
-          category,
-          item,
-          comment: comments[key] || "",
-          files: files[key] || [],
-          terminato: !!completed[key],
-        };
-      });
-
-    // Nome file più descrittivo con azienda
+    const exportData = generaExportJSON(audit, comments, files, completed);
     const now = new Date();
     const timestamp = now.toISOString().replace(/[:.]/g, "").slice(0, 15);
     const aziendaClean = (audit.azienda || "Azienda")
-      .replace(/[^a-zA-Z0-9]/g, "_") // Rimuove caratteri speciali
-      .substring(0, 20); // Limita lunghezza
-
+      .replace(/[^a-zA-Z0-9]/g, "_")
+      .substring(0, 20);
     const fileName = `${aziendaClean}_export_${timestamp}.json`;
-
-    const dataStr = JSON.stringify(
-      {
-        azienda: audit.azienda,
-        dimensione: audit.dimensione,
-        dataAvvio: audit.dataAvvio,
-        stato: audit.stato,
-        selections,
-      },
-      null,
-      2
-    );
-
-    // Prova a usare File System Access API per permettere scelta cartella anche su mobile
+    const dataStr = JSON.stringify(exportData, null, 2);
     if (window.showSaveFilePicker) {
-      // Modalità moderna: permette all'utente di scegliere dove salvare
       handleSaveFileModern(fileName, dataStr);
     } else {
-      // Fallback: download automatico per browser non supportati
       handleSaveFileFallback(fileName, dataStr);
     }
-
     safeUpdate({
       exportHistory: [
         ...(audit.exportHistory || []),

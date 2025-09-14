@@ -18,6 +18,7 @@ function AuditSelector({
   const [dipendenti, setDipendenti] = useState("");
   const [totaleAttivo, setTotaleAttivo] = useState("");
   const [showNew, setShowNew] = useState(false);
+  const [dimensionePreview, setDimensionePreview] = useState("");
 
   const auditsToShow = Array.isArray(audits)
     ? audits.filter((a) => showClosed || a.stato === "in corso")
@@ -126,11 +127,18 @@ function AuditSelector({
             style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}
           >
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="Fatturato (EUR)"
               value={fatturato}
-              onChange={(e) => setFatturato(e.target.value)}
+              onChange={(e) => {
+                // Rimuove caratteri non numerici
+                const val = e.target.value.replace(/[^0-9]/g, "");
+                setFatturato(val);
+              }}
               title="Fatturato annuo"
+              style={{ minWidth: "140px" }}
             />
             <input
               type="number"
@@ -138,24 +146,24 @@ function AuditSelector({
               value={dipendenti}
               onChange={(e) => setDipendenti(e.target.value)}
               title="Numero medio dipendenti"
-            />
-            <input
-              type="number"
-              placeholder="Totale attivo (EUR)"
-              value={totaleAttivo}
-              onChange={(e) => setTotaleAttivo(e.target.value)}
-              title="Totale attivo di bilancio"
+              style={{ minWidth: "100px" }}
             />
             <input
               type="text"
-              value={(() => {
-                const dimPreview = calcolaDimensione(
-                  fatturato,
-                  dipendenti,
-                  totaleAttivo
-                );
-                return dimPreview ? dimPreview : "—";
-              })()}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="Totale attivo (EUR)"
+              value={totaleAttivo}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9]/g, "");
+                setTotaleAttivo(val);
+              }}
+              title="Totale attivo di bilancio"
+              style={{ minWidth: "140px" }}
+            />
+            <input
+              type="text"
+              value={dimensionePreview ? dimensionePreview : "—"}
               readOnly
               style={{
                 background: "#e3f2fd",
@@ -168,23 +176,42 @@ function AuditSelector({
               title="Dimensione aziendale calcolata"
             />
           </div>
-          <div style={{ margin: "8px 0", fontSize: "15px", color: "#1976d2" }}>
-            <b>Dimensione calcolata:</b>{" "}
-            {(() => {
-              const dimPreview = calcolaDimensione(
-                fatturato,
-                dipendenti,
-                totaleAttivo
-              );
-              return dimPreview ? (
-                dimPreview
-              ) : (
-                <span style={{ color: "#888" }}>
-                  — (inserisci almeno 2 valori)
-                </span>
-              );
-            })()}
+          <div
+            style={{ fontSize: "12px", color: "#888", margin: "4px 0 8px 0" }}
+          >
+            <span>
+              Formato: <b>solo numeri</b> (es:{" "}
+              <span style={{ color: "#1976d2" }}>2.000.000</span> per due
+              milioni). I valori inseriti saranno formattati come valuta.
+            </span>
           </div>
+          <button
+            style={{
+              marginBottom: 8,
+              background: "#1976d2",
+              color: "white",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              fontWeight: "bold",
+            }}
+            onClick={() => {
+              // Formatto i valori come valuta italiana
+              const formatVal = (v) =>
+                v ? Number(v).toLocaleString("it-IT") : "";
+              setFatturato(formatVal(fatturato.replace(/[^0-9]/g, "")));
+              setTotaleAttivo(formatVal(totaleAttivo.replace(/[^0-9]/g, "")));
+              // Calcolo la dimensione
+              const dimPreview = calcolaDimensione(
+                fatturato.replace(/[^0-9]/g, ""),
+                dipendenti,
+                totaleAttivo.replace(/[^0-9]/g, "")
+              );
+              setDimensionePreview(dimPreview ? dimPreview : "—");
+            }}
+          >
+            Calcola dimensione
+          </button>
           <button
             onClick={async () => {
               if (azienda) {

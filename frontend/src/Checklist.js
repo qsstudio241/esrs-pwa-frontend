@@ -1403,7 +1403,7 @@ function Checklist({ audit, onUpdate }) {
         Mostra solo punti aperti
       </label>
       <button onClick={exportSelectionsFS} style={{ margin: "10px" }}>
-        Salva Export in cartella
+        SALVA
       </button>
       <button onClick={exportSelections} style={{ margin: "10px" }}>
         Esporta come JSON

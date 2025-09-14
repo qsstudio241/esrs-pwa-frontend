@@ -1,0 +1,987 @@
+﻿PRASSI DI RIFERIMENTO UNI/PdR 134:2022
+
+Rating di sostenibilità per imprese di minori dimensioni - Modello 
+di autovalutazione
+
+Sustainability rating for minor dimension companies - Self assessment model
+
+La presente prassi di riferimento è uno strumento che consente di avere indicazioni operative per 
+l’autovalutazione della sostenibilità di imprese di minori dimensioni (MPMI).
+
+Pubblicata il 24 novembre 2022 ICS 13.020, 03.100
+
+
+
+© UNI
+Via Sannio 2 – 20137 Milano
+Telefono 02 700241
+www.uni.com – uni@uni.com
+
+Tutti i diritti sono riservati.
+
+I contenuti possono essere riprodotti o diffusi (anche integralmente) a condizione che ne venga data 
+comunicazione all’editore e sia citata la fonte.
+
+Documento distribuito gratuitamente da UNI.
+
+
+
+UNI/PdR 134:2022 
+
+PREMESSA 
+
+La presente prassi di riferimento UNI/PdR 134:2022 non è una norma nazionale, ma è un documento 
+pubblicato da UNI, come previsto dal Regolamento UE n.1025/2012, che raccoglie prescrizioni 
+relative a prassi condivise all'interno del seguente soggetto firmatario di un accordo di collaborazione 
+con UNI: 
+
+Provincia Autonoma di Trento 
+Piazza Dante, 15 
+38122 Trento 
+
+La presente prassi di riferimento è stata elaborata dal Tavolo “UNI/PdR Rating d’impresa - 
+Sostenibilità” condotto da UNI, costituito dai seguenti esperti: 
+
+Ada Rosa Balzan – Project Leader (ARB) 
+Rino Belfanti (Camera di Commercio di Trento) 
+Mauro Casotto (Trentino Sviluppo) 
+Maria Chin (Provincia Autonoma di Trento) 
+Elisabetta Nardelli (Trentino Marketing) 
+Marco Niro (Provincia Autonoma di Trento) 
+Elisabetta Sovilla (Provincia Autonoma di Trento) 
+Daniele Tumietto (UNINFO) 
+Maria Luisa Venuta (ARB) 
+Elisa Zerlottin (Federazione Trentina della Cooperazione) 
+
+La presente prassi di riferimento è stata ratificata dal Presidente dell'UNI ed entra in vigore il  
+24 novembre 2022. 
+
+Le prassi di riferimento, adottate esclusivamente in ambito nazionale, rientrano fra i “prodotti della 
+normazione europea”, come previsti dal Regolamento UE n.1025/2012, e sono documenti che 
+introducono prescrizioni tecniche, elaborati sulla base di un rapido processo ristretto ai soli autori, 
+sotto la conduzione operativa di UNI. 
+Le prassi di riferimento sono disponibili per un periodo non superiore a 5 anni, tempo massimo dalla 
+loro pubblicazione entro il quale possono essere trasformate in un documento normativo (UNI, 
+UNI/TS, UNI/TR) oppure devono essere ritirate. 
+
+Chiunque ritenesse, a seguito dell’applicazione della presente prassi di riferimento, di poter fornire 
+suggerimenti per un suo miglioramento è pregato di inviare i propri contributi all’UNI, Ente Italiano di 
+Normazione, che li terrà in considerazione.  
+
+© UNI             1 
+
+
+
+UNI/PdR 134:2022 
+
+SOMMARIO 
+INTRODUZIONE 3 
+1 SCOPO E CAMPO DI APPLICAZIONE 5 
+2 RIFERIMENTI NORMATIVI 5 
+3 TERMINI E DEFINIZIONI 6 
+4 PRINCIPIO 8 
+5 INDICATORI DI SOSTENIBILITÀ 9 
+
+5.1 GENERALITÀ 9 
+5.2 DOMANDE RELATIVE AGLI ASPETTI AMBIENTALI DELLA SOSTENIBILITÀ 11 
+5.3 DOMANDE RELATIVE AGLI INDICATORI SOCIALI DI SOSTENIBILITÀ 12 
+5.4 DOMANDE RELATIVE AGLI INDICATORI DI GOVERNANCE DI SOSTENIBILITÀ 14 
+5.5 SISTEMI DI PUNTEGGIO DI AUTOVALUTAZIONE 15 
+
+BIBLIOGRAFIA 16 
+
+ 
+
+  
+
+© UNI             2 
+
+
+
+UNI/PdR 134:2022 
+
+INTRODUZIONE 
+
+La Commissione europea si prefigge di promuovere l’imprenditoria e di migliorare il contesto in cui 
+operano le imprese per consentire loro di realizzare appieno le loro potenzialità nell’economia globale. 
+
+In tal senso, un aspetto significativo e che diventerà nel prossimo futuro sempre più discriminante è 
+quello della sostenibilità delle azioni imprenditoriali. 
+
+Il concetto di sviluppo sostenibile è complesso; la definizione universalmente riconosciuta risale al 
+1987 e si trova nel cosiddetto Rapporto Brundtland “Our common future” che lo ha così definito: “Lo 
+sviluppo sostenibile è quello che consente alla generazione presente di soddisfare i propri bisogni 
+senza compromettere la possibilità alle generazioni future di soddisfare i propri”. 
+Enunciando i principi di equità inter e intragenerazionale ha determinato inoltre nuove declinazioni 
+del concetto di sostenibilità esteso non solo agli aspetti ambientali. Ma la visione integrata delle 
+diverse dimensioni dello sviluppo viene sancita definitivamente dalle Nazioni Unite con l’adozione 
+dell’Agenda 2030 che definisce un modello di sviluppo sostenibile universale che si riferisce a tre 
+dimensioni della sostenibilità: ambientale, sociale ed economica. 
+
+Con particolare riferimento all’attività delle imprese la nozione di sostenibilità non è più riconducibile 
+solo alla sua capacità di mantenere uno sviluppo economico nel tempo ma si integra di tre ulteriori 
+dimensioni fondamentali (i cosiddetti Criteri “ESG”): Ambientale (E, enviromental), Sociale (S, social), 
+e di Governance (G). Queste tre dimensioni possono avere declinazioni specifiche, specialmente in 
+un contesto, come quello italiano ed europeo, fortemente caratterizzato dalla presenza di micro e 
+piccole imprese che hanno una forte e diffusa relazione con il proprio territorio. 
+
+Anche a livello complessivo di Unione Europea le MPMI (micro piccole e medie imprese) costituiscono 
+il tessuto imprenditoriale prevalente. Esse rappresentano il 99% delle imprese, forniscono due terzi 
+dei posti di lavoro nel settore privato e contribuiscono a più della metà del valore aggiunto totale 
+creato. Sebbene solo una parte di esse siano impegnate direttamente in attività transfrontaliere, in 
+termini di filiera, le PMI fanno ormai parte di catene del valore complesse e globali, a cui 
+contribuiscono attraverso soluzioni flessibili e altamente personalizzabili. 
+
+Anche in Italia su 5.164.831 imprese iscritte al registro imprese delle Camere di Commercio I.A.A., 
+4.901.499 rientrano nel range 0-9 addetti, mentre quelle da 10 a 49 addetti sono 230.464 (dati rilevato 
+al 31.12.2021), per oltre il 99% di imprese rientranti nella categoria delle micro e piccole imprese.1 
+
+Per questo motivo la presente prassi si concentra sulle imprese di minori dimensioni, in particolare 
+sulle micro imprese (entro i 9 addetti), per aiutarle ad avvicinarsi a un approccio consapevole e 
+strategico alla sostenibilità, che valorizzi le molte iniziative spesso inconsapevolmente intraprese su 
+questo tema, evidenziando allo stesso tempo gli spazi per nuovi e più consapevoli interventi. 
+
+Già i dati pubblicati a inizio 2020 da ISTAT, relativi al censimento delle PMI, confermavano che la 
+sostenibilità era un tema già presente nelle aziende di minori dimensioni e in alcuni casi un l’elemento 
+chiave: circa 1 azienda su 2 vedeva la sostenibilità come elemento differenziante e di vantaggio 
+competitivo. 
+
+                                               
+1 https://www.europarl.europa.eu/factsheets/it/sheet/63/piccole-e-medie-imprese (dato rilevato al 
+31.12.2021) 
+
+© UNI             3 
+
+
+
+UNI/PdR 134:2022 
+
+L’importanza e l’attenzione a questi temi è aumentata negli ultimi anni, con gli effetti combinati e diretti 
+della pandemia e del cambiamento climatico. In questo contesto di nuova normalità i paradigmi di 
+business hanno la necessità di rispondere alla sfida della sostenibilità connessa alle performance 
+economiche delle aziende, che dovranno adattarsi ai cambiamenti imposti dal clima e dai conseguenti 
+fabbisogni (riduzione delle emissioni tramite efficientamento energetico, attivazione economia 
+circolare e soluzioni nuove di utilizzo materiali). 
+
+Un ulteriore elemento da considerare, destinato ad avere un impatto significativo, è l’inserimento di 
+parametri legati alla sostenibilità in normative con un forte impatto sull’attività d’impresa come quella 
+per l’accesso al credito o ad incentivi/aiuti. Ad esempio, il principio Do Not Significant Harm (DNSH) 
+prevede che gli interventi inseriti nel PNRR (Piani nazionali di ripresa e resilienza) non arrechino 
+nessun danno significativo all’ambiente, o le nuove linee EBA per cui la valutazione del credito passa 
+anche da valutazioni di sostenibilità. 
+
+Un primo immediato indicatore dell’impatto della sostenibilità sul territorio e nelle sue diverse 
+dimensioni possibili, si ha spostando l’attenzione dall’utile (principale indicatore della sostenibilità 
+economica), per portarla anche su altri elementi e margini di bilancio, che possono essere 
+maggiormente significativi per capire il valore creato e distribuito ai diversi stakeholders (ad esempio 
+dipendenti, personale, ma anche liberalità, utilizzo dei beni e dei materiali). Ad esempio, nei valori 
+esposti in bilancio non è raro trovare valori/attività che derivano proprio da azioni di sostenibilità 
+sociale: si pensi a iniziative quali permessi per volontariato, anticipi stipendi, sostegno ad associazioni 
+del territorio. 
+
+Dare evidenza a questi elementi e attribuire loro il giusto significato è il primo passo per misurare la 
+sostenibilità dell’impresa, nella consapevolezza che gli indicatori di sostenibilità, anche se “non 
+finanziari”, hanno in realtà riflesso sul valore economico, e svolgono un ruolo importante di lungo 
+periodo sulla prosperità e sulla valutazione/apprezzamento/reputazione dell’azienda. 
+
+L’obiettivo di questa prassi è proprio quello di aiutare le aziende più piccole e quindi meno strutturate 
+a prendere coscienza e consapevolezza del proprio ruolo e del proprio impatto sul territorio e sulla 
+società. A ciò si collega l’importanza di comunicare anche all’esterno quelle azioni positive intraprese 
+dall’azienda nel suo quotidiano. 
+
+  
+
+© UNI             4 
+
+
+
+UNI/PdR 134:2022 
+
+1 SCOPO E CAMPO DI APPLICAZIONE 
+
+La presente prassi di riferimento si prefigge lo scopo di dare degli indirizzi organizzativi e operativi 
+alle aziende di minori dimensioni (0-49 addetti) che operano nei diversi settori produttivi per poter 
+valutare la propria sostenibilità nonché calcolare e monitorare le loro performance in tale ambito, 
+articolato nei suoi aspetti ambientali, sociali e di governance (criteri ESG) e comprendere il proprio 
+contributo al raggiungimento dei 17 obiettivi contenuti nell’Agenda 2030 delle Nazioni Unite. 
+
+Il documento si rivolge ai titolari di imprese di minori dimensioni che hanno necessità di uno strumento 
+di prima analisi e valutazione della propria sostenibilità che tenga conto delle loro specificità 
+dimensionali e organizzative. La Prassi si configura come uno strumento: 
+
+− concreto e operativo di autovalutazione e misurazione della propria sostenibilità nei tre diversi 
+ambiti declinati per imprese di minori dimensioni; 
+
+− di trasparenza, di comunicazione e di coinvolgimento degli stakeholder nella gestione della 
+propria sostenibilità. E, in particolare, nei confronti della Pubblica Amministrazione per 
+facilitare e rendere trasparenti i rapporti con la stessa, anche in materia di accesso a 
+finanziamenti e/o forme di premialità; 
+
+− che consente di aumentare la resilienza e la competitività delle aziende, con effetti di 
+miglioramento sui costi, sul valore dell'impresa, sul posizionamento, sulla reputazione, grazie 
+anche alla possibilità di ottenere migliori condizioni di finanziamento e di accesso al credito; 
+
+− che favorisca i rapporti all’interno delle catene di fornitura/del valore, in particolare a fronte 
+dell’adozione più diffusa di pratiche di sostenibilità, premiando quelle imprese che, ponendo 
+attenzione a tali temi anche nei confronti di clienti e fornitori, diventano agenti di diffusione 
+lungo la filiera produttiva di pratiche virtuose, disincentivando comportamenti in conflitto con 
+tali valori. 
+
+NOTA La presente prassi è finalizzata esclusivamente alla valutazione di conformità di prima parte, 
+come forma di autovalutazione. 
+
+2 RIFERIMENTI NORMATIVI 
+
+La presente prassi di riferimento rimanda, mediante riferimenti datati e non, a disposizioni contenute 
+in altre pubblicazioni. Tali riferimenti normativi e legislativi sono citati nei punti appropriati del testo e 
+sono di seguito elencati. Per quanto riguarda i riferimenti datati, successive modifiche o revisioni 
+apportate a dette pubblicazioni valgono unicamente se introdotte nel presente documento come 
+aggiornamento o revisione. Per i riferimenti non datati vale l'ultima edizione della pubblicazione alla 
+quale si fa riferimento. 
+
+UNI EN ISO 9001:2015 Sistemi di gestione per la qualità - Requisiti 
+
+UNI EN ISO 14001:2015 Sistemi di gestione ambientale - Requisiti e guida per l'uso 
+
+UNI EN ISO 14046:2016 Gestione ambientale - Impronta Idrica (Water Footprint) - Principi, requisiti 
+e linee guida 
+
+UNI EN ISO 14064-1:2019 Gas ad effetto serra - Parte 1: Specifiche e guida, al livello 
+dell'organizzazione, per la quantificazione e la rendicontazione delle emissioni di gas ad effetto serra 
+e della loro rimozione 
+
+© UNI             5 
+
+
+
+UNI/PdR 134:2022 
+
+UNI EN ISO 26000:2020 Guida alla responsabilità sociale 
+
+UNI CEI EN ISO 50001:2018 Sistemi di gestione dell'energia - Requisiti e linee guida per l'uso 
+
+UNI/PdR 18:2016 Responsabilità sociale delle organizzazioni - Indirizzi applicativi alla UNI ISO 26000 
+
+UNI/PdR 125:2022 Linee guida sul sistema di gestione per la parità di genere che prevede l'adozione 
+di specifici KPI (Key Performances Indicator - Indicatori chiave di prestazione) inerenti alle Politiche 
+di parità di genere nelle organizzazioni 
+
+3 TERMINI E DEFINIZIONI 
+
+Ai fini del presente documento valgono i termini e le definizioni seguenti, citate nel testo della prassi 
+e riferite a nozioni e strumenti. 
+
+3.1 Agenda 2030: Invito all’azione per porre fine alla povertà, per proteggere il pianeta e migliorare 
+la vita delle persone in ogni parte del mondo. L’Agenda 2030 è stata sottoscritta nel settembre 2015 
+dai governi dei 193 Paesi membri dell’ONU. È costituita da 17 macro obiettivi che si declinano in 169 
+target specifici. 
+
+3.2 bilancio di sostenibilità: Integrazione volontaria delle preoccupazioni sociali ed ecologiche delle 
+imprese nelle loro operazioni commerciali e nei loro rapporti con le parti interessate. 
+[FONTE: Libro Verde della Commissione Europea, 2001] 
+
+3.3 CO2 eq: Misura metrica utilizzata per confrontare le emissioni di vari gas serra sulla base del loro 
+potenziale di riscaldamento globale (GWP). 
+
+3.4 cambiamento climatico: Cambiamento a lungo termine delle temperature e dei modelli 
+meteorologici, che può avvenire in maniera naturale, ad esempio tramite variazioni del ciclo solare, o 
+essere causato dalle attività umane, ad esempio la combustione di combustibili fossili come il 
+carbone, il petrolio e il gas. 
+[FONTE: Sito web delle Nazioni Unite, modificata] 
+
+3.5 certificazione di competenze: Procedura di formale riconoscimento, da parte dell’ente titolato, 
+delle competenze acquisite dalla persona in contesti formali, anche in caso di interruzione del 
+percorso formativo, o di quelle validate acquisite in contesti non formali e informali. 
+[FONTE: Decreto Legislativo 16 gennaio 2013, n. 13, modificata] 
+
+3.6 compensazione: Riduzione delle emissioni di gas serra che è necessaria per ridurre l’impatto 
+ambientale. Compensare le emissioni CO2 significa bilanciare la quantità di CO2 generata dalle 
+diverse attività svolte. 
+
+3.7 corporate governance: Insieme di strumenti, regole, relazioni, processi e sistemi aziendali 
+finalizzati a una corretta ed efficiente gestione dell’impresa. 
+
+  
+
+© UNI             6 
+
+
+
+UNI/PdR 134:2022 
+
+3.8 DNSH (Do Not Significant Harm): Principio che prevede che gli interventi dei piani nazionali 
+degli Stati Membri per la ripresa e la resilienza (RRP, in italiano PNRR) non arrechino danno 
+significativo rispetto ai 6 obiettivi ambientali fissati all’art.17 del Regolamento sulla Tassonomia 
+Europea (Regulation (EU) 2020/852). 
+[FONTE: European Commission, “Do Not Significant Harm”, Technical Guidance by the Commission, 16 
+february 2021] 
+
+3.9 EBA: Autorità bancaria europea, è un’autorità indipendente europea che opera per assicurare 
+una regolamentazione e un’azione di vigilanza che siano efficaci, prudenziali e coerenti in tutto il 
+settore bancario europeo. 
+
+3.10 economia circolare: Sistema economico che, attraverso un approccio sistemico e olistico, mira 
+a mantenere circolare il flusso delle risorse, conservandone, rigenerandone o aumentandone il 
+valore, e che al contempo contribuisce allo sviluppo sostenibile. 
+[FONTE: UNI/TS 11820:2022, in pubblicazione] 
+
+3.11 emissioni: Sostanze di origine antropica o naturale rilasciate in atmosfera in forma gassosa 
+(CO2, SO2, ecc.) o particellare (PM2,5, PM10). 
+
+3.12 ESG (Environmental, Social, Governance): Acronimo che si utilizza in ambito 
+economico/finanziario e imprenditoriale per indicare tutte quelle attività legate agli investimenti 
+finanziari responsabili e ai processi aziendali in cui si considerano aspetti di natura ambientale, 
+sociale e di governance. 
+
+3.13 media impresa: Costituita da imprese che occupano meno di 250 persone, il cui fatturato annuo 
+non supera i 50 milioni di euro oppure il cui totale di bilancio annuo non supera i 43 milioni di euro. 
+
+3.14 micro, piccole e medie imprese (MPMI): Categoria delle micro imprese (3.15) delle piccole 
+imprese (3.18) e delle medie imprese (3.13). 
+
+[FONTE: Raccomandazione della Commissione europea 2003/361/CE del 6 maggio 2003, modificata] 
+
+3.15 micro impresa: Impresa che occupa meno di 10 dipendenti, con un fatturato minore di 2 milioni 
+di euro e un valore totale dello stato patrimoniale minore di 2 milioni di euro. 
+
+3.16 obiettivi di sviluppo sostenibile: Obiettivi definiti dalle Nazioni Unite all’interno dell’Agenda 
+2030 (3.1). 
+
+3.17 parità di genere: Parità di genere tra sessi. 
+[FONTE UNI/PdR 125:2022] 
+
+3.18 piccola impresa: Impresa che occupa meno di 50 dipendenti, con un fatturato minore di 10 
+milioni di euro e un valore totale dello stato patrimoniale minore di 10 milioni di euro. 
+
+3.19 PNRR: Piano nazionale di ripresa e resilienza. 
+
+3.20 stakeholder (“portatore di interesse”): Individuo o gruppo che ha un interesse in qualunque 
+delle decisioni o attività di un’organizzazione. 
+[Fonte: UNI EN ISO 26000:2020, punto 2.20] 
+
+© UNI             7 
+
+
+
+UNI/PdR 134:2022 
+
+3.21 sviluppo sostenibile: Lo sviluppo sostenibile consiste nell'integrare gli obiettivi di un'alta qualità 
+della vita, della salute e della prosperità con giustizia sociale e mantenimento della capacità della 
+terra di sostenere la vita in tutta la sua diversità. Questi obiettivi sociali, economici e ambientali sono 
+interdipendenti e si rafforzano a vicenda. Lo sviluppo sostenibile può essere trattato come un modo 
+per esprimere le aspettative più ampie della società nel suo insieme. 
+[FONTE: UNI EN ISO 26000:2020, punto 2.23] 
+
+3.22 transition risk: Nel contesto del cambiamento climatico, è il rischio inerente al cambiamento di 
+strategie, politiche o investimenti, mentre la società e l'industria lavorano per ridurre la propria 
+dipendenza dal carbonio e dall'impatto sul clima. Questi rischi sono identificabili in quattro categorie: 
+
+− politica e rischio legale; 
+− rischio tecnologico; 
+− rischio di mercato; 
+− rischio di reputazione. 
+
+4 PRINCIPIO 
+
+La prassi di riferimento è proposta come uno strumento trasversale a tutti i settori economici per una 
+prima misurazione della sostenibilità nelle imprese di minori dimensioni, in base ad elementi e 
+pratiche di diretta identificazione. 
+
+Le domande di autovalutazione che si andranno a proporre hanno un carattere trasversale che 
+permette la loro immediata applicazione in potenza a tutte le micro e piccole imprese. 
+
+Un livello di dettaglio ulteriore richiede l’attenta analisi dell’ambito specifico di operatività; esso 
+rappresenta un lavoro di dettaglio da affrontare in una fase successiva a questo primo “check-up” di 
+autovalutazione proposto. 
+
+La misurazione della sostenibilità porta benefici alle MPMI in tema di: 
+
+− mitigazione dei rischi (finanziari e non finanziari): occorre conoscere e prevenire con azioni e 
+processi attivi di sostenibilità i potenziali impatti negativi economici e non solo dei rischi in 
+ambito ambientale, sociale, di governance, estendo l’attenzione ai rischi correlati alla gestione 
+del personale, alle misure anti-corruzione, alla tutela dei diritti umani, al controllo dei principi 
+di sostenibilità lungo la catena di fornitura, alle misure relative alle conformità normative 
+(compliance) nonché alle mutazioni del contesto geopolitico; 
+
+− semplificazione dei rapporti con la Pubblica Amministrazione: l’aspetto della sostenibilità 
+rientra sempre più nelle valutazioni delle stazioni appaltanti anche in sede di affidamento degli 
+appalti pubblici e nei criteri di accesso agli strumenti di finanza agevolata. La predisposizione 
+e la comunicazione di un’analisi di sostenibilità secondo criteri riconosciuti potrà, dunque 
+incidere positivamente nel processo di valutazione da parte della Pubblica Amministrazione; 
+
+− accesso facilitato al credito e alle risorse finanziarie: i criteri ESG e le valutazioni non 
+strettamente finanziarie, secondo le nuove regole europee sulla tassonomia, stanno 
+spingendo gli istituti di credito a inserire tali elementi nella definizione delle condizioni di 
+concessione creditizia; 
+
+© UNI             8 
+
+
+
+UNI/PdR 134:2022 
+
+− migliore capacità di attrazione di nuovi talenti e competenze qualificate: una migliore 
+reputazione aziendale favorisce il reperimento di risorse qualificate e motivate e un buon clima 
+organizzativo migliora la perfomance aziendale e la capacità di creare e di introdurre 
+innovazioni di processo e di prodotto; 
+
+− creazione di valore all’interno delle catene di fornitura e creazione di valore: in particolare 
+tramite l'adozione di pratiche di sostenibilità le MPMI diventano attivatori di processi di 
+sostenibilità lungo la filiera produttiva di pratiche virtuose; 
+
+− legittimazione nei confronti del territorio e della comunità in cui si opera: le MPMI sono di solito 
+radicate nel territorio e coltivano nel tempo relazioni per lo sviluppo del capitale umano e 
+naturale locale. L'analisi di sostenibilità valorizza anche questo aspetto, che di solito è una 
+prassi inconsapevole; 
+
+− conoscenza e consapevolezza dei 17 obiettivi e dei 169 target contenuti nell'Agenda 2030 
+delle Nazioni Unite al fine di indirizzare e allineare le performance di impresa con gli obiettivi 
+internazionali in materia; 
+
+− riduzione dei costi di gestione legati al consumo di risorse, tenendo sotto controllo gli sprechi 
+e l’efficienza degli acquisti e dei consumi; 
+
+− sostegno e supporto ai processi di accesso ai mercati di sbocco internazionali, che richiedono 
+un approccio alla sostenibilità più maturo e sostenuto da adeguati riferimenti. 
+
+5 INDICATORI DI SOSTENIBILITÀ 
+
+5.1 GENERALITÀ 
+
+Nell’ambito della cultura d’impresa, i temi della sostenibilità si stanno affermando sempre più come 
+elemento chiave non solo per comunicare l’impatto della propria attività imprenditoriale, ma anche 
+per rispondere ad obblighi e previsioni di legge, alle raccomandazioni europee e agli obiettivi 
+dell'Agenda 2030. Come già evidenziato nella prassi, i fondamenti della sostenibilità sono 
+sostanzialmente tre, legati ad aspetti di compatibilità ambientale, inclusione sociale e responsabilità 
+d’impresa, che sono sintetizzati nell’acronimo ESG. 
+
+È importante però rilevare che la legislazione italiana si è concentrata soprattutto sui principi di 
+riferimento dei criteri ESG, in linea con l’evoluzione legislativa europea. 
+
+Per renderli misurabili e definire la sostenibilità di un’impresa è stato predisposto un set di domande 
+attraverso il quale, oltre ad effettuare una prima valutazione di sostenibilità della propria impresa, 
+possono essere individuate le azioni future da perseguire per migliorare la propria performance nei 
+tre campi di riferimento degli ESG. 
+
+NOTA Tale set di domande è stato anche inserito in un questionario, scaricabile dal sito UNI 
+all’indirizzo: https://bit.ly/3CReCvj 
+
+Il set di domande è suddiviso in 4 parti, presentate nei prospetti da 1 a 4, che si integrano tra di loro. 
+
+Nella prima parte si misura il grado di conoscenza e consapevolezza dell’importanza etica attribuita 
+alla sostenibilità. 
+
+  
+
+© UNI             9 
+
+
+
+UNI/PdR 134:2022 
+
+Prospetto 1 - Domande relative agli aspetti generali della sostenibilità 
+
+N° Domanda 
+1 Ritiene che le sue conoscenze sul tema della sostenibilità siano sufficienti per poterla applicare 
+
+nella sua impresa? 
+a) sì 
+b) no no
+
+2 Nella sua impresa l’aspetto ambientale è essenziale per la sostenibilità? 
+a) sì 
+b) no no
+
+3 Nella sua impresa gli aspetti sociali sono essenziali per la sostenibilità? 
+a) sì 
+b) no si
+
+4 Nella sua impresa gli aspetti di governance (gestione dell’impresa) sono essenziali per la sostenibilità? 
+a) sì 
+b) no si
+
+5 Conosce i 17 obiettivi per lo sviluppo sostenibile dell’Agenda ONU 2030 e come si possono 
+applicare alla sua impresa? 
+a) sì si
+b) no 
+
+6 Nella sua impresa ha avviato azioni concrete (ad esempio, introducendo sistemi di misurazione 
+per le rilevazioni) e dimostrabili per rendere il business più sostenibile (ad esempio, riduzione 
+degli impatti ambientali, azioni per il benessere dei lavoratori, attività a sostegno della comunità 
+e/o del territorio)? 
+a) sì  
+b) no si
+
+7 La sua impresa possiede certificazioni di qualità, ambientali o sociali o altre certificazioni 
+connesse ai temi della sostenibilità? (ad esempio, ISO 9001, EMAS, ISO 14001, ISO 50001, ISO 
+14064, SA 8000, ecc.) 
+a) sì si
+b) no 
+
+8 Ritiene importante implementare o aumentare la sostenibilità nella sua attività d’impresa e ha in 
+programma di farlo nei prossimi 12/24 mesi? 
+a) sì 
+b) no si
+
+9 La sua impresa possiede un bilancio di sostenibilità che rendiconta gli impatti ambientali, 
+economici e sociali? 
+a) sì 
+b) no no
+
+10 Ha in programma di redigerlo nei prossimi 12 mesi? 
+a) sì 
+b) no si
+
+11 Anche gli istituti bancari e finanziari prendono in considerazione nelle richieste di finanziamenti 
+come l’impresa gestisce la sostenibilità: ne era al corrente? 
+a) sì si
+b) no 
+
+12 Ha ricevuto da parte dei suoi stakeholder (ad esempio clienti, fornitori, comunità locali, 
+associazioni, ecc.) richieste di informazioni su come la sua impresa sta considerando i temi della 
+sostenibilità? 
+a) sì 
+b) no si
+
+© UNI             10 
+
+
+
+UNI/PdR 134:2022 
+
+5.2 DOMANDE RELATIVE AGLI ASPETTI AMBIENTALI DELLA SOSTENIBILITÀ 
+
+Nella seconda parte del questionario sono approfonditi i temi ambientali sull'uso consapevole ed 
+efficiente di risorse che sono beni comuni, come ad esempio, il consumo di materie prime e di energia, 
+la riduzione delle emissioni inquinanti ecc., e di contribuire allo sviluppo della comunità locale in cui 
+si opera. Rientrano in quest’ambito anche le attività di certificazione per la gestione ambientale e 
+prevenzione dell’inquinamento, così come le attività dirette alla riduzione di risorse ed energia (ad 
+esempio la serie ISO 14000). 
+
+Prospetto 2 - Domande relative agli aspetti ambientali della sostenibilità 
+
+N° Domanda 
+13 Nella sua impresa ha posto in essere delle azioni di riduzione delle emissioni di CO2 (ad esempio, 
+
+acquistando impianti, macchinari o caldaie con prestazioni energetiche efficienti e coerenti con le 
+normative europee sulla riduzione progressiva delle emissioni GHG, utilizzando auto elettriche o 
+ibride, applicando la domotica agli edifici con sensori intelligenti)? 
+a) sì 
+b) no no
+
+14 Nella sua impresa ha introdotto strumenti per la riduzione dell'utilizzo di acqua potabile nello 
+svolgimento delle sue attività e per ridurre progressivamente i consumi idrici (ad esempio, installazione 
+di sistemi per il riutilizzo acqua piovana e/o acque grigie, installazione di riduttori di flusso)? 
+a) sì 
+b) no no
+
+15 Nella sua impresa ha realizzato iniziative per ridurre i rifiuti e i materiali di scarto (ad esempio, 
+scegliendo prodotti con packaging ridotto al minimo o fatto di materiali riciclati, oppure 
+prediligendo laddove è possibile l'acquisto di prodotti sfusi)? 
+a) sì 
+b) no no
+
+16 Nella sua impresa ha implementato o programmato entro la fine del prossimo anno delle azioni 
+per il miglioramento dell'efficienza aziendale in termini di riscaldamento/condizionamento degli 
+ambienti (ad esempio, caldaie con migliori prestazioni energetiche)? 
+a) sì si
+b) no 
+
+17 Nella sua impresa ha sviluppato un piano per il miglioramento dell'efficienza energetica aziendale 
+in termini di efficienza energetica (ad esempio, utilizzo lampadine a basso consumo, sistemi di 
+gestione intelligente dell'illuminazione che si accendono al solo passaggio di persone o macchine)? 
+a) sì 
+b) no 
+
+18 Nella sua impresa si produce energia rinnovabile (ad esempio, mediante installazione di pannelli 
+fotovoltaici o termici o consumando energia proveniente da impianti di produzione di energia 
+da fonte rinnovabile di terzi)? 
+a) sì 
+b) no 
+
+19 Nella sua impresa ha attivato politiche e azioni per gestire il suo ciclo idrico complessivo 
+eliminando possibili casi di inquinamento delle acque utilizzate? 
+a) sì 
+b) no 
+
+20 La sua impresa svolge un ruolo attivo per la conservazione e la preservazione della biodiversità 
+del territorio in cui si trovano le proprie sedi (ad esempio, coltivando piante di origine locale nei 
+suoi spazi aperti o sostenendo associazioni locali che svolgono queste attività)? 
+a) sì 
+b) no 
+
+© UNI             11 
+
+
+
+UNI/PdR 134:2022 
+
+21 Nella sua impresa sono presenti degli spazi verdi nelle aree di disponibilità? 
+a) sì 
+b) no 
+
+22 Nella sua impresa si promuovono programmi di formazione e informazione, a cui far partecipare 
+anche i dipendenti, sui temi ambientali e di cambiamento climatico? 
+a) sì 
+b) no 
+
+23 Nella sua impresa i mezzi aziendali sono almeno per il 50% mezzi a ridotto impatto ambientale 
+(ad esempio, mezzi elettrici, mezzi alimentati con energia proveniente da fonti rinnovabili ecc.)? 
+a) sì 
+b) no 
+
+24 Nella sua impresa si adottano politiche di acquisto di prodotti/servizi a ridotto impatto ambientale 
+(ad esempio, i prodotti per la pulizia ecologici certificati Ecolabel)? 
+a) sì 
+b) no 
+
+25 Nella sua impresa si utilizzano, durante la sua attività quotidiana, i prodotti dei fornitori locali (ad 
+esempio, km0, filiera corta, ecc.)? 
+a) sì 
+b) no 
+
+26 La sua impresa si è dotata di un piano di gestione della mobilità al fine di ottimizzare l’impatto dei 
+trasporti? 
+a) sì 
+b) no 
+
+27 Nella sua impresa si adotta una politica di sensibilizzazione per favorire la scelta di mezzi di 
+trasporto a ridotto impatto ambientale (ad esempio bici, treno, autobus, ecc.)? 
+a) sì 
+b) no 
+
+5.3 DOMANDE RELATIVE AGLI ASPETTI SOCIALI DI SOSTENIBILITÀ 
+
+Nella terza parte del questionario sono approfondite le tematiche sociali, legate sia alla capacità di 
+valorizzare le risorse umane (ad esempio con attività di formazione e aggiornamento professionale, 
+la qualità del lavoro e delle relazioni con i dipendenti) e contribuire allo sviluppo della comunità locale, 
+sia di mantenere uno sviluppo economico dell’impresa nel tempo, comunicando il valore aggiunto 
+generato e distribuito ai diversi portatori di interesse diretti e indiretti. Rientrano in questo ambito 
+anche le attività di certificazione sociale (ad esempio SA8000). 
+
+Prospetto 3 - Domande relative agli aspetti sociali di sostenibilità 
+N° Domanda 
+28 Nella sua impresa ha assunto nuovo personale negli ultimi due anni, generando nuovi posti di lavoro? 
+
+a) sì 
+b) no 
+
+29 Nella sua impresa promuove azioni per favorire l'inserimento nel mondo del lavoro dei giovani (ad 
+esempio, con delle collaborazioni con gli istituti tecnici, ITS o Università per accogliere gli studenti 
+per stage (o tirocini)? 
+a) sì 
+b) no 
+
+30 Nella sua impresa ha inserito la flessibilità di orario (ad esempio all’inizio/fine delle attività e/o in pausa 
+pranzo)? 
+a) sì 
+b) no 
+
+© UNI             12 
+
+
+
+UNI/PdR 134:2022 
+
+31 Nella sua impresa ha sviluppato delle convenzioni con imprese locali con condizioni di favore per 
+i propri dipendenti? 
+a) sì 
+b) no 
+
+32 Nella sua impresa ha definito un piano di welfare aziendale o delle azioni specifiche di supporto 
+alla vita quotidiana del dipendente? 
+a) sì 
+b) no 
+
+33 Nella sua impresa si realizzano buone prassi e iniziative in materia di salute e sicurezza sul lavoro 
+(oltre quelle obbligatorie, ad esempio, safety day, formazione aggiuntiva)? 
+a) sì 
+b) no 
+
+34 Nella sua impresa si adotta lo smart working (o altre forme di flessibilità oraria) e prevede di 
+continuare a farlo nei prossimi anni, laddove applicabile per le mansioni svolte dal lavoratore? 
+a) sì 
+b) no 
+
+35 Nella sua impresa, solitamente i dipendenti partecipano in orari di lavoro a corsi di formazione 
+(oltre a quelli obbligatori per legge) durante l’anno? 
+a) sì 
+b) no 
+
+36 Qualora non fosse possibile la partecipazione dei dipendenti a programmi formativi in orario 
+lavorativo, sono previste forme incentivanti o compensative su corsi di formazione? 
+a) sì 
+b) no 
+
+37 La sua impresa ha un proprio codice etico e/o di condotta reso pubblico e accessibile a tutti gli 
+stakeholder? 
+a) sì 
+b) no 
+
+38 Nella sua impresa si adottano delle forme di incentivazioni verso i propri dipendenti, in ambito di 
+sostenibilità, legate al risparmio/flessibilità lavorativa/innovazione/riduzione impatto ambientale? 
+a) sì 
+b) no 
+
+39 La sua impresa ha un proprio piano di sviluppo carriera che esula dagli scatti di livello previsti per 
+legge? 
+a) sì 
+b) no 
+
+40 Nella sua impresa si adottano azioni di solidarietà sociale e limitazione degli sprechi (anche con 
+riferimento alla Legge 19 agosto 2016, n. 166)? 
+a) sì 
+b) no 
+
+41 Nella sua impresa ha messo in atto delle iniziative per garantire la parità di genere? 
+a) sì 
+b) no 
+
+42 Nella sua impresa ha intrapreso il percorso di certificazione per la parità di genere, secondo la 
+PdR 125:2022? 
+a) sì 
+b) no 
+
+  
+
+© UNI             13 
+
+
+
+UNI/PdR 134:2022 
+
+5.4 DOMANDE RELATIVE AGLI ASPETTI DI GOVERNANCE DI SOSTENIBILITÀ 
+
+Nella quarta parte del questionario sono, infine, approfondite le tematiche di Governance dove 
+entrano in gioco le modalità con cui si realizza il monitoraggio della coerenza dei comportamenti 
+interni, la disponibilità a integrare o ad attivare procedure di trasparenza, rendicontazione (ad 
+esempio, procedure di risk assessment, di cui alla norma UN CEI EN IEC 31010), introducendo criteri 
+socio-ambientali nei propri processi decisionali. 
+
+Prospetto 4 - Domande relative agli aspetti di governance di sostenibilità 
+
+N° Domanda 
+43 Ritiene che le sue conoscenze sul tema della sostenibilità siano sufficienti per poterla applicare 
+
+nella sua impresa? 
+a) sì NO
+b) no 
+
+44 La sua impresa ha adottato un modello di gestione del rischio capace di adattarsi a situazioni che 
+comportano cambiamenti repentini o imprevedibili, come ad esempio nel caso del Covid-19? 
+a) sì 
+b) no NO
+
+45 La sua impresa ha un piano/propone delle azioni per la cultura dell’equità di genere/pari 
+opportunità (ad esempio, tutela della genitorialità, conciliazione vita lavoro, parità retributiva, 
+certificazione secondo UNI/PdR 125:2022…)? 
+a) sì 
+b) no 
+
+46 La sua impresa fa parte di partenariati pubblico-privati e/o partecipa alla creazione di gruppi di 
+lavoro/comitati/associazioni che possano supportare le imprese per lo sviluppo e la diffusione di 
+buone pratiche sostenibili? 
+a) sì 
+b) no 
+
+47 Nella sua impresa il titolare e/o il legale rappresentante ha/hanno mai fatto corsi di gestione 
+aziendale (ad esempio, corretta gestione della organizzazione, amministrazione e controllo 
+dell’impresa)? 
+a) sì 
+b) no 
+
+48 Nella sua impresa ha implementato, o prevede di farlo nei prossimi 12 mesi, una trasformazione 
+per digitalizzare i suoi sistemi di gestione interna e/o verso i propri clienti? 
+a) sì 
+b) no 
+
+RISPONDERE ALTERNATIVAMENTE ALLA DOMANDA 49 o 50 
+49 Se l’impresa è composta da più soci, almeno una di loro è donna? 
+
+a) sì 
+b) no 
+
+50 Se l’impresa è di proprietà di un’unica persona, questa persona è una donna? 
+a) sì 
+b) no 
+
+51 Nella sua impresa ha realizzato un piano per monitorare i rischi (ad esempio, cambiamenti 
+climatici, gestione di sostanze pericolose, cyber security, compliance dei vari settori quali fiscale, 
+privacy, libera concorrenza, ecc.)? 
+a) sì 
+b) no 
+
+© UNI             14 
+
+
+
+UNI/PdR 134:2022 
+
+52 Se sì, per i rischi sono stati misurati il livello di probabilità e il relativo impatto, nonché sono state 
+definite azioni specifiche per mitigarli? 
+a) sì 
+b) no 
+
+53 Alla luce della compilazione del questionario, ritiene ancora che le sue conoscenze sul tema della 
+sostenibilità siano sufficienti per poterla applicare nella sua impresa? 
+a) sì 
+b) no 
+
+5.5 SISTEMI DI PUNTEGGIO DI AUTOVALUTAZIONE 
+
+Nel seguente prospetto 5, sono riportati i risultati del questionario di autovalutazione. I risultati sono 
+stati suddivisi in 5 fasce (insufficiente, sufficiente, buono, ottimo ed eccellente), che rappresentano il 
+grado di attenzione e attivazione dell’impresa, nei confronti del tema della sostenibilità. 
+Ogni risposta affermativa vale 1 punto, mentre ogni risposta negativa vale 0 punti. 
+
+Prospetto 5 - Fasce di punteggio del questionario di autovalutazione 
+
+FASCIA TOTALE RISPOSTE LIVELLO DESCRIZIONE INDICATIVA 
+AFFERMATIVE 
+
+1 26 o inferiore Insufficiente Sono completamente assenti obiettivi, politiche, 
+pianificazione e forme di monitoraggio sulla 
+sostenibilità. 
+
+2 tra 27 e 32 Sufficiente È presente la consapevolezza sul tema della 
+sostenibilità. Si sono rilevati comportamenti 
+sostenibili all’interno dell’impresa, ma senza una 
+gestione formalizzata a livello di sistema. 
+
+3 tra 33 e 42 Buono Si è sviluppata una consapevole azione di 
+indirizzo della sostenibilità in termini di politica, 
+di obiettivi e di definizione dei piani di rilevazione 
+dei dati. 
+
+4 tra 43 e 48 Ottimo Sono presenti politiche sulla sostenibilità, sono 
+presenti obiettivi chiari e il piano di monitoraggio, 
+mancano ancora alcuni punti per il 
+raggiungimento un sistema completo di gestione 
+dei temi della sostenibilità. 
+
+5 tra 49 e 52 Eccellente Sono presenti politiche sulla sostenibilità che 
+riguardano l’intera organizzazione; sono attivi e 
+aggiornati piani di miglioramento sviluppati sulla 
+base di misure e indicatori quantitativi e con 
+obiettivi chiari e condivisi con gli stakeholder. 
+
+  
+
+© UNI             15 
+
+
+
+UNI/PdR 134:2022 
+
+BIBLIOGRAFIA 
+
+[1] United Nations, Resolution adopted by the General Assembly on 25 September 2015. 
+Transforming our world: the 2030 Agenda for Sustainable Development, 
+https://www.un.org/en/development/desa/population/migration/generalassembly/docs/global
+compact/A_RES_70_1_E.pdf 
+
+[2] EBA «GL 2020 06 Final Report on GL on loan origination and monitoring», 2020, 
+https://www.eba.europa.eu/sites/default/documents/files/document_library/Publications/Guid
+elines/2020/Guidelines%20on%20loan%20origination%20and%20monitoring/Translations/8
+86685/Final%20Report%20on%20GL%20on%20loan%20origination%20and%20monitoring
+_COR_IT.pdf 
+
+[3] Global Green Growth Institute, OECD, Unenvironment «SMEs: Key Drivers of Green and 
+Inclusive Growth», 2018 
+
+[4] European Commission, European Resource Efficiency Knowledge Centre «Green Action Plan 
+for SMEs - Implementation report», 2018 
+
+[5] GERMANWATCH, Frank Bold, Alliance for Corporate Transparency «(Financial) 
+Opportunities of European sustainability reporting rules for small businesses», 2021 
+
+[6] Commissione Europea, «Indice di digitalizzazione dell’economia e della società (DESI)», 2020 
+[7] Oxford Economics, «SME Pulse 2019 | Strategies to boost the bottom line», 2019 
+[8] GRI Global Reporting Initiative, https://www.globalreporting.org 
+[9] SASB Sustainability Accounting Standards Board, https://www.sasb.org 
+[10] Regolamento CE/1221/2009, sull’adesione volontaria delle organizzazioni a un sistema 
+
+comunitario di ecogestione e audit (EMAS), che abroga il regolamento (CE) n. 761/2001 e le 
+decisioni della Commissione 2001/681/CE e 2006/193/CE 
+
+[11] Strategia Nazionale di Sviluppo Sostenibile, https://www.mite.gov.it/pagina/la-strategia-
+nazionale-lo-sviluppo-sostenibile 
+
+[12] Piano Nazionale di Rilancio e Resilienza, https://italiadomani.gov.it/content/dam/sogei-
+ng/documenti/PNRR%20Aggiornato.pdf 
+
+[13] Forum per la finanza sostenibile, «PMI Italiane e sostenibilità», 2020 
+[14] Fondazione per lo Sviluppo sostenibile, «Non senza le PMI. Il ruolo delle piccole e medie 
+
+imprese nella transizione energetica dell’Italia», 2021 
+[15] Cerved «Rapporto Cerved PMI 2020», 2020 
+[16] ISTAT, «La misurazione del Benessere - Indicatori BES», 2021 
+[17] ISTAT, «Sostenibilità nelle imprese: aspetti ambientali e sociali», 2020 
+[18] Asvis, «Rapporto Asvis 2021», 2021 
+[19] Unioncamere e Fondazione Symbola, «Rapporto GreenItaly 2021», 2021 
+[20] ALTIS Università Cattolica M.C. Zaccone e M.Pedrini, «ESG Factor Integration into Private 
+
+Equity», 2020 
+[21] Università Cattolica del Sacro Cuore, «Sostenibilità: una valutazione su misura per le PMI», 
+
+2019 
+
+© UNI             16 
+
+
+
+UNI/PdR 134:2022 
+
+[22] SDA Bocconi, GENERALI, SME EnterPRIZE, «Fostering Sustainability in Small and Medium-
+sized Enterprises», 2021 
+
+[23] Ministero della Transizione Ecologica (MiTE), ISPRA, ENEA, «Strategia nazionale per 
+l’economia circolare», 2021 
+
+[24] Monitor Deloitte, Confindustria Piccola Industria, Intesa San Paolo, «I bisogni delle PMI per la 
+ripresa post-Covid. La crisi come opportunità per evolvere i paradigmi aziendali», 2021 
+
+[25] Chiara Spadaro, «Piccolo è meglio. I valori dell’altra economia. 20 storie italiane di grandi 
+“imprese” su piccola scala. Quando le dimensioni, le persone e la qualità della vita contano», 
+2012 
+
+[26] Provincia di Trento, «Strategia Provinciale per lo Sviluppo Sostenibile - SPROSS», 2021 
+[27] Provincia di Trento, «Agenda imprese 2030», 2021 
+[28] Provincia di Trento, «Agenda 2030 - Documento posizionamento del Trentino», 2019 
+[29] Confindustria Trento, «Report di sostenibilità 2019», 2019 
+[30] Decreto Legislativo 16 gennaio 2013, n. 13 Definizione delle norme generali e dei livelli 
+
+essenziali delle prestazioni per l’individuazione e validazione degli apprendimenti non formali 
+e informali e degli standard minimi di servizio del sistema nazionale di certificazione delle 
+competenze, a norma dell’articolo 4, commi 58 e 68, della legge 28 giugno 2012, n. 92 
+
+[31] UNI EN ISO 14021:2021 Etichette e dichiarazioni ambientali - Asserzioni ambientali auto-
+dichiarate (etichettatura ambientale di Tipo II) 
+
+[32] UNI/PdR 51:2018 Responsabilità sociale nelle Micro e Piccole Imprese (MPI) e nelle imprese 
+artigiane, ovvero imprese a valore artigiano - Linee guida per l'applicazione del modello di 
+responsabilità sociale secondo UNI ISO 26000 
+
+[33] https://unric.org/it/che-cosa-sono-i-cambiamenti-climatici/ 
+
+© UNI             17 
+
+
+
+
+
+
+Membro italiano ISO e CEN
+www.uni.com
+
+www.youtube.com/normeuni
+www.twitter.com/normeuni
+
+www.twitter.com/formazioneuni
+www.linkedin.com/company/normeuni
+
+www.facebook.com/unmondofattobene
+
+Sede di Milano Sede di Roma
+Via Sannio, 2 - 20137 Milano Via del Collegio Capranica, 4 - 00186 Roma
+tel 02700241, uni@uni.com tel 0669923074, uni.roma@uni.com

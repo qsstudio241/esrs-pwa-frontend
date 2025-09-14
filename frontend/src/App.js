@@ -1,23 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import Checklist from './Checklist';
-import { StorageProvider } from './storage/StorageContext';
+import React, { useState, useEffect } from "react";
+import requisitiDimensioni from "./requisiti_dimensioni_esrs.json";
+import Checklist from "./Checklist";
+import { StorageProvider } from "./storage/StorageContext";
 
 // Utility per generare un ID univoco
-const generateId = () => 'audit_' + Date.now();
+const generateId = () => "audit_" + Date.now();
 
-function AuditSelector({ audits, onSelectAudit, onCreateAudit, showClosed, setShowClosed }) {
-  const [azienda, setAzienda] = useState('');
-  const [dimensione, setDimensione] = useState('Micro');
+function AuditSelector({
+  audits,
+  onSelectAudit,
+  onCreateAudit,
+  showClosed,
+  setShowClosed,
+}) {
+  const [azienda, setAzienda] = useState("");
+  const [fatturato, setFatturato] = useState("");
+  const [dipendenti, setDipendenti] = useState("");
+  const [totaleAttivo, setTotaleAttivo] = useState("");
   const [showNew, setShowNew] = useState(false);
 
-  const auditsToShow = Array.isArray(audits) ? audits.filter(a => showClosed || a.stato === 'in corso') : [];
+  const auditsToShow = Array.isArray(audits)
+    ? audits.filter((a) => showClosed || a.stato === "in corso")
+    : [];
 
   return (
     <div style={{ marginBottom: 24 }}>
       <h2>Seleziona audit</h2>
-      <select onChange={e => onSelectAudit(e.target.value)} value="">
+      <select onChange={(e) => onSelectAudit(e.target.value)} value="">
         <option value="">-- Seleziona --</option>
-        {auditsToShow.map(a => (
+        {auditsToShow.map((a) => (
           <option key={a.id} value={a.id}>
             {a.azienda} ({a.dimensione}) - {a.stato}
           </option>
@@ -27,7 +38,7 @@ function AuditSelector({ audits, onSelectAudit, onCreateAudit, showClosed, setSh
         <input
           type="checkbox"
           checked={showClosed}
-          onChange={e => setShowClosed(e.target.checked)}
+          onChange={(e) => setShowClosed(e.target.checked)}
         />
         Mostra anche audit chiusi
       </label>
@@ -39,31 +50,191 @@ function AuditSelector({ audits, onSelectAudit, onCreateAudit, showClosed, setSh
           <input
             placeholder="Nome azienda"
             value={azienda}
-            onChange={e => setAzienda(e.target.value)}
+            onChange={(e) => setAzienda(e.target.value)}
           />
-          <select value={dimensione} onChange={e => setDimensione(e.target.value)}>
-            <option value="Micro">Micro</option>
-            <option value="Piccola">Piccola</option>
-            <option value="Media">Media</option>
-            <option value="Grande">Grande</option>
-          </select>
+          <div style={{ margin: "16px 0" }}>
+            <b>Tabella soglie normative (CSRD/ESRS):</b>
+            <table
+              style={{
+                borderCollapse: "collapse",
+                width: "100%",
+                marginTop: 8,
+                fontSize: "14px",
+              }}
+            >
+              <thead>
+                <tr style={{ background: "#e3f2fd" }}>
+                  <th style={{ border: "1px solid #90caf9", padding: "4px" }}>
+                    Dimensione
+                  </th>
+                  <th style={{ border: "1px solid #90caf9", padding: "4px" }}>
+                    Fatturato max (EUR)
+                  </th>
+                  <th style={{ border: "1px solid #90caf9", padding: "4px" }}>
+                    Dipendenti max
+                  </th>
+                  <th style={{ border: "1px solid #90caf9", padding: "4px" }}>
+                    Totale attivo max (EUR)
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(requisitiDimensioni.dimensioni_aziendali).map(
+                  ([dimKey, dimObj]) => (
+                    <tr key={dimKey}>
+                      <td
+                        style={{ border: "1px solid #90caf9", padding: "4px" }}
+                      >
+                        {dimKey.charAt(0).toUpperCase() + dimKey.slice(1)}
+                      </td>
+                      <td
+                        style={{ border: "1px solid #90caf9", padding: "4px" }}
+                      >
+                        {dimObj.criteri.fatturato_max !== null
+                          ? dimObj.criteri.fatturato_max.toLocaleString("it-IT")
+                          : "—"}
+                      </td>
+                      <td
+                        style={{ border: "1px solid #90caf9", padding: "4px" }}
+                      >
+                        {dimObj.criteri.dipendenti_max !== null
+                          ? dimObj.criteri.dipendenti_max
+                          : "—"}
+                      </td>
+                      <td
+                        style={{ border: "1px solid #90caf9", padding: "4px" }}
+                      >
+                        {dimObj.criteri.totale_attivo_max !== null
+                          ? dimObj.criteri.totale_attivo_max.toLocaleString(
+                              "it-IT"
+                            )
+                          : "—"}
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+            <div style={{ fontSize: "12px", color: "#555", marginTop: 4 }}>
+              <em>
+                La dimensione aziendale viene calcolata automaticamente secondo
+                la regola "almeno 2 su 3 criteri".
+              </em>
+            </div>
+          </div>
+          <div
+            style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}
+          >
+            <input
+              type="number"
+              placeholder="Fatturato (EUR)"
+              value={fatturato}
+              onChange={(e) => setFatturato(e.target.value)}
+              title="Fatturato annuo"
+            />
+            <input
+              type="number"
+              placeholder="Dipendenti"
+              value={dipendenti}
+              onChange={(e) => setDipendenti(e.target.value)}
+              title="Numero medio dipendenti"
+            />
+            <input
+              type="number"
+              placeholder="Totale attivo (EUR)"
+              value={totaleAttivo}
+              onChange={(e) => setTotaleAttivo(e.target.value)}
+              title="Totale attivo di bilancio"
+            />
+            <input
+              type="text"
+              value={(() => {
+                const dimPreview = calcolaDimensione(
+                  fatturato,
+                  dipendenti,
+                  totaleAttivo
+                );
+                return dimPreview ? dimPreview : "—";
+              })()}
+              readOnly
+              style={{
+                background: "#e3f2fd",
+                color: "#1976d2",
+                fontWeight: "bold",
+                border: "1px solid #90caf9",
+                padding: "6px",
+                minWidth: "120px",
+              }}
+              title="Dimensione aziendale calcolata"
+            />
+          </div>
+          <div style={{ margin: "8px 0", fontSize: "15px", color: "#1976d2" }}>
+            <b>Dimensione calcolata:</b>{" "}
+            {(() => {
+              const dimPreview = calcolaDimensione(
+                fatturato,
+                dipendenti,
+                totaleAttivo
+              );
+              return dimPreview ? (
+                dimPreview
+              ) : (
+                <span style={{ color: "#888" }}>
+                  — (inserisci almeno 2 valori)
+                </span>
+              );
+            })()}
+          </div>
           <button
-            onClick={() => {
+            onClick={async () => {
               if (azienda) {
+                try {
+                  // Copia il nome azienda negli appunti
+                  await navigator.clipboard.writeText(azienda);
+                  console.log(
+                    `📋 Nome azienda copiato negli appunti: ${azienda}`
+                  );
+                } catch (err) {
+                  console.log("Impossibile copiare negli appunti");
+                }
+
+                // Calcolo automatico dimensione
+                const dimCalcolata = calcolaDimensione(
+                  fatturato,
+                  dipendenti,
+                  totaleAttivo
+                );
+                if (!dimCalcolata) {
+                  alert(
+                    "Inserisci almeno due valori tra fatturato, dipendenti e totale attivo per calcolare la dimensione aziendale."
+                  );
+                  return;
+                }
                 onCreateAudit({
                   id: generateId(),
                   azienda,
-                  dimensione,
-                  stato: 'in corso',
+                  dimensione: dimCalcolata,
+                  stato: "in corso",
                   dataAvvio: new Date().toISOString(),
                   checklist: {},
                   comments: {},
                   photos: {},
                   exportHistory: [],
-                  directoryHandle: null // nuovo campo per la persistenza
+                  directoryHandle: null, // nuovo campo per la persistenza
+                  metricheAziendali: {
+                    fatturato: fatturato ? Number(fatturato) : null,
+                    dipendenti: dipendenti ? Number(dipendenti) : null,
+                    totaleAttivo: totaleAttivo ? Number(totaleAttivo) : null,
+                    dimensioneCalcolata: dimCalcolata,
+                  },
                 });
-                setAzienda('');
+                setAzienda("");
+                setFatturato("");
+                setDipendenti("");
+                setTotaleAttivo("");
                 setShowNew(false);
+              } else {
+                alert("⚠️ Inserisci il nome dell'azienda prima di procedere");
               }
             }}
           >
@@ -78,37 +249,39 @@ function AuditSelector({ audits, onSelectAudit, onCreateAudit, showClosed, setSh
 function App() {
   const [audits, setAudits] = useState(() => {
     try {
-      const saved = localStorage.getItem('audits');
-      console.log('Raw localStorage audits:', saved); // Debug: Log raw data
+      const saved = localStorage.getItem("audits");
+      console.log("Raw localStorage audits:", saved); // Debug: Log raw data
       if (!saved) return [];
       const parsed = JSON.parse(saved);
-      console.log('Parsed audits:', parsed); // Debug: Log parsed data
+      console.log("Parsed audits:", parsed); // Debug: Log parsed data
       return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-      console.error('Failed to parse audits from localStorage:', e);
+      console.error("Failed to parse audits from localStorage:", e);
       return [];
     }
   });
-  const [currentAuditId, setCurrentAuditId] = useState('');
+  const [currentAuditId, setCurrentAuditId] = useState("");
   const [showClosed, setShowClosed] = useState(false);
 
   useEffect(() => {
     try {
-      localStorage.setItem('audits', JSON.stringify(audits));
+      localStorage.setItem("audits", JSON.stringify(audits));
     } catch (e) {
-      console.error('Failed to save audits to localStorage:', e);
+      console.error("Failed to save audits to localStorage:", e);
     }
   }, [audits]);
 
   // Safeguard: Ensure audits is an array before calling find
-  const currentAudit = Array.isArray(audits) ? audits.find(a => a.id === currentAuditId) : null;
+  const currentAudit = Array.isArray(audits)
+    ? audits.find((a) => a.id === currentAuditId)
+    : null;
 
   const handleSelectAudit = (id) => setCurrentAuditId(id);
 
   const handleCreateAudit = (newAudit) => {
-    setAudits(prev => {
+    setAudits((prev) => {
       if (!Array.isArray(prev)) {
-        console.error('audits is not an array:', prev);
+        console.error("audits is not an array:", prev);
         return [newAudit];
       }
       return [...prev, newAudit];
@@ -117,14 +290,12 @@ function App() {
   };
 
   const updateCurrentAudit = (data) => {
-    setAudits(prev => {
+    setAudits((prev) => {
       if (!Array.isArray(prev)) {
-        console.error('audits is not an array:', prev);
+        console.error("audits is not an array:", prev);
         return [];
       }
-      return prev.map(a =>
-        a.id === currentAuditId ? { ...a, ...data } : a
-      );
+      return prev.map((a) => (a.id === currentAuditId ? { ...a, ...data } : a));
     });
   };
 
@@ -139,10 +310,7 @@ function App() {
           setShowClosed={setShowClosed}
         />
         {currentAudit ? (
-          <Checklist
-            audit={currentAudit}
-            onUpdate={updateCurrentAudit}
-          />
+          <Checklist audit={currentAudit} onUpdate={updateCurrentAudit} />
         ) : (
           <p>Seleziona un audit per iniziare.</p>
         )}
@@ -152,3 +320,33 @@ function App() {
 }
 
 export default App;
+
+// Determina la dimensione aziendale in base a soglie presenti in requisiti_dimensioni_esrs.json
+function calcolaDimensione(fatturato, dipendenti, totaleAttivo) {
+  const clean = (v) =>
+    v === "" || v === null || v === undefined ? null : Number(v);
+  const f = clean(fatturato);
+  const d = clean(dipendenti);
+  const t = clean(totaleAttivo);
+
+  const provided = [f, d, t].filter((x) => x != null).length;
+  if (provided < 2) return null; // servono almeno 2 dati per classificare
+
+  const dim = requisitiDimensioni.dimensioni_aziendali;
+
+  const meets = (sizeKey) => {
+    const c = dim[sizeKey].criteri;
+    let count = 0;
+    if (f != null && (c.fatturato_max == null || f <= c.fatturato_max)) count++;
+    if (d != null && (c.dipendenti_max == null || d <= c.dipendenti_max))
+      count++;
+    if (t != null && (c.totale_attivo_max == null || t <= c.totale_attivo_max))
+      count++;
+    return count >= 2; // regola 2 su 3
+  };
+
+  if (meets("micro")) return "Micro";
+  if (meets("piccola")) return "Piccola";
+  if (meets("media")) return "Media";
+  return "Grande";
+}

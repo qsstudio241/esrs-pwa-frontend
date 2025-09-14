@@ -160,14 +160,105 @@ function Checklist({ audit, onUpdate }) {
   const [currentChecklist, setCurrentChecklist] = useState(null);
   const [checklistLoading, setChecklistLoading] = useState(true);
   const [checklistError, setChecklistError] = useState(null);
+  // clientName rimosso - ora usiamo audit.azienda direttamente
+
+  const handleDirectorySelect = async (isNewAudit = null) => {
+    if (!audit) return;
+
+    try {
+      setChecklistLoading(true);
+      console.log(`🎯 Configurazione directory per: ${audit.azienda}`);
+
+      console.log(`� Creazione struttura directory per: ${audit.azienda}`);
+      console.log(`🔍 DEBUG INITIAL STATE:`, {
+        auditDirReady,
+        storageReady: storage.ready(),
+        storageAuditDir: !!storage.auditDir,
+        storageSubDirs: !!storage.subDirs,
+      });
+
+      // Determina il tipo di audit se non specificato
+      if (isNewAudit === null) {
+        // Auto-detect basato su stato precedente
+        const auditKey = `auditDir_${audit.id}`;
+        const savedState = localStorage.getItem(auditKey);
+        isNewAudit = !savedState || !JSON.parse(savedState || "{}").configured;
+      }
+
+      let result;
+      if (isNewAudit) {
+        console.log("🆕 Inizializzazione nuovo audit per:", audit.azienda);
+        result = await storage.initNewAuditTree(audit.azienda);
+      } else {
+        console.log("📂 Ripresa audit esistente per:", audit.azienda);
+        result = await storage.resumeExistingAudit(audit.azienda);
+      }
+
+      console.log(`🔍 DEBUG AFTER STORAGE CALL:`, {
+        result,
+        storageReady: storage.ready(),
+        storageAuditDir: !!storage.auditDir,
+        storageSubDirs: !!storage.subDirs,
+        auditDirType: storage.auditDir?.constructor?.name,
+      });
+
+      const auditWithDir = { ...audit, directoryHandle: storage.auditDir };
+      onUpdate(auditWithDir);
+
+      // Aggiorna lo stato della directory con il percorso corretto
+      const isReady = storage.ready();
+      setAuditDirReady(isReady);
+      setAuditPath(
+        result?.structure ||
+          `${audit.azienda}/${new Date().getFullYear()}_ESRS_Bilancio`
+      );
+
+      console.log(`🔍 DEBUG FINAL STATE:`, {
+        isReady,
+        auditDirReadyAfterSet: isReady,
+        auditPath: result?.structure,
+        storageAuditDir: !!storage.auditDir,
+        storageSubDirs: !!storage.subDirs,
+      });
+
+      setChecklistError(null);
+      console.log(
+        `✅ Directory configurata con successo per: ${audit.azienda}`,
+        result
+      );
+    } catch (error) {
+      console.error("❌ Errore configurazione directory:", error);
+      setChecklistError(`Errore nella configurazione: ${error.message}`);
+    } finally {
+      setChecklistLoading(false);
+    }
+  };
+
+  // Funzione per distinguere manualmente nuovo audit vs ripresa
+  const handleNewAuditDirectory = () => handleDirectorySelect(true);
+  const handleResumeAuditDirectory = () => handleDirectorySelect(false);
 
   // Funzione per filtrare gli elementi ESRS in base alla dimensione aziendale
   const getFilteredEsrsDetails = () => {
+    console.log("🔍 getFilteredEsrsDetails chiamata:", {
+      hasCurrentChecklist: !!currentChecklist,
+      hasCategories: currentChecklist?.categories
+        ? Object.keys(currentChecklist.categories)
+        : "N/A",
+      auditDimensione: audit.dimensione,
+      checklistLoading,
+      checklistError,
+    });
+
     // Se abbiamo una checklist dinamica, usala
     if (currentChecklist && currentChecklist.categories) {
-      return ChecklistLoader.convertToLegacyFormat(currentChecklist);
+      console.log("✅ Uso checklist dinamica");
+      const result = ChecklistLoader.convertToLegacyFormat(currentChecklist);
+      console.log("📋 Categorie checklist dinamica:", Object.keys(result));
+      return result;
     }
 
+    console.log("⚠️ Fallback a checklist hardcodata");
     // Fallback: usa la vecchia logica hardcodata
     if (!audit.dimensione) return esrsDetails;
 
@@ -197,17 +288,39 @@ function Checklist({ audit, onUpdate }) {
     setAuditDirReady(false);
     setAuditPath("");
     setErrorMessage("");
-    storage.auditDir = null; // Reset dello storage
-    storage.subDirs = null;
+    // NON resettare storage.auditDir e storage.subDirs qui!
 
     // Carica lo stato import specifico per questo audit
     const importKey = `jsonImported_${audit.id}`;
     const wasImported = localStorage.getItem(importKey) === "true";
     setJsonImported(wasImported);
+
+    // Carica lo stato della cartella audit se precedentemente configurata
+    const auditKey = `auditDir_${audit.id}`;
+    const savedAuditDir = localStorage.getItem(auditKey);
+    if (savedAuditDir) {
+      try {
+        const auditConfig = JSON.parse(savedAuditDir);
+        if (auditConfig.configured) {
+          console.log("📁 Stato cartella audit trovato:", auditConfig);
+          // Non possiamo ripristinare automaticamente l'handle, ma mostriamo che era configurata
+          setAuditPath(auditConfig.structure);
+          // Nota: auditDirReady rimane false fino a quando non si riseleziona la cartella
+        }
+      } catch (error) {
+        console.error("Errore lettura stato cartella audit:", error);
+      }
+    }
   }, [audit.id, storage]);
 
   React.useEffect(() => {
-    setAuditDirReady(storage.ready());
+    const readyState = storage.ready();
+    console.log(`🔍 DEBUG useEffect READY CHECK:`, {
+      readyState,
+      storageAuditDir: !!storage.auditDir,
+      storageSubDirs: !!storage.subDirs,
+    });
+    setAuditDirReady(readyState);
   }, [storage]);
 
   React.useEffect(() => {
@@ -246,41 +359,163 @@ function Checklist({ audit, onUpdate }) {
   const renderSetupGuide = () => {
     if (!auditDirReady) {
       return (
-        <div
-          style={{
-            background: "#fff3cd",
-            border: "2px solid #ffc107",
-            padding: "20px",
-            margin: "16px 0",
-            borderRadius: "8px",
-            textAlign: "center",
-          }}
-        >
-          <h3 style={{ color: "#856404", margin: "0 0 12px 0" }}>
-            🚀 Per iniziare a lavorare su questo audit
-          </h3>
-          <p style={{ color: "#856404", margin: "8px 0", fontSize: "16px" }}>
-            <strong>Passo 1:</strong> Seleziona la cartella di lavoro
-          </p>
-          <button
-            onClick={pickAuditDirectory}
+        <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+          <div
             style={{
-              background: "#0078d4",
-              color: "#fff",
-              border: "none",
-              padding: "12px 24px",
-              fontSize: "16px",
-              borderRadius: "6px",
-              cursor: "pointer",
-              margin: "8px",
+              border: "2px solid #007bff",
+              borderRadius: "8px",
+              padding: "20px",
+              backgroundColor: "#f8f9fa",
             }}
           >
-            📁 Seleziona cartella audit
-          </button>
-          <p style={{ color: "#856404", margin: "8px 0", fontSize: "14px" }}>
-            <strong>Suggerimento:</strong> Scegli una cartella con percorso
-            breve (es: Desktop, Documenti)
-          </p>
+            <h3 style={{ color: "#007bff", marginBottom: "15px" }}>
+              🏢 Audit ESRS per: {audit.azienda}
+            </h3>
+
+            <div style={{ marginBottom: "20px", textAlign: "center" }}>
+              <div
+                style={{
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  color: "#007bff",
+                  marginBottom: "10px",
+                }}
+              >
+                📋 {audit.azienda} - {audit.dimensione}
+              </div>
+              <div style={{ fontSize: "14px", color: "#666" }}>
+                Clicca per configurare la struttura directory
+              </div>
+            </div>
+
+            {/* Determina se mostrare opzioni per nuovo o ripresa */}
+            {(() => {
+              const hasData =
+                Object.keys(comments).length > 0 ||
+                Object.keys(files).length > 0 ||
+                Object.keys(completed).length > 0 ||
+                jsonImported;
+
+              if (hasData) {
+                // Ripresa audit esistente
+                return (
+                  <div>
+                    <button
+                      onClick={handleResumeAuditDirectory}
+                      style={{
+                        backgroundColor: "#28a745",
+                        color: "white",
+                        border: "none",
+                        padding: "12px 24px",
+                        borderRadius: "4px",
+                        fontSize: "16px",
+                        cursor: "pointer",
+                        width: "100%",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      🔄 Riprendi Audit - Seleziona Cartella Azienda
+                    </button>
+                    <div
+                      style={{
+                        fontSize: "12px",
+                        color: "#666",
+                        textAlign: "center",
+                      }}
+                    >
+                      Seleziona la cartella che contiene già la struttura "
+                      {audit.azienda}"
+                    </div>
+                    <button
+                      onClick={handleNewAuditDirectory}
+                      style={{
+                        backgroundColor: "#6c757d",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                        width: "100%",
+                        marginTop: "8px",
+                      }}
+                    >
+                      🆕 O crea nuova struttura
+                    </button>
+                  </div>
+                );
+              } else {
+                // Nuovo audit
+                return (
+                  <div>
+                    <button
+                      onClick={handleNewAuditDirectory}
+                      style={{
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        border: "none",
+                        padding: "12px 24px",
+                        borderRadius: "4px",
+                        fontSize: "16px",
+                        cursor: "pointer",
+                        width: "100%",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      🆕 Nuovo Audit - Seleziona Cartella Padre
+                    </button>
+                    <div
+                      style={{
+                        fontSize: "12px",
+                        color: "#666",
+                        textAlign: "center",
+                      }}
+                    >
+                      Seleziona dove creare la nuova struttura "{audit.azienda}
+                      /2025_ESRS_Bilancio"
+                    </div>
+                    <button
+                      onClick={handleResumeAuditDirectory}
+                      style={{
+                        backgroundColor: "#6c757d",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                        width: "100%",
+                        marginTop: "8px",
+                      }}
+                    >
+                      🔄 O riprendi audit esistente
+                    </button>
+                  </div>
+                );
+              }
+            })()}
+
+            <div
+              style={{
+                marginTop: "15px",
+                fontSize: "14px",
+                color: "#666",
+                backgroundColor: "#e9f7ff",
+                padding: "10px",
+                borderRadius: "4px",
+              }}
+            >
+              💡 <strong>Struttura che verrà creata:</strong>
+              <br />
+              📁 {audit.azienda}/2025_ESRS_Bilancio/
+              <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;├── 📁 Evidenze (E1,E2,S1,S4,G1,Generale)
+              <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;├── 📁 Export
+              <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;└── 📁 Report
+            </div>
+          </div>
         </div>
       );
     }
@@ -288,10 +523,9 @@ function Checklist({ audit, onUpdate }) {
   };
 
   const renderImportGuide = () => {
-    // Mostra il pulsante import se:
-    // 1. File System API è supportata E cartella audit è selezionata, OPPURE
-    // 2. File System API NON è supportata (modalità mobile/fallback)
-    const showImport = auditDirReady || !window.showDirectoryPicker;
+    // Mostra sempre il pulsante import per supportare il workflow multi-dispositivo
+    // L'utente può importare un JSON da un altro dispositivo per riprendere il lavoro
+    const showImport = true;
 
     if (showImport) {
       return (
@@ -916,54 +1150,85 @@ function Checklist({ audit, onUpdate }) {
     }
   };
 
-  const pickAuditDirectory = async () => {
-    try {
-      console.log("Inizio selezione cartella audit...");
-
-      await storage.initAuditTree({ id: audit.id });
-      setAuditDirReady(storage.ready());
-      setAuditPath(`A-${audit.id}`); // Aggiorna il path
-      alert(
-        "✅ Cartella audit collegata con successo!\n\nStruttura creata:\n- ESG-Bilanci/\n  - " +
-          new Date().getFullYear() +
-          "/\n    - A-" +
-          audit.id +
-          "/\n      - Evidenze/\n      - Export/\n      - Report/"
-      );
-    } catch (err) {
-      console.error("Errore completo:", err);
-
-      let errorMessage = "Errore sconosciuto nella selezione cartella.";
-
-      if (
-        err.message.includes("not supported") ||
-        err.message.includes("showDirectoryPicker")
-      ) {
-        errorMessage =
-          '❌ Browser non compatibile\n\nUsa Chrome o Microsoft Edge (versione recente) per questa funzionalità.\n\nPuoi comunque usare "Esporta come JSON" per scaricare i dati.';
-      } else if (
-        err.message.includes("annullata") ||
-        err.name === "AbortError"
-      ) {
-        errorMessage =
-          "⚠️ Selezione annullata\n\nRiprova quando sei pronto a selezionare la cartella.";
-      } else if (
-        err.message.includes("permessi") ||
-        err.name === "NotAllowedError"
-      ) {
-        errorMessage =
-          "🔒 Permessi negati\n\nConcedi i permessi per accedere al file system quando richiesto dal browser.";
-      } else {
-        errorMessage = `❌ Errore: ${err.message}\n\nSuggerimenti:\n1. Usa Chrome/Edge aggiornato\n2. Concedi i permessi quando richiesto\n3. Seleziona una cartella accessibile (es. Desktop, Documenti)`;
-      }
-
-      alert(errorMessage);
-    }
-  };
-
   const generateReport = () => {
-    // ...existing code...
-    // TODO: Implement report generation logic here if needed
+    // Estrai i dati principali
+    const selections = Object.keys(comments)
+      .filter((key) => {
+        const comment = comments[key] || "";
+        return (
+          comment.trim().length > 0 || (files[key] && files[key].length > 0)
+        );
+      })
+      .map((key) => {
+        const [category, item] = key.split("-");
+        return {
+          category,
+          item,
+          comment: comments[key] || "",
+          files: files[key] || [],
+          terminato: !!completed[key],
+        };
+      });
+
+    // Genera HTML
+    let html = `<!DOCTYPE html><html lang='it'><head><meta charset='UTF-8'><title>Report ESG - ${audit.azienda}</title><style>
+      body { font-family: Arial, sans-serif; margin: 32px; }
+      h1 { color: #1976d2; }
+      h2 { color: #1565c0; }
+      .completed { color: green; font-weight: bold; }
+      .open { color: orange; font-weight: bold; }
+      .comment { margin: 8px 0; }
+      .file-list { margin: 8px 0; }
+      .category { margin-top: 24px; }
+    </style></head><body>`;
+    html += `<h1>Report ESG - ${audit.azienda}</h1>`;
+    html += `<div><b>Dimensione:</b> ${
+      audit.dimensione || "N/A"
+    } <br/><b>Data avvio:</b> ${audit.dataAvvio || "N/A"} <br/><b>Stato:</b> ${
+      audit.stato || "N/A"
+    }</div>`;
+    html += `<hr/>`;
+
+    selections.forEach((sel, idx) => {
+      html += `<div class='category'><h2>${sel.category}</h2>`;
+      html += `<div><b>Domanda:</b> ${sel.item}</div>`;
+      html += `<div class='comment'><b>Commento:</b> ${
+        sel.comment || "<i>Nessuna evidenza</i>"
+      }</div>`;
+      html += `<div class='file-list'><b>File allegati:</b> <ul>`;
+      sel.files.forEach((file) => {
+        if (file.path) {
+          html += `<li>${file.name} <span style='font-size:12px;color:#555;'>(Percorso: ${file.path})</span></li>`;
+        } else {
+          html += `<li>${file.name}</li>`;
+        }
+      });
+      html += `</ul></div>`;
+      html += `<div class='${sel.terminato ? "completed" : "open"}'>${
+        sel.terminato ? "✔ Terminato" : "⏳ Aperto"
+      }</div>`;
+      html += `</div><hr/>`;
+    });
+
+    html += `<footer style='margin-top:32px;font-size:12px;color:#888;'>Report generato il ${new Date().toLocaleString()}</footer>`;
+    html += `</body></html>`;
+
+    // Download
+    const blob = new Blob([html], { type: "text/html" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const aziendaClean = (audit.azienda || "Azienda")
+      .replace(/[^a-zA-Z0-9]/g, "_")
+      .substring(0, 20);
+    const now = new Date();
+    const timestamp = now.toISOString().replace(/[:.]/g, "").slice(0, 15);
+    link.href = url;
+    link.download = `${aziendaClean}_report_${timestamp}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    alert("Report HTML generato e scaricato!");
   };
 
   const filteredEsrsDetails = getFilteredEsrsDetails();
@@ -985,9 +1250,14 @@ function Checklist({ audit, onUpdate }) {
       <div style={{ marginBottom: "12px" }}>
         <b>Stato cartella audit:</b>{" "}
         {auditDirReady && auditPath ? (
-          <span style={{ color: "green" }}>{auditPath}</span>
+          <span style={{ color: "green" }}>✅ Configurata: {auditPath}</span>
+        ) : auditPath ? (
+          <span style={{ color: "orange" }}>
+            ⚠️ Precedentemente configurata: {auditPath} (riseleziona per
+            riattivare)
+          </span>
         ) : (
-          <span style={{ color: "red" }}>Non selezionata</span>
+          <span style={{ color: "red" }}>❌ Non selezionata</span>
         )}
         <br />
         <b>Stato import JSON:</b>{" "}
@@ -1036,15 +1306,27 @@ function Checklist({ audit, onUpdate }) {
               <div>
                 <div>
                   <strong>Elementi mostrati:</strong>{" "}
-                  {Object.values(filteredEsrsDetails).reduce(
-                    (total, items) => total + items.length,
-                    0
-                  )}{" "}
+                  {currentChecklist
+                    ? currentChecklist.metadata.totalItemsFiltered ||
+                      Object.values(currentChecklist.categories || {}).reduce(
+                        (sum, cat) => sum + (cat.items?.length || 0),
+                        0
+                      )
+                    : Object.values(filteredEsrsDetails).reduce(
+                        (total, items) => total + items.length,
+                        0
+                      )}{" "}
                   /{" "}
-                  {Object.values(esrsDetails).reduce(
-                    (total, items) => total + items.length,
-                    0
-                  )}{" "}
+                  {currentChecklist
+                    ? currentChecklist.metadata.totalItems ||
+                      Object.values(currentChecklist.categories || {}).reduce(
+                        (sum, cat) => sum + (cat.items?.length || 0),
+                        0
+                      )
+                    : Object.values(esrsDetails).reduce(
+                        (total, items) => total + items.length,
+                        0
+                      )}{" "}
                   totali
                 </div>
 
@@ -1127,16 +1409,27 @@ function Checklist({ audit, onUpdate }) {
         Esporta come JSON
       </button>
       <button
-        onClick={() =>
-          generateWordReport({
-            checklist: audit.checklist || {},
-            azienda: audit.azienda || "Nome azienda",
-            anno: new Date().getFullYear(),
-          })
-        }
+        onClick={() => {
+          console.log("🔍 Debug storage prima di generare report:", {
+            isReady: storage.ready(),
+            hasSubDirs: !!storage.subDirs,
+            hasReport: !!storage.subDirs?.report,
+            clientName: storage.clientName,
+            rootPath: storage.rootPath,
+          });
+
+          if (!storage.ready()) {
+            alert(
+              "⚠️ Prima di generare il report Word, devi selezionare la cartella audit.\n\nClicca su '📁 Seleziona Cartella e Inizia Audit' per configurare la struttura delle cartelle."
+            );
+            return;
+          }
+
+          generateWordReport(audit, storage);
+        }}
         style={{ margin: "10px" }}
       >
-        Genera Report Word
+        📄 Genera Report Word
       </button>
       <button onClick={generateReport} style={{ margin: "10px" }}>
         Genera Report HTML

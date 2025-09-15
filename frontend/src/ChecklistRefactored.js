@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import useEsrsData from "./hooks/useEsrsData";
-import { KPI_STATES } from "./utils/kpiValidation";
 import useEvidenceManager from "./hooks/useEvidenceManager";
+import useKpiState from "./hooks/useKpiState";
 
 // Component base refactor: solo visualizzazione + stati locali (no evidenze, no export)
 export default function ChecklistRefactored({ audit, onUpdate }) {
@@ -10,7 +10,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
   const evidence = useEvidenceManager(audit, onUpdate);
   const [openSections, setOpenSections] = useState(() => new Set());
   const [query, setQuery] = useState("");
-  const [localStates, setLocalStates] = useState({}); // key: `${cat}-${idx}` -> stato
+  const kpi = useKpiState(audit, onUpdate);
 
   const searchResults = useMemo(() => search(query), [query, search]);
 
@@ -23,18 +23,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
     });
   }
 
-  function cycleState(cat, idx, mandatory) {
-    const key = `${cat}-${idx}`;
-    setLocalStates((prev) => {
-      const current = prev[key];
-      const order = mandatory
-        ? [KPI_STATES.OK, KPI_STATES.NOK]
-        : [KPI_STATES.OK, KPI_STATES.NOK, KPI_STATES.OPT_EMPTY];
-      const next = !current
-        ? order[0]
-        : order[(order.indexOf(current) + 1) % order.length];
-      return { ...prev, [key]: next };
-    });
+  function cycleState(itemId, mandatory) {
+    kpi.setStateFor(itemId, mandatory);
   }
 
   return (
@@ -97,8 +87,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                   }}
                 >
                   {items.map((it, idx) => {
-                    const key = `${cat}-${idx}`;
-                    const state = localStates[key];
+                    const key = `${cat}-${idx}`; // UI key stabile
+                    const state = kpi.getState(it.itemId);
                     const itemLabel = it.item;
                     const evidList = evidence.list(cat, itemLabel);
                     return (
@@ -113,7 +103,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                         }}
                       >
                         <button
-                          onClick={() => cycleState(cat, idx, it.mandatory)}
+                          onClick={() => cycleState(it.itemId, it.mandatory)}
                           style={{
                             minWidth: 70,
                             fontSize: ".7rem",
@@ -140,28 +130,71 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                               multiple
                               onChange={(e) => {
                                 const fl = Array.from(e.target.files || []);
-                                evidence.addFiles({ category: cat, itemLabel, fileList: fl });
-                                e.target.value = '';
+                                evidence.addFiles({
+                                  category: cat,
+                                  itemLabel,
+                                  fileList: fl,
+                                });
+                                e.target.value = "";
                               }}
                             />
                             <label
                               htmlFor={`file-${cat}-${idx}`}
                               style={{
-                                cursor: 'pointer',
-                                fontSize: '.6rem',
-                                color: '#1976d2',
-                                textDecoration: 'underline'
+                                cursor: "pointer",
+                                fontSize: ".6rem",
+                                color: "#1976d2",
+                                textDecoration: "underline",
                               }}
-                            >Aggiungi evidenza</label>
+                            >
+                              Aggiungi evidenza
+                            </label>
                             {evidList.length > 0 && (
-                              <ul style={{ margin: '4px 0 0 0', padding: 0, listStyle: 'none' }}>
+                              <ul
+                                style={{
+                                  margin: "4px 0 0 0",
+                                  padding: 0,
+                                  listStyle: "none",
+                                }}
+                              >
                                 {evidList.map((f, fi) => (
-                                  <li key={fi} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <span style={{ fontSize: '.55rem', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
+                                  <li
+                                    key={fi}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: 6,
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        fontSize: ".55rem",
+                                        maxWidth: 140,
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap",
+                                      }}
+                                    >
+                                      {f.name}
+                                    </span>
                                     <button
-                                      onClick={() => evidence.removeFile({ category: cat, itemLabel, index: fi })}
-                                      style={{ fontSize: '.55rem', border: '1px solid #ccc', background: '#fafafa', cursor: 'pointer', borderRadius: 3 }}
-                                    >✕</button>
+                                      onClick={() =>
+                                        evidence.removeFile({
+                                          category: cat,
+                                          itemLabel,
+                                          index: fi,
+                                        })
+                                      }
+                                      style={{
+                                        fontSize: ".55rem",
+                                        border: "1px solid #ccc",
+                                        background: "#fafafa",
+                                        cursor: "pointer",
+                                        borderRadius: 3,
+                                      }}
+                                    >
+                                      ✕
+                                    </button>
                                   </li>
                                 ))}
                               </ul>

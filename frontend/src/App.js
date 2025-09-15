@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import requisitiDimensioni from "./requisiti_dimensioni_esrs.json";
 import Checklist from "./Checklist";
+import ChecklistRefactored from "./ChecklistRefactored";
 import { StorageProvider } from "./storage/StorageContext";
 import { calcolaDimensioneAzienda } from "./utils/auditBusinessLogic";
 
@@ -290,6 +291,13 @@ function App() {
   });
   const [currentAuditId, setCurrentAuditId] = useState("");
   const [showClosed, setShowClosed] = useState(false);
+  const [useRefactored, setUseRefactored] = useState(() => {
+    try {
+      return localStorage.getItem("feature_refactored_checklist") === "1";
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     try {
@@ -327,6 +335,30 @@ function App() {
     });
   };
 
+  const toggleRefactored = () => {
+    setUseRefactored((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("feature_refactored_checklist", next ? "1" : "0");
+      } catch {}
+      return next;
+    });
+  };
+
+  function resetAudits() {
+    // eslint-disable-next-line no-alert
+    if (window.confirm('⚠️ Questo eliminerà tutti gli audit salvati localmente. Procedere?')) {
+      try {
+        localStorage.removeItem('audits');
+        Object.keys(localStorage).forEach(k => {
+          if (k.startsWith('auditDir_')) localStorage.removeItem(k);
+        });
+      } catch {}
+      setAudits([]);
+      setCurrentAuditId('');
+    }
+  }
+
   return (
     <StorageProvider>
       <div className="App">
@@ -337,8 +369,30 @@ function App() {
           showClosed={showClosed}
           setShowClosed={setShowClosed}
         />
+        <div style={{ marginBottom: 8, display: 'flex', gap: 16, alignItems: 'center' }}>
+          <label style={{ fontSize: "12px" }}>
+            <input
+              type="checkbox"
+              checked={useRefactored}
+              onChange={toggleRefactored}
+            />{" "}
+            Usa nuova checklist (beta)
+          </label>
+          {process.env.NODE_ENV !== 'production' && (
+            <button onClick={resetAudits} style={{ fontSize: '11px', background: '#ffe0e0', border: '1px solid #ffb0b0', cursor: 'pointer', padding: '4px 8px', borderRadius: 4 }}>
+              Reset audit locali
+            </button>
+          )}
+        </div>
         {currentAudit ? (
-          <Checklist audit={currentAudit} onUpdate={updateCurrentAudit} />
+          useRefactored ? (
+            <ChecklistRefactored
+              audit={currentAudit}
+              onUpdate={updateCurrentAudit}
+            />
+          ) : (
+            <Checklist audit={currentAudit} onUpdate={updateCurrentAudit} />
+          )
         ) : (
           <p>Seleziona un audit per iniziare.</p>
         )}

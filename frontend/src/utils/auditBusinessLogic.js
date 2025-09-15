@@ -12,26 +12,4 @@ export function calcolaDimensioneAzienda({ fatturato, dipendenti, attivo }) {
 }
 
 // Funzione per esportare selezioni in formato JSON
-export function generaExportJSON(audit, comments, files, completed) {
-  const selections = Object.keys(comments)
-    .filter((key) => (comments[key] || "").trim().length > 0)
-    .map((key) => {
-      const [category, item] = key.split("-");
-      return {
-        category,
-        item,
-        comment: comments[key] || "",
-        files: files[key] || [],
-        terminato: !!completed[key],
-      };
-    });
-  return {
-    azienda: audit.azienda,
-    dimensione: audit.dimensione,
-    dataAvvio: audit.dataAvvio,
-    stato: audit.stato,
-    selections,
-  };
-}
-
 // Altre funzioni di business logic possono essere aggiunte qui

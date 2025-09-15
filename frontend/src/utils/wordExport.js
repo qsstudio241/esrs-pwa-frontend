@@ -19,15 +19,34 @@ async function loadTemplate() {
 }
 
 // Funzione per generare il documento Word con integrazione File System
-export async function generateWordReport(auditData, storageProvider) {
+export async function generateWordReport(auditOrSnapshot, storageProvider) {
   try {
-    console.log("🎯 Generazione report Word per:", auditData.azienda);
+    const isSnapshot = !!(
+      auditOrSnapshot &&
+      auditOrSnapshot.meta &&
+      auditOrSnapshot.meta.schemaVersion
+    );
+    const snapshot = isSnapshot ? auditOrSnapshot : null;
+    const auditData = isSnapshot
+      ? snapshotToLegacyAuditShape(snapshot)
+      : auditOrSnapshot;
+    console.log(
+      "🎯 Generazione report Word per:",
+      auditData.azienda,
+      isSnapshot
+        ? "(snapshot v" + snapshot.meta.schemaVersion + ")"
+        : "(legacy audit)"
+    );
 
     const templateBuffer = await loadTemplate();
 
     if (!templateBuffer) {
       // Se non c'è template, creiamo un documento avanzato senza template
-      await generateAdvancedWordReport(auditData, storageProvider);
+      if (isSnapshot) {
+        await generateAdvancedWordReportFromSnapshot(snapshot, storageProvider);
+      } else {
+        await generateAdvancedWordReport(auditData, storageProvider);
+      }
       return;
     }
 
@@ -39,7 +58,9 @@ export async function generateWordReport(auditData, storageProvider) {
     });
 
     // Prepara i dati completi per il template
-    const templateData = prepareAdvancedTemplateData(auditData);
+    const templateData = isSnapshot
+      ? prepareTemplateDataFromSnapshot(snapshot)
+      : prepareAdvancedTemplateData(auditData);
 
     // Inserisce i dati nel template
     doc.setData(templateData);
@@ -594,4 +615,111 @@ RESPONSABILITÀ:
 • Consulenti: Supporto specialistico quando necessario`;
 
   return actionPlan;
+}
+
+// ================== Snapshot (schemaVersion=2) Support Extensions ==================
+
+function prepareTemplateDataFromSnapshot(snapshot) {
+  if (!snapshot) return {};
+  const { audit, items, meta } = snapshot;
+  const completedItems = items.filter((i) => i.completed).length;
+  const totalItems = items.length;
+  const completionPercentage = totalItems
+    ? Math.round((completedItems / totalItems) * 100)
+    : 0;
+
+  const sezioniESRS = {};
+  items.forEach((it) => {
+    if (!sezioniESRS[it.category]) {
+      sezioniESRS[it.category] = {
+        name: it.category,
+        items: [],
+        completed: 0,
+        total: 0,
+      };
+    }
+    sezioniESRS[it.category].items.push({
+      name: it.item,
+      comment: it.comment || "",
+      completed: !!it.completed,
+      filesCount: (it.files || []).length,
+      kpiState: it.kpiState || null,
+    });
+    sezioniESRS[it.category].total++;
+    if (it.completed) sezioniESRS[it.category].completed++;
+  });
+
+  const evidenze = [];
+  items.forEach((it) => {
+    (it.files || []).forEach((f) => {
+      evidenze.push({
+        category: it.category,
+        item: it.item,
+        fileName: f.name,
+        filePath: f.path || "Memoria browser",
+        fileType: f.type || "N/A",
+      });
+    });
+  });
+
+  const commenti = items
+    .filter((it) => it.comment && it.comment.trim())
+    .map((it) => ({
+      category: it.category,
+      item: it.item,
+      text: it.comment,
+      completed: !!it.completed,
+      kpiState: it.kpiState || null,
+    }));
+
+  const kpiCounts = items.reduce((acc, it) => {
+    if (it.kpiState) acc[it.kpiState] = (acc[it.kpiState] || 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    azienda: audit.azienda,
+    dimensione: audit.dimensione,
+    anno: new Date().getFullYear(),
+    dataAvvio: new Date(audit.dataAvvio).toLocaleDateString("it-IT"),
+    dataGenerazione: new Date(meta.generatedAt).toLocaleDateString("it-IT"),
+    stato: audit.stato,
+    completedItems,
+    totalItems,
+    completionPercentage,
+    sezioniESRS,
+    evidenze,
+    commenti,
+    kpiCounts,
+    schemaVersion: meta.schemaVersion,
+  };
+}
+
+function snapshotToLegacyAuditShape(snapshot) {
+  if (!snapshot) return {};
+  return {
+    ...snapshot.audit,
+    comments: snapshot.items.reduce((acc, it) => {
+      acc[`${it.category}-${it.item}`] = it.comment || "";
+      return acc;
+    }, {}),
+    files: snapshot.items.reduce((acc, it) => {
+      acc[`${it.category}-${it.item}`] = it.files || [];
+      return acc;
+    }, {}),
+    completed: snapshot.items.reduce((acc, it) => {
+      acc[`${it.category}-${it.item}`] = !!it.completed;
+      return acc;
+    }, {}),
+  };
+}
+
+async function generateAdvancedWordReportFromSnapshot(
+  snapshot,
+  storageProvider
+) {
+  const data = prepareTemplateDataFromSnapshot(snapshot);
+  const content = generateAdvancedReportContent(data);
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  await saveReportToFileSystem(blob, data, storageProvider, "txt");
 }

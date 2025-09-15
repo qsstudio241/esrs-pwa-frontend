@@ -1,8 +1,8 @@
 // Export Layer Unificato
 // Responsabilità: snapshot normalizzato + funzioni export formati (JSON, Word, HTML)
 
-import { generaExportJSON } from "../auditBusinessLogic";
 import { generateWordReport } from "../wordExport";
+import { recordTelemetry } from "../telemetry";
 import esrsDetails from "../../data/esrsDetails";
 
 export function buildSnapshot(audit) {
@@ -19,26 +19,39 @@ export function buildSnapshot(audit) {
   } = audit;
   // Mappa category-> slug item -> itemId dal dataset attuale per migrazione
   const itemIdIndex = {};
-  Object.keys(esrsDetails).forEach(cat => {
-    esrsDetails[cat].forEach(it => {
-      const slug = (it.item || '').toLowerCase();
+  Object.keys(esrsDetails).forEach((cat) => {
+    esrsDetails[cat].forEach((it) => {
+      const slug = (it.item || "").toLowerCase();
       itemIdIndex[`${cat}::${slug}`] = it.itemId;
     });
   });
 
-  const items = Object.keys({ ...comments, ...files, ...completed }).reduce((acc, key) => {
-    const [category, ...rest] = key.split("-");
-    const item = rest.join("-");
-    const slug = item.toLowerCase();
-    const itemId = itemIdIndex[`${category}::${slug}`] || null; // se null, item obsoleto/non più nel dataset
-    if (!acc[key]) {
-      acc[key] = { key, category, item, itemId, comment: "", files: [], completed: false, deprecated: itemId === null };
-    }
-    if (comments[key]) acc[key].comment = comments[key];
-    if (files[key]) acc[key].files = files[key];
-    if (completed[key] !== undefined) acc[key].completed = !!completed[key];
-    return acc;
-  }, {});
+  const items = Object.keys({ ...comments, ...files, ...completed }).reduce(
+    (acc, key) => {
+      const [category, ...rest] = key.split("-");
+      const item = rest.join("-");
+      const slug = item.toLowerCase();
+      const itemId = itemIdIndex[`${category}::${slug}`] || null; // se null, item obsoleto/non più nel dataset
+      if (!acc[key]) {
+        acc[key] = {
+          key,
+          category,
+          item,
+          itemId,
+          comment: "",
+          files: [],
+          completed: false,
+          deprecated: itemId === null,
+          kpiState: audit?.kpiStates?.[itemId]?.state || null,
+        };
+      }
+      if (comments[key]) acc[key].comment = comments[key];
+      if (files[key]) acc[key].files = files[key];
+      if (completed[key] !== undefined) acc[key].completed = !!completed[key];
+      return acc;
+    },
+    {}
+  );
 
   return {
     meta: {
@@ -54,19 +67,15 @@ export function buildSnapshot(audit) {
 
 export function exportJSON(audit) {
   const snapshot = buildSnapshot(audit);
+  recordTelemetry("export_json", { items: snapshot?.items?.length || 0 });
   return JSON.stringify(snapshot, null, 2);
 }
 
 export async function exportWord(audit, options = {}) {
-  // Reuse existing generator; expects audit structure + comments/files/completed
-  // For backward compatibility we still call generaExportJSON to create data model if needed
-  const data = generaExportJSON(
-    audit,
-    audit.comments || {},
-    audit.files || {},
-    audit.completed || {}
-  );
-  return generateWordReport(data, options);
+  // Usa direttamente lo snapshot normalizzato; adapter provvisorio per wordExport
+  const snapshot = buildSnapshot(audit);
+  recordTelemetry("export_word", { items: snapshot?.items?.length || 0 });
+  return generateWordReport(snapshot, options);
 }
 
 export function buildExportFileName(audit, type = "json") {
@@ -80,7 +89,32 @@ export function buildExportFileName(audit, type = "json") {
 // Placeholder for HTML export (future)
 export function exportHTML(audit) {
   const snapshot = buildSnapshot(audit);
-  return `<pre>${escapeHtml(JSON.stringify(snapshot, null, 2))}</pre>`;
+  if (!snapshot) return "<p>Nessun dato</p>";
+  recordTelemetry("export_html", { items: snapshot.items.length });
+  const rows = snapshot.items
+    .map(
+      (it) => `
+    <tr data-itemid="${it.itemId || ""}">
+      <td>${escapeHtml(it.category)}</td>
+      <td>${escapeHtml(it.item)}</td>
+      <td>${it.completed ? "✅" : "❌"}</td>
+      <td>${escapeHtml(it.comment || "")}</td>
+      <td>${(it.files || []).map((f) => escapeHtml(f.name)).join("<br/>")}</td>
+    </tr>`
+    )
+    .join("");
+  const html = `<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"/><title>Export Audit ${escapeHtml(
+    snapshot.audit.azienda || ""
+  )}</title>
+  <style>body{font-family:Arial, sans-serif;margin:20px;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ccc;padding:4px;font-size:12px;}th{background:#f5f5f5;}caption{font-weight:bold;margin-bottom:8px;} .meta{font-size:11px;color:#555;margin-bottom:12px;} .completed{color:#2e7d32;} .incompleted{color:#c62828;} </style></head><body>
+  <h1>Audit ${escapeHtml(snapshot.audit.azienda || "")}</h1>
+  <div class="meta">Schema v${snapshot.meta.schemaVersion} • Generato ${
+    snapshot.meta.generatedAt
+  }</div>
+  <table aria-label="Riepilogo Audit"><caption>Checklist</caption>
+  <thead><tr><th>Categoria</th><th>Item</th><th>Stato</th><th>Commento</th><th>Evidenze</th></tr></thead><tbody>${rows}</tbody></table>
+  </body></html>`;
+  return html;
 }
 
 function escapeHtml(str) {

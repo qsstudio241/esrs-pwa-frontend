@@ -4,9 +4,9 @@
 function slugify(str) {
   return str
     .toLowerCase()
-    .normalize('NFD')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .normalize("NFD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
     .substring(0, 60);
 }
 
@@ -17,7 +17,7 @@ function hashShort(input) {
     h ^= input.charCodeAt(i);
     h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0; // moltiplica per FNV prime
   }
-  return ('0000000' + h.toString(16)).slice(-8);
+  return ("0000000" + h.toString(16)).slice(-8);
 }
 
 const rawEsrsDetails = {
@@ -167,7 +167,7 @@ const rawEsrsDetails = {
 // Arricchisce ogni item con itemId deterministico basato su category + slug label
 function buildDataset() {
   const out = {};
-  Object.keys(rawEsrsDetails).forEach(category => {
+  Object.keys(rawEsrsDetails).forEach((category) => {
     out[category] = rawEsrsDetails[category].map((entry, idx) => {
       const slug = slugify(entry.item);
       const base = `${category}-${slug}-${idx}`; // idx garantisce unicità anche se label duplicate
@@ -180,5 +180,7 @@ function buildDataset() {
 
 const esrsDetails = buildDataset();
 
-export function getEsrsDetails() { return esrsDetails; }
+export function getEsrsDetails() {
+  return esrsDetails;
+}
 export default esrsDetails;

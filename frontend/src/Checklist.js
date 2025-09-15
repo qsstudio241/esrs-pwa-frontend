@@ -3,7 +3,13 @@ import { useStorage } from "./storage/StorageContext";
 import { generateWordReport } from "./utils/wordExport";
 import requisitiDimensioni from "./requisiti_dimensioni_esrs.json";
 import ChecklistLoader from "./utils/checklistLoader";
-import { generaExportJSON } from "./utils/auditBusinessLogic";
+// import { generaExportJSON } from "./utils/auditBusinessLogic"; // legacy
+import { buildSnapshot, buildExportFileName } from "./utils/exporters";
+import {
+  createProfiler,
+  appendPerformanceLog,
+} from "./utils/performanceProfiler";
+import { useEvidenceManager } from "./hooks/useEvidenceManager";
 
 const esrsDetails = {
   Generale: [
@@ -713,50 +719,9 @@ function Checklist({ audit, onUpdate }) {
     });
   };
 
-  const handleFileUploadFS = async (key, event) => {
-    if (!storage.ready()) {
-      alert("Seleziona prima la cartella audit");
-      return;
-    }
-    const list = [...(files[key] ?? [])];
-    const category = key.split("-")[0];
-    for (const file of event.target.files) {
-      if (list.length >= 5) {
-        alert("Limite 5 file per item");
-        break;
-      }
-      try {
-        const meta = await storage.saveEvidence(key, file, category);
-        list.push({ name: meta.name, type: meta.type, path: meta.path });
-      } catch (err) {
-        setErrorMessage("Errore salvataggio evidenza: " + err.message);
-        alert("Errore salvataggio evidenza: " + err.message);
-      }
-    }
-    safeUpdate({ files: { ...files, [key]: list } });
-  };
+  // handleFileUploadFS & removeFile legacy rimossi (ora gestiti da useEvidenceManager)
 
-  const removeFile = async (key, index) => {
-    const currentFiles = files[key] || [];
-    const file = currentFiles[index];
-    if (file && file.path) {
-      try {
-        await navigator.clipboard.writeText(file.path);
-        alert(
-          `✅ Percorso copiato negli appunti:\n${file.path}\n\n💡 Ora puoi navigare manualmente alla cartella per eliminare fisicamente il file se necessario.`
-        );
-      } catch (err) {
-        alert(
-          `⚠️ Impossibile copiare il percorso negli appunti.\n\nPercorso file: ${file.path}`
-        );
-      }
-    }
-    // Rimuovi il riferimento dal report
-    const newFileArray = currentFiles.filter((_, i) => i !== index);
-    safeUpdate({
-      files: { ...files, [key]: newFileArray },
-    });
-  };
+  const evidence = useEvidenceManager(audit, (patch) => safeUpdate(patch));
 
   const handleCompletedChange = (category, item) => {
     const key = `${category}-${item}`;
@@ -786,163 +751,55 @@ function Checklist({ audit, onUpdate }) {
     input.click();
   };
 
-  // Funzione di compressione aggressiva per dispositivi con poca memoria
-  const compressImageAggressive = (file, maxWidth = 800, quality = 0.6) => {
-    return new Promise((resolve, reject) => {
-      if (!file.type.startsWith("image/")) {
-        resolve(file);
-        return;
-      }
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const img = new Image();
-
-      img.onload = () => {
-        try {
-          // Ridimensionamento più aggressivo per tablet con poca memoria
-          const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
-          canvas.width = Math.floor(img.width * ratio);
-          canvas.height = Math.floor(img.height * ratio);
-
-          // Disegna l'immagine ridimensionata
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-          // Converti con qualità ridotta
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                console.log(
-                  `Immagine compressa: ${(file.size / 1024 / 1024).toFixed(
-                    1
-                  )}MB → ${(blob.size / 1024 / 1024).toFixed(1)}MB`
-                );
-                resolve(new File([blob], file.name, { type: "image/jpeg" }));
-              } else {
-                reject(new Error("Errore durante la compressione"));
-              }
-            },
-            "image/jpeg",
-            quality
-          );
-        } catch (error) {
-          console.error("Errore compressione:", error);
-          reject(error);
-        }
-      };
-
-      img.onerror = () => reject(new Error("Errore caricamento immagine"));
-      img.src = URL.createObjectURL(file);
-    });
-  };
+  // compressImageAggressive ora fornita dal hook evidence (se necessaria internamente)
 
   // Funzione di upload ottimizzata per dispositivi con limitazioni
   const handleFileUploadOptimized = async (category, itemIndex, event) => {
     const fileList = Array.from(event.target.files);
-    if (fileList.length === 0) return;
-
-    // Crea la chiave per questo item
+    if (!fileList.length) return;
     const itemData = filteredEsrsDetails[category][itemIndex];
-    const item = typeof itemData === "string" ? itemData : itemData.item;
-    const key = `${category}-${item}`;
-
-    try {
-      // LOGICA INTELLIGENTE: Prova prima File System API, poi fallback automatico
-      if (window.showDirectoryPicker && storage.ready()) {
-        console.log("Usando File System API (modalità desktop)");
-        await handleFileUploadFS(key, event);
-      } else {
-        console.log("Usando localStorage fallback (modalità mobile)");
-        await handleFileUploadFallback(key, fileList);
-      }
-    } catch (error) {
-      console.error("Errore upload File System API:", error);
-      // Fallback automatico a localStorage in caso di errore
-      console.log("Fallback automatico a localStorage");
-      await handleFileUploadFallback(key, fileList);
-    }
+    const itemLabel = typeof itemData === "string" ? itemData : itemData.item;
+    await evidence.addFiles({ category, itemLabel, fileList });
   };
 
   // Funzione fallback per dispositivi che non supportano File System Access API
-  const handleFileUploadFallback = async (key, fileList) => {
-    const currentFiles = files[key] || [];
-    const newFileArray = [...currentFiles];
-
-    for (const file of fileList) {
-      if (newFileArray.length >= 5) {
-        alert("Limite 5 file per item");
-        break;
-      }
-
-      try {
-        // Comprimi aggressivamente per evitare problemi di memoria
-        const processedFile = await compressImageAggressive(file);
-
-        // Verifica dimensione dopo compressione
-        if (processedFile.size > 2 * 1024 * 1024) {
-          // 2MB max
-          throw new Error("File troppo grande anche dopo compressione");
-        }
-
-        // Converti in base64 per localStorage
-        const base64Data = await fileToBase64(processedFile);
-
-        newFileArray.push({
-          name: processedFile.name,
-          type: processedFile.type,
-          data: base64Data,
-          size: processedFile.size,
-          compressed: true,
-          timestamp: new Date().toISOString(),
-        });
-
-        console.log(
-          `File caricato in localStorage: ${processedFile.name} (${(
-            processedFile.size / 1024
-          ).toFixed(1)}KB)`
-        );
-      } catch (error) {
-        console.error(`Errore elaborazione file ${file.name}:`, error);
-        alert(`Errore elaborazione ${file.name}: ${error.message}`);
-      }
-    }
-
-    // Salva in localStorage
-    safeUpdate({
-      files: { ...files, [key]: newFileArray },
-    });
-  };
+  // handleFileUploadFallback sostituito dal hook evidence
 
   // Utility per convertire file in base64
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  // fileToBase64 gestito dal hook evidence
 
   const exportSelections = () => {
-    const exportData = generaExportJSON(audit, comments, files, completed);
-    const now = new Date();
-    const timestamp = now.toISOString().replace(/[:.]/g, "").slice(0, 15);
-    const aziendaClean = (audit.azienda || "Azienda")
-      .replace(/[^a-zA-Z0-9]/g, "_")
-      .substring(0, 20);
-    const fileName = `${aziendaClean}_export_${timestamp}.json`;
-    const dataStr = JSON.stringify(exportData, null, 2);
-    if (window.showSaveFilePicker) {
-      handleSaveFileModern(fileName, dataStr);
-    } else {
-      handleSaveFileFallback(fileName, dataStr);
+    try {
+      const profiler = createProfiler({
+        enabled: true,
+        persist: (rec) => safeUpdate(appendPerformanceLog(audit, rec)),
+      });
+      profiler.start("export_json", {
+        items: Object.keys(audit.comments || {}).length,
+      });
+      const snapshot = buildSnapshot(audit);
+      const fileName = buildExportFileName(audit, "json");
+      const dataStr = JSON.stringify(snapshot, null, 2);
+      if (window.showSaveFilePicker) {
+        handleSaveFileModern(fileName, dataStr);
+      } else {
+        handleSaveFileFallback(fileName, dataStr);
+      }
+      safeUpdate({
+        exportHistory: [
+          ...(audit.exportHistory || []),
+          {
+            fileName,
+            dataExport: new Date().toISOString(),
+            schemaVersion: snapshot?.meta?.schemaVersion,
+          },
+        ],
+      });
+      profiler.end("export_json", { bytes: dataStr.length });
+    } catch (e) {
+      alert("Errore export: " + e.message);
+      console.error("Errore export layer", e);
     }
-    safeUpdate({
-      exportHistory: [
-        ...(audit.exportHistory || []),
-        { fileName, dataExport: new Date().toISOString() },
-      ],
-    });
   };
 
   // Funzione per salvare file con File System Access API (scelta cartella)
@@ -1556,7 +1413,15 @@ function Checklist({ audit, onUpdate }) {
                           </a>
                         )}
                         <button
-                          onClick={() => removeFile(key, index)}
+                          onClick={() => {
+                            const [categoryLocal, ...rest] = key.split("-");
+                            const itemLabel = rest.join("-");
+                            evidence.removeFile({
+                              category: categoryLocal,
+                              itemLabel,
+                              index,
+                            });
+                          }}
                           disabled={stato === "chiuso"}
                         >
                           Rimuovi

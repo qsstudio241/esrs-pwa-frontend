@@ -2,8 +2,14 @@ import React, { useState, useEffect } from "react";
 import requisitiDimensioni from "./requisiti_dimensioni_esrs.json";
 import Checklist from "./Checklist";
 import ChecklistRefactored from "./ChecklistRefactored";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { StorageProvider } from "./storage/StorageContext";
 import { calcolaDimensioneAzienda } from "./utils/auditBusinessLogic";
+import {
+  setTelemetryOptIn,
+  recordTelemetry,
+  dumpTelemetry,
+} from "./utils/telemetry";
 
 // Utility per generare un ID univoco
 const generateId = () => "audit_" + Date.now();
@@ -279,10 +285,14 @@ function App() {
   const [audits, setAudits] = useState(() => {
     try {
       const saved = localStorage.getItem("audits");
-      console.log("Raw localStorage audits:", saved); // Debug: Log raw data
+      if (process.env.NODE_ENV !== "production") {
+        console.log("Raw localStorage audits:", saved);
+      }
       if (!saved) return [];
       const parsed = JSON.parse(saved);
-      console.log("Parsed audits:", parsed); // Debug: Log parsed data
+      if (process.env.NODE_ENV !== "production") {
+        console.log("Parsed audits:", parsed);
+      }
       return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
       console.error("Failed to parse audits from localStorage:", e);
@@ -294,6 +304,13 @@ function App() {
   const [useRefactored, setUseRefactored] = useState(() => {
     try {
       return localStorage.getItem("feature_refactored_checklist") === "1";
+    } catch {
+      return false;
+    }
+  });
+  const [telemetryOptIn, setTelemetryOptInState] = useState(() => {
+    try {
+      return localStorage.getItem("telemetry_opt_in") === "1";
     } catch {
       return false;
     }
@@ -340,22 +357,39 @@ function App() {
       const next = !prev;
       try {
         localStorage.setItem("feature_refactored_checklist", next ? "1" : "0");
+        recordTelemetry("feature_toggle", {
+          feature: "refactored_checklist",
+          enabled: next,
+        });
       } catch {}
+      return next;
+    });
+  };
+
+  const toggleTelemetry = () => {
+    setTelemetryOptInState((prev) => {
+      const next = !prev;
+      setTelemetryOptIn(next);
+      recordTelemetry("telemetry_opt", { enabled: next });
       return next;
     });
   };
 
   function resetAudits() {
     // eslint-disable-next-line no-alert
-    if (window.confirm('⚠️ Questo eliminerà tutti gli audit salvati localmente. Procedere?')) {
+    if (
+      window.confirm(
+        "⚠️ Questo eliminerà tutti gli audit salvati localmente. Procedere?"
+      )
+    ) {
       try {
-        localStorage.removeItem('audits');
-        Object.keys(localStorage).forEach(k => {
-          if (k.startsWith('auditDir_')) localStorage.removeItem(k);
+        localStorage.removeItem("audits");
+        Object.keys(localStorage).forEach((k) => {
+          if (k.startsWith("auditDir_")) localStorage.removeItem(k);
         });
       } catch {}
       setAudits([]);
-      setCurrentAuditId('');
+      setCurrentAuditId("");
     }
   }
 
@@ -369,7 +403,14 @@ function App() {
           showClosed={showClosed}
           setShowClosed={setShowClosed}
         />
-        <div style={{ marginBottom: 8, display: 'flex', gap: 16, alignItems: 'center' }}>
+        <div
+          style={{
+            marginBottom: 8,
+            display: "flex",
+            gap: 16,
+            alignItems: "center",
+          }}
+        >
           <label style={{ fontSize: "12px" }}>
             <input
               type="checkbox"
@@ -378,21 +419,100 @@ function App() {
             />{" "}
             Usa nuova checklist (beta)
           </label>
-          {process.env.NODE_ENV !== 'production' && (
-            <button onClick={resetAudits} style={{ fontSize: '11px', background: '#ffe0e0', border: '1px solid #ffb0b0', cursor: 'pointer', padding: '4px 8px', borderRadius: 4 }}>
+          <label style={{ fontSize: "12px" }}>
+            <input
+              type="checkbox"
+              checked={telemetryOptIn}
+              onChange={toggleTelemetry}
+            />{" "}
+            Telemetria anonima (opt-in)
+          </label>
+          {telemetryOptIn && (
+            <button
+              style={{ fontSize: "11px" }}
+              onClick={() => {
+                const data = dumpTelemetry();
+                const blob = new Blob([JSON.stringify(data, null, 2)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "telemetry_dump.json";
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+            >
+              Esporta Telemetria
+            </button>
+          )}
+          {process.env.NODE_ENV !== "production" && (
+            <button
+              onClick={resetAudits}
+              style={{
+                fontSize: "11px",
+                background: "#ffe0e0",
+                border: "1px solid #ffb0b0",
+                cursor: "pointer",
+                padding: "4px 8px",
+                borderRadius: 4,
+              }}
+            >
               Reset audit locali
             </button>
           )}
         </div>
         {currentAudit ? (
-          useRefactored ? (
-            <ChecklistRefactored
-              audit={currentAudit}
-              onUpdate={updateCurrentAudit}
-            />
-          ) : (
-            <Checklist audit={currentAudit} onUpdate={updateCurrentAudit} />
-          )
+          <ErrorBoundary
+            onReset={() => {
+              // Soft reset: ricarica audit corrente dall'array (già persistito) e forza re-render
+              setCurrentAuditId((id) => (id ? "" : currentAudit.id));
+              setTimeout(() => setCurrentAuditId(currentAudit.id), 0);
+            }}
+            renderExtra={({ error }) => (
+              <>
+                <button
+                  onClick={() => {
+                    try {
+                      const blob = new Blob(
+                        [JSON.stringify(currentAudit, null, 2)],
+                        { type: "application/json" }
+                      );
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `audit_raw_${currentAudit.id}.json`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    } catch (e) {
+                      console.error("Export raw audit failed", e);
+                    }
+                  }}
+                >
+                  Esporta dati grezzi
+                </button>
+                {error && (
+                  <button
+                    onClick={() => {
+                      console.error("Forzatura reload pagina dopo errore");
+                      window.location.reload();
+                    }}
+                  >
+                    Ricarica pagina
+                  </button>
+                )}
+              </>
+            )}
+          >
+            {useRefactored ? (
+              <ChecklistRefactored
+                audit={currentAudit}
+                onUpdate={updateCurrentAudit}
+              />
+            ) : (
+              <Checklist audit={currentAudit} onUpdate={updateCurrentAudit} />
+            )}
+          </ErrorBoundary>
         ) : (
           <p>Seleziona un audit per iniziare.</p>
         )}

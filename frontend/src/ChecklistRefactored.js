@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import useEsrsData from "./hooks/useEsrsData";
 import useEvidenceManager from "./hooks/useEvidenceManager";
 import useKpiState from "./hooks/useKpiState";
+import useAutosaveDebounce from "./hooks/useAutosaveDebounce";
+import { computeProgress } from "./utils/progressUtils";
 
 // Component base refactor: solo visualizzazione + stati locali (no evidenze, no export)
 export default function ChecklistRefactored({ audit, onUpdate }) {
@@ -23,13 +25,41 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
     });
   }
 
+  const autosave = useAutosaveDebounce((patch) => onUpdate && onUpdate(patch));
+
   function cycleState(itemId, mandatory) {
     kpi.setStateFor(itemId, mandatory);
+    autosave.queue({ kpiStates: audit.kpiStates });
   }
 
+  const progress = computeProgress(audit);
+
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>Checklist (Refactored Preview)</h2>
+    <div style={{ padding: "1rem" }} aria-label="Checklist Refactored">
+      <h2 tabIndex={0}>Checklist (Refactored Preview)</h2>
+      <div style={{ marginBottom: ".75rem" }} aria-label="Stato avanzamento">
+        <div style={{ fontSize: ".7rem", color: "#555" }}>
+          Avanzamento totale: {(progress.total.pct * 100).toFixed(0)}% (
+          {progress.total.done}/{progress.total.total})
+        </div>
+        <div
+          style={{
+            background: "#eee",
+            height: 6,
+            borderRadius: 3,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              width: `${(progress.total.pct * 100).toFixed(0)}%`,
+              background: "#1976d2",
+              height: "100%",
+              transition: "width .3s",
+            }}
+          />
+        </div>
+      </div>
       <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
         <input
           value={query}
@@ -61,6 +91,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                 borderRadius: 4,
                 marginBottom: "0.75rem",
               }}
+              role="group"
+              aria-labelledby={`hdr-${cat}`}
             >
               <header
                 onClick={() => toggle(cat)}
@@ -71,6 +103,16 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                }}
+                id={`hdr-${cat}`}
+                aria-expanded={openSections.has(cat)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggle(cat);
+                  }
                 }}
               >
                 <span>{cat}</span>
@@ -85,6 +127,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                     margin: 0,
                     padding: "0.5rem 0.75rem",
                   }}
+                  aria-label={`Lista items ${cat}`}
                 >
                   {items.map((it, idx) => {
                     const key = `${cat}-${idx}`; // UI key stabile
@@ -101,6 +144,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                           padding: ".25rem 0",
                           borderBottom: "1px solid #eee",
                         }}
+                        aria-label={`Item ${itemLabel}`}
                       >
                         <button
                           onClick={() => cycleState(it.itemId, it.mandatory)}
@@ -113,6 +157,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                             border: "1px solid #ccc",
                             background: state ? "#e8f4ff" : "#fafafa",
                           }}
+                          aria-pressed={!!state}
+                          title="Cambia stato KPI"
                         >
                           {state || "—"}
                         </button>

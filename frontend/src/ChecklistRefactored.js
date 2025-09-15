@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from "react";
 import useEsrsData from "./hooks/useEsrsData";
 import { KPI_STATES } from "./utils/kpiValidation";
+import useEvidenceManager from "./hooks/useEvidenceManager";
 
 // Component base refactor: solo visualizzazione + stati locali (no evidenze, no export)
 export default function ChecklistRefactored({ audit, onUpdate }) {
   const { dimensione } = audit || {};
   const { categories, filtered, search } = useEsrsData(dimensione);
+  const evidence = useEvidenceManager(audit, onUpdate);
   const [openSections, setOpenSections] = useState(() => new Set());
   const [query, setQuery] = useState("");
   const [localStates, setLocalStates] = useState({}); // key: `${cat}-${idx}` -> stato
@@ -97,6 +99,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                   {items.map((it, idx) => {
                     const key = `${cat}-${idx}`;
                     const state = localStates[key];
+                    const itemLabel = it.item;
+                    const evidList = evidence.list(cat, itemLabel);
                     return (
                       <li
                         key={key}
@@ -127,6 +131,41 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                           <div style={{ fontSize: ".65rem", color: "#777" }}>
                             {it.mandatory ? "Obbligatorio" : "Opzionale"} ·{" "}
                             {it.applicability?.join(", ")}
+                          </div>
+                          <div style={{ marginTop: 4 }}>
+                            <input
+                              type="file"
+                              style={{ display: "none" }}
+                              id={`file-${cat}-${idx}`}
+                              multiple
+                              onChange={(e) => {
+                                const fl = Array.from(e.target.files || []);
+                                evidence.addFiles({ category: cat, itemLabel, fileList: fl });
+                                e.target.value = '';
+                              }}
+                            />
+                            <label
+                              htmlFor={`file-${cat}-${idx}`}
+                              style={{
+                                cursor: 'pointer',
+                                fontSize: '.6rem',
+                                color: '#1976d2',
+                                textDecoration: 'underline'
+                              }}
+                            >Aggiungi evidenza</label>
+                            {evidList.length > 0 && (
+                              <ul style={{ margin: '4px 0 0 0', padding: 0, listStyle: 'none' }}>
+                                {evidList.map((f, fi) => (
+                                  <li key={fi} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                    <span style={{ fontSize: '.55rem', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
+                                    <button
+                                      onClick={() => evidence.removeFile({ category: cat, itemLabel, index: fi })}
+                                      style={{ fontSize: '.55rem', border: '1px solid #ccc', background: '#fafafa', cursor: 'pointer', borderRadius: 3 }}
+                                    >✕</button>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
                           </div>
                         </div>
                       </li>

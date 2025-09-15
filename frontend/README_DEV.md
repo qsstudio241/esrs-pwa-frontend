@@ -141,6 +141,31 @@ Migrazione dataset: se item rimosso -> `itemId` non trovato => `deprecated: true
 - Unit: `snapshot.test.js` (schema invariants), `kpiValidation.test.js`, `useEsrsData.test.js`, `App.test.js` smoke.
 - Planned E2E: Playwright scenario minimo creazione audit -> aggiunta commento/evidenza mock -> export JSON -> validazione meta.
 
+### 17.1 Deployment (Netlify)
+
+Configurazione consigliata:
+
+- Base directory: `frontend`
+- Build command: `npm run build`
+- Publish directory: `build`
+- Node: 18 (gestito da `netlify.toml`)
+
+Routing SPA: redirect `/* -> /index.html` e fallback `/offline`.
+
+Post-deploy checklist:
+
+1. SW attivo e offline reload funziona.
+2. Export JSON + Word con KPI & evidenze.
+3. Limiti evidenze (5 file, <=2MB ciascuno, <=8MB cumulativo) rispettati.
+4. Telemetria opt-in/out senza errori.
+5. KPI aggiornato riflesso nell'export.
+
+Promozione:
+
+1. Feature branch -> PR -> merge `main`.
+2. Tag release (`vX.Y.Z`).
+3. Netlify production punta a `main`, previews per PR.
+
 ## 18. Coding Conventions
 
 - Niente commenti superflui inline (preferire documentazione modulare qui).

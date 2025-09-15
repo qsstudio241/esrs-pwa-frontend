@@ -1,7 +1,26 @@
 // Dataset ESRS estratto da Checklist.js per modularizzazione
 // TODO: Successivamente estendere/normalizzare struttura con ID univoci e metadati KPI
 
-const esrsDetails = {
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 60);
+}
+
+// Hash semplice (FNV-1a-like) per produrre un id breve ripetibile senza dipendenze terze
+function hashShort(input) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0; // moltiplica per FNV prime
+  }
+  return ('0000000' + h.toString(16)).slice(-8);
+}
+
+const rawEsrsDetails = {
   Generale: [
     {
       item: "Categorie di principi di rendicontazione di sostenibilità, ambiti di rendicontazione e convenzioni redazionali",
@@ -145,4 +164,21 @@ const esrsDetails = {
   ],
 };
 
+// Arricchisce ogni item con itemId deterministico basato su category + slug label
+function buildDataset() {
+  const out = {};
+  Object.keys(rawEsrsDetails).forEach(category => {
+    out[category] = rawEsrsDetails[category].map((entry, idx) => {
+      const slug = slugify(entry.item);
+      const base = `${category}-${slug}-${idx}`; // idx garantisce unicità anche se label duplicate
+      const itemId = `${hashShort(base)}_${slug}`; // es: a1b2c3d4-cultura-aziendale
+      return { ...entry, itemId };
+    });
+  });
+  return out;
+}
+
+const esrsDetails = buildDataset();
+
+export function getEsrsDetails() { return esrsDetails; }
 export default esrsDetails;

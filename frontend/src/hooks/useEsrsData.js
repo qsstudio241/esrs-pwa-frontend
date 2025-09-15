@@ -7,7 +7,7 @@ import esrsDetails from "../data/esrsDetails";
  * - categories: elenco categorie presenti (filtrate se serve)
  * - all: dataset completo originale
  * - filtered: dataset filtrato per dimensione aziendale (se fornita)
- * - search(text): restituisce array risultati { category, index, item }
+ * - search(text): restituisce array risultati { category, index, item } (item contiene itemId)
  */
 export function useEsrsData(dimensioneAzienda, options = {}) {
   const { includeEmpty = true } = options;

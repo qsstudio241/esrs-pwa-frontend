@@ -2,7 +2,6 @@ import React, { useState, useMemo } from "react";
 import useEsrsData from "./hooks/useEsrsData";
 import useEvidenceManager from "./hooks/useEvidenceManager";
 import useKpiState from "./hooks/useKpiState";
-import useAutosaveDebounce from "./hooks/useAutosaveDebounce";
 import { computeProgress } from "./utils/progressUtils";
 
 // Component base refactor: solo visualizzazione + stati locali (no evidenze, no export)
@@ -25,11 +24,9 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
     });
   }
 
-  const autosave = useAutosaveDebounce((patch) => onUpdate && onUpdate(patch));
-
   function cycleState(itemId, mandatory) {
+    // Persist immediately via hook; autosave queue not needed here
     kpi.setStateFor(itemId, mandatory);
-    autosave.queue({ kpiStates: audit.kpiStates });
   }
 
   const progress = computeProgress(audit);

@@ -750,7 +750,9 @@ function Checklist({ audit, onUpdate }) {
       try {
         const fileList = Array.from(input.files || []);
         if (fileList.length) {
-          await handleFileUploadOptimized(category, itemLabel, { target: { files: fileList } });
+          await handleFileUploadOptimized(category, itemLabel, {
+            target: { files: fileList },
+          });
         }
       } finally {
         // rimuovi l'input per evitare leak e garantire nuovo change anche con stessi file
@@ -1380,6 +1382,16 @@ function Checklist({ audit, onUpdate }) {
                       >
                         📷 Foto
                       </button>
+                      <span
+                        style={{
+                          alignSelf: "center",
+                          fontSize: "12px",
+                          color: "#555",
+                        }}
+                        title="Numero di allegati per questo punto"
+                      >
+                        Allegati: {evidence.list(category, item).length}
+                      </span>
                     </div>{" "}
                     {evidence.error && (
                       <div
@@ -1392,7 +1404,7 @@ function Checklist({ audit, onUpdate }) {
                         ⚠️ {evidence.error}
                       </div>
                     )}
-                    {(files[key] || []).map((file, index) => (
+                    {evidence.list(category, item).map((file, index) => (
                       <div key={index}>
                         {file.path ? (
                           <>
@@ -1434,11 +1446,9 @@ function Checklist({ audit, onUpdate }) {
                         )}
                         <button
                           onClick={() => {
-                            const [categoryLocal, ...rest] = key.split("-");
-                            const itemLabel = rest.join("-");
                             evidence.removeFile({
-                              category: categoryLocal,
-                              itemLabel,
+                              category,
+                              itemLabel: item,
                               index,
                             });
                           }}

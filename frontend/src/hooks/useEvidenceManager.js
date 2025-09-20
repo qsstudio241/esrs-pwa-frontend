@@ -86,9 +86,9 @@ export function useEvidenceManager(audit, onUpdate) {
     async ({ category, itemLabel, fileList }) => {
       if (!ready) return;
       setError(null);
-  const key = keyFrom(category, itemLabel);
-  const filesNow = getFiles();
-  const current = filesNow[key] || [];
+      const key = keyFrom(category, itemLabel);
+      const filesNow = getFiles();
+      const current = filesNow[key] || [];
       const next = [...current];
       const profiler = createProfiler({
         enabled: true,
@@ -149,13 +149,23 @@ export function useEvidenceManager(audit, onUpdate) {
       });
       profiler.end("evidence_upload", { newCount: next.length, totalSize });
     },
-    [keyFrom, ready, safeUpdate, storage, compressImageAggressive, fileToBase64, audit, onUpdate, getFiles]
+    [
+      keyFrom,
+      ready,
+      safeUpdate,
+      storage,
+      compressImageAggressive,
+      fileToBase64,
+      audit,
+      onUpdate,
+      getFiles,
+    ]
   );
 
   const removeFile = useCallback(
     async ({ category, itemLabel, index, copyPath = true }) => {
-  const key = keyFrom(category, itemLabel);
-  const current = getFiles()[key] || [];
+      const key = keyFrom(category, itemLabel);
+      const current = getFiles()[key] || [];
       const f = current[index];
       if (f?.path && copyPath) {
         try {
@@ -163,7 +173,7 @@ export function useEvidenceManager(audit, onUpdate) {
         } catch {}
       }
       const next = current.filter((_, i) => i !== index);
-  safeUpdate({ files: { ...getFiles(), [key]: next } });
+      safeUpdate({ files: { ...getFiles(), [key]: next } });
       recordTelemetry("evidence_remove", {
         category,
         itemLabel,

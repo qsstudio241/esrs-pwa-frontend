@@ -17,7 +17,7 @@ const MAX_TOTAL_PER_ITEM = 8 * 1024 * 1024; // 8MB cumulativi
 
 export function useEvidenceManager(audit, onUpdate) {
   const storage = useStorage();
-  const files = useMemo(() => audit?.files || {}, [audit]);
+  const getFiles = useCallback(() => audit?.files || {}, [audit]);
   const [error, setError] = useState(null);
 
   const ready = !!audit;
@@ -86,8 +86,9 @@ export function useEvidenceManager(audit, onUpdate) {
     async ({ category, itemLabel, fileList }) => {
       if (!ready) return;
       setError(null);
-      const key = keyFrom(category, itemLabel);
-      const current = files[key] || [];
+  const key = keyFrom(category, itemLabel);
+  const filesNow = getFiles();
+  const current = filesNow[key] || [];
       const next = [...current];
       const profiler = createProfiler({
         enabled: true,
@@ -141,29 +142,20 @@ export function useEvidenceManager(audit, onUpdate) {
           setError(e.message);
         }
       }
-      safeUpdate({ files: { ...files, [key]: next } });
+      const latest = getFiles();
+      safeUpdate({ files: { ...latest, [key]: next } });
       const totalSize = calcTotalEvidenceSize({
-        files: { ...files, [key]: next },
+        files: { ...latest, [key]: next },
       });
       profiler.end("evidence_upload", { newCount: next.length, totalSize });
     },
-    [
-      files,
-      keyFrom,
-      ready,
-      safeUpdate,
-      storage,
-      compressImageAggressive,
-      fileToBase64,
-      audit,
-      onUpdate,
-    ]
+    [keyFrom, ready, safeUpdate, storage, compressImageAggressive, fileToBase64, audit, onUpdate, getFiles]
   );
 
   const removeFile = useCallback(
     async ({ category, itemLabel, index, copyPath = true }) => {
-      const key = keyFrom(category, itemLabel);
-      const current = files[key] || [];
+  const key = keyFrom(category, itemLabel);
+  const current = getFiles()[key] || [];
       const f = current[index];
       if (f?.path && copyPath) {
         try {
@@ -171,19 +163,19 @@ export function useEvidenceManager(audit, onUpdate) {
         } catch {}
       }
       const next = current.filter((_, i) => i !== index);
-      safeUpdate({ files: { ...files, [key]: next } });
+  safeUpdate({ files: { ...getFiles(), [key]: next } });
       recordTelemetry("evidence_remove", {
         category,
         itemLabel,
         remaining: next.length,
       });
     },
-    [files, keyFrom, safeUpdate]
+    [keyFrom, safeUpdate, getFiles]
   );
 
   const list = useCallback(
-    (category, itemLabel) => files[keyFrom(category, itemLabel)] || [],
-    [files, keyFrom]
+    (category, itemLabel) => getFiles()[keyFrom(category, itemLabel)] || [],
+    [getFiles, keyFrom]
   );
 
   return useMemo(

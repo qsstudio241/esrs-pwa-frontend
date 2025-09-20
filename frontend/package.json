@@ -19,6 +19,8 @@
     "build": "craco build",
     "test": "craco test",
     "validate:snapshot": "node scripts/validate-esrs-snapshot.js",
+    "report:coverage:esrs": "node scripts/esrs-coverage.js",
+    "report:coverage:esrs:strict": "node scripts/esrs-coverage.js --mode=strict --normalize-esrs2",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",

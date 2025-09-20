@@ -91,7 +91,9 @@ test("legacy FS: configure folder, upload via Galleria, show path", async ({
   await chooser.setFiles(xlsxPath);
 
   // In FS mode, legacy UI shows a button with the file name and a path line
-  const fileButton = page.getByRole("button", { name: "fs-sample.xlsx" });
-  await expect(fileButton).toBeVisible();
+  // Wait for path line to appear, then check the filename is visible
   await expect(page.getByText("Percorso:")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /^(?:fs-sample\.xlsx)$/ })
+  ).toBeVisible();
 });

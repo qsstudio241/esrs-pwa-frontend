@@ -377,42 +377,42 @@
           "text": "Consumatori e utilizzatori finali",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS S4"
+          "reference": "ESRS S4-1"
         },
         {
           "id": "S4002",
           "text": "Politiche per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS S4"
+          "reference": "ESRS S4-2"
         },
         {
           "id": "S4003",
           "text": "Processi per l'impegno con i consumatori e gli utilizzatori finali riguardo agli impatti materiali",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS S4"
+          "reference": "ESRS S4-3"
         },
         {
           "id": "S4004",
           "text": "Processi per rimediare agli impatti negativi materiali e canali per i consumatori e gli utilizzatori finali per esprimere preoccupazioni",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS S4"
+          "reference": "ESRS S4-4"
         },
         {
           "id": "S4005",
           "text": "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per i consumatori e agli utilizzatori finali",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS S4"
+          "reference": "ESRS S4-5"
         },
         {
           "id": "S4006",
           "text": "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS S4"
+          "reference": "ESRS S4-6"
         }
       ]
     },
@@ -426,77 +426,77 @@
           "text": "Condotta delle imprese",
           "applicability": ["Piccola", "Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-1"
         },
         {
           "id": "G1002",
           "text": "Politiche per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
           "applicability": ["Piccola", "Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-2"
         },
         {
           "id": "G1003",
           "text": "Processi per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
           "applicability": ["Piccola", "Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-3"
         },
         {
           "id": "G1004",
           "text": "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per la condotta delle imprese",
           "applicability": ["Piccola", "Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-4"
         },
         {
           "id": "G1005",
           "text": "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
           "applicability": ["Piccola", "Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-5"
         },
         {
           "id": "G1006",
           "text": "Cultura aziendale",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-6"
         },
         {
           "id": "G1007",
           "text": "Gestione dei rapporti con i fornitori",
           "applicability": ["Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-7"
         },
         {
           "id": "G1008",
           "text": "Formazione e sensibilizzazione su anti-corruzione e anti-bribery",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-8"
         },
         {
           "id": "G1009",
           "text": "Incidenti di corruzione o bribery",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-9"
         },
         {
           "id": "G1010",
           "text": "Attività di lobbying",
           "applicability": ["Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-10"
         },
         {
           "id": "G1011",
           "text": "Pratiche di pagamento",
           "applicability": ["Media", "Grande"],
           "mandatory": true,
-          "reference": "ESRS G1"
+          "reference": "ESRS G1-11"
         }
       ]
     },

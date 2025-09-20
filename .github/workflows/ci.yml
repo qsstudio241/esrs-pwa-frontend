@@ -32,6 +32,12 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
+      - name: Run strict ESRS coverage (gate)
+        working-directory: ./frontend
+        run: |
+          npm run report:coverage:esrs:strict
+          node -e "const fs=require('fs');const p='./coverage-esrs/coverage-report.json';const r=JSON.parse(fs.readFileSync(p,'utf8'));const bad=(r.summary||[]).filter(x=>x.coverage!==1&&x.coverage!==null);if(bad.length){console.error('Coverage gaps in:',bad.map(b=>b.category).join(', '));process.exit(1);}console.log('Strict ESRS coverage OK');"
+
       - name: Upload build artifact
         if: success()
         uses: actions/upload-artifact@v4

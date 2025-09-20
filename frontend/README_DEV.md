@@ -166,6 +166,20 @@ Promozione:
 2. Tag release (`vX.Y.Z`).
 3. Netlify production punta a `main`, previews per PR.
 
+### 17.2 Checklist Normalization & KPI
+
+- Governance normalization: le categorie custom `G2`, `G3`, `G4`, `G5` vengono mappate in `ESRS-2` (General Disclosures) in fase di load tramite `ChecklistLoader.normalizeGovernance()`. Gli item mantengono tracciabilità con campo `sourceCategory`.
+- Classification: ad ogni item viene assegnata una `classification` euristica tra `policy | action | target | metric | general` (utile per UI/filtri).
+- KPI placeholders aggiunti (solo se mancanti):
+  - `E1` (clima): intensità GHG, energia totale, quota rinnovabile, Scope1/2 (location/market), principali cat. Scope3, flag scenario analysis.
+  - `E3` (acqua): prelievo totale, % riciclo, operazioni in aree ad alto stress.
+  - `E5` (circolarità): rifiuti totali, % recupero/riciclo, % materiali riciclati.
+  - `S1` (forza lavoro): LTIFR, tasso infortuni, ore formazione, turnover, pay gap (placeholder), % permanenti, % copertura contrattazione.
+  - `S2` (catena valore): fornitori auditati %, non conformità, remediation.
+  - `S4` (consumatori): reclami, incidenti sicurezza prodotto, incidenti privacy/dati.
+
+Implementazione: `src/utils/checklistLoader.js` (funzioni `augmentChecklist`, `normalizeGovernance`, `addClassification`, `addKpiPlaceholders`). La validazione (`validateChecklist`) opera dopo l’augment.
+
 ## 18. Coding Conventions
 
 - Niente commenti superflui inline (preferire documentazione modulare qui).

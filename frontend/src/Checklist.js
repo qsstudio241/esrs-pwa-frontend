@@ -735,19 +735,30 @@ function Checklist({ audit, onUpdate }) {
     const input = document.createElement("input");
     input.type = "file";
     input.multiple = true;
+    input.style.position = "fixed";
+    input.style.left = "-9999px";
 
     if (source === "camera") {
-      // Configurazione ottimizzata per fotocamera mobile
       input.accept = "image/*";
-      input.capture = "environment"; // Fotocamera posteriore
-      // Forza una sola immagine per volta per evitare problemi di memoria
+      input.capture = "environment";
       input.multiple = false;
     } else {
-      // Configurazione per galleria/file: accetta qualsiasi tipo
       input.accept = "*/*";
     }
 
-    input.onchange = (e) => handleFileUploadOptimized(category, itemLabel, e);
+    const onChange = async () => {
+      try {
+        const fileList = Array.from(input.files || []);
+        if (fileList.length) {
+          await handleFileUploadOptimized(category, itemLabel, { target: { files: fileList } });
+        }
+      } finally {
+        // rimuovi l'input per evitare leak e garantire nuovo change anche con stessi file
+        if (input.parentNode) input.parentNode.removeChild(input);
+      }
+    };
+    input.addEventListener("change", onChange, { once: true });
+    document.body.appendChild(input);
     input.click();
   };
 
@@ -1333,7 +1344,9 @@ function Checklist({ audit, onUpdate }) {
                       }}
                     >
                       <button
-                        onClick={() => handleFileSelect(category, item, "gallery")}
+                        onClick={() =>
+                          handleFileSelect(category, item, "gallery")
+                        }
                         style={{
                           padding: "8px 12px",
                           backgroundColor: "#007bff",
@@ -1350,7 +1363,9 @@ function Checklist({ audit, onUpdate }) {
                       </button>
 
                       <button
-                        onClick={() => handleFileSelect(category, item, "camera")}
+                        onClick={() =>
+                          handleFileSelect(category, item, "camera")
+                        }
                         style={{
                           padding: "8px 12px",
                           backgroundColor: "#28a745",

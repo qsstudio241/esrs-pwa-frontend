@@ -180,6 +180,76 @@ function buildDataset() {
 
 const esrsDetails = buildDataset();
 
+// Helpers per arricchimento runtime
+function classify(label) {
+  const l = String(label || "").toLowerCase();
+  if (l.includes("politich")) return "policy";
+  if (l.includes("azione") || l.includes("intervento")) return "action";
+  if (l.includes("obiettivo") || l.includes("target")) return "target";
+  if (
+    l.includes("monitoragg") ||
+    l.includes("inventar") ||
+    l.includes("indic") ||
+    l.includes("kpi") ||
+    l.includes("misur") ||
+    l.includes("report")
+  )
+    return "metric";
+  return "general";
+}
+
+function withEsrs2(categories) {
+  if (categories["ESRS-2"]) return categories;
+  categories["ESRS-2"] = [
+    { item: "Ruoli e responsabilità di governance", classification: "general" },
+    {
+      item: "Strategia e modello di business (sintesi)",
+      classification: "general",
+    },
+    {
+      item: "Gestione impatti, rischi e opportunità (processo)",
+      classification: "action",
+    },
+    { item: "Metriche e target (panoramica)", classification: "metric" },
+    {
+      item: "Politiche e azioni su impatti/rischi materiali",
+      classification: "policy",
+    },
+    {
+      item: "Catena del valore e confini di reporting",
+      classification: "general",
+    },
+  ];
+  return categories;
+}
+
+export function getEsrsDataset() {
+  // Clona e arricchisce: classification + ESRS-2 + metadata
+  const categories = withEsrs2(JSON.parse(JSON.stringify(esrsDetails)));
+  let total = 0;
+  Object.keys(categories).forEach((cat) => {
+    categories[cat] = (categories[cat] || []).map((it, idx) => {
+      const label = it.item || it.title || "";
+      const slug = slugify(label);
+      const ensuredId =
+        it.itemId || `${hashShort(`${cat}-${slug}-${idx}`)}_${slug}`;
+      return {
+        ...it,
+        itemId: ensuredId,
+        classification: it.classification || classify(label),
+      };
+    });
+    total += categories[cat].length;
+  });
+  const metadata = {
+    name: "ESRS Dataset",
+    datasetSchemaVersion: 2,
+    totalItems: total,
+    lastAugmentedAt: new Date().toISOString(),
+  };
+  return { metadata, categories };
+}
+
 export function getEsrsDetails() {
   return esrsDetails;
 }

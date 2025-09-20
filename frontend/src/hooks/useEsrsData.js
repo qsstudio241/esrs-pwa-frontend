@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import esrsDetails from "../data/esrsDetails";
+import { getEsrsDataset } from "../data/esrsDetails";
 
 /**
  * Hook per ottenere e filtrare il dataset ESRS.
@@ -12,17 +12,22 @@ import esrsDetails from "../data/esrsDetails";
 export function useEsrsData(dimensioneAzienda, options = {}) {
   const { includeEmpty = true } = options;
 
+  const dataset = useMemo(() => getEsrsDataset(), []);
+
   const filtered = useMemo(() => {
-    if (!dimensioneAzienda) return esrsDetails;
     const out = {};
-    Object.keys(esrsDetails).forEach((cat) => {
-      const items = esrsDetails[cat].filter(
-        (i) => !i.applicability || i.applicability.includes(dimensioneAzienda)
-      );
+    Object.keys(dataset.categories).forEach((cat) => {
+      const all = dataset.categories[cat] || [];
+      const items = !dimensioneAzienda
+        ? all
+        : all.filter(
+            (i) =>
+              !i.applicability || i.applicability.includes(dimensioneAzienda)
+          );
       if (items.length || includeEmpty) out[cat] = items;
     });
     return out;
-  }, [dimensioneAzienda, includeEmpty]);
+  }, [dataset, dimensioneAzienda, includeEmpty]);
 
   const categories = useMemo(() => Object.keys(filtered), [filtered]);
 
@@ -40,7 +45,7 @@ export function useEsrsData(dimensioneAzienda, options = {}) {
     return results;
   }
 
-  return { categories, all: esrsDetails, filtered, search };
+  return { metadata: dataset.metadata, categories, filtered, search };
 }
 
 export default useEsrsData;

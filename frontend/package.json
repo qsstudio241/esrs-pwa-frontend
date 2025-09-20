@@ -18,6 +18,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
+    "validate:snapshot": "node scripts/validate-esrs-snapshot.js",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",

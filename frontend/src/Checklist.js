@@ -736,15 +736,15 @@ function Checklist({ audit, onUpdate }) {
     input.type = "file";
     input.multiple = true;
 
-    if (source === "camera") {
+  if (source === "camera") {
       // Configurazione ottimizzata per fotocamera mobile
       input.accept = "image/*";
       input.capture = "environment"; // Fotocamera posteriore
       // Forza una sola immagine per volta per evitare problemi di memoria
       input.multiple = false;
     } else {
-      // Configurazione per galleria/file
-      input.accept = "image/*,application/pdf,.doc,.docx,.xls,.xlsx";
+      // Configurazione per galleria/file: accetta qualsiasi tipo
+      input.accept = "*/*";
     }
 
     input.onchange = (e) => handleFileUploadOptimized(category, itemIndex, e);
@@ -1372,6 +1372,17 @@ function Checklist({ audit, onUpdate }) {
                         📷 Foto
                       </button>
                     </div>{" "}
+                    {evidence.error && (
+                      <div
+                        style={{
+                          color: "#c62828",
+                          fontSize: "12px",
+                          margin: "4px 0",
+                        }}
+                      >
+                        ⚠️ {evidence.error}
+                      </div>
+                    )}
                     {(files[key] || []).map((file, index) => (
                       <div key={index}>
                         {file.path ? (

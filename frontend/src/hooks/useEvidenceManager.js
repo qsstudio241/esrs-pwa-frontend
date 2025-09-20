@@ -7,13 +7,7 @@ import {
   appendPerformanceLog,
 } from "../utils/performanceProfiler";
 
-const ALLOWED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
+// Accept any file type; keep size constraints for local fallback
 const MAX_SINGLE = 2 * 1024 * 1024; // 2MB
 const MAX_TOTAL_PER_ITEM = 8 * 1024 * 1024; // 8MB cumulativi
 
@@ -91,6 +85,7 @@ export function useEvidenceManager(audit, onUpdate) {
   const addFiles = useCallback(
     async ({ category, itemLabel, fileList }) => {
       if (!ready) return;
+      setError(null);
       const key = keyFrom(category, itemLabel);
       const current = files[key] || [];
       const next = [...current];
@@ -113,9 +108,7 @@ export function useEvidenceManager(audit, onUpdate) {
           break;
         }
         try {
-          if (ALLOWED_TYPES.indexOf(file.type) === -1) {
-            throw new Error(`Tipo non consentito: ${file.type}`);
-          }
+          // No MIME whitelist: accept any file type
           if (window.showDirectoryPicker && storage.ready()) {
             const meta = await storage.saveEvidence(key, file, category);
             next.push({ name: meta.name, type: meta.type, path: meta.path });

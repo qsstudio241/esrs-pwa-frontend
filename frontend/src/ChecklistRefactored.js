@@ -174,6 +174,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                               style={{ display: "none" }}
                               id={`file-${cat}-${idx}`}
                               multiple
+                              accept="*/*"
                               onChange={(e) => {
                                 const fl = Array.from(e.target.files || []);
                                 evidence.addFiles({
@@ -195,6 +196,17 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                             >
                               Aggiungi evidenza
                             </label>
+                            {evidence.error && (
+                              <div
+                                style={{
+                                  color: "#c62828",
+                                  fontSize: ".6rem",
+                                  marginTop: 4,
+                                }}
+                              >
+                                ⚠️ {evidence.error}
+                              </div>
+                            )}
                             {evidList.length > 0 && (
                               <ul
                                 style={{
@@ -212,17 +224,77 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                       gap: 6,
                                     }}
                                   >
-                                    <span
-                                      style={{
-                                        fontSize: ".55rem",
-                                        maxWidth: 140,
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                      }}
-                                    >
-                                      {f.name}
-                                    </span>
+                                    {f.data ? (
+                                      <a
+                                        href={f.data}
+                                        download={f.name}
+                                        style={{ fontSize: ".55rem" }}
+                                      >
+                                        {f.name}
+                                      </a>
+                                    ) : f.path ? (
+                                      <span
+                                        style={{
+                                          display: "inline-flex",
+                                          alignItems: "center",
+                                          gap: 4,
+                                        }}
+                                      >
+                                        <button
+                                          type="button"
+                                          title={f.path}
+                                          onClick={() =>
+                                            alert(
+                                              `File salvato in ${f.path}. Apri la cartella audit per visualizzarlo.`
+                                            )
+                                          }
+                                          style={{
+                                            background: "none",
+                                            border: "none",
+                                            color: "#1976d2",
+                                            textDecoration: "underline",
+                                            cursor: "pointer",
+                                            padding: 0,
+                                            fontSize: ".55rem",
+                                          }}
+                                        >
+                                          {f.name}
+                                        </button>
+                                        <button
+                                          type="button"
+                                          title="Copia percorso"
+                                          onClick={async () => {
+                                            try {
+                                              await navigator.clipboard.writeText(
+                                                f.path
+                                              );
+                                            } catch {}
+                                          }}
+                                          style={{
+                                            fontSize: ".5rem",
+                                            border: "1px solid #ccc",
+                                            background: "#fafafa",
+                                            cursor: "pointer",
+                                            borderRadius: 3,
+                                            padding: "0 4px",
+                                          }}
+                                        >
+                                          Copia
+                                        </button>
+                                      </span>
+                                    ) : (
+                                      <span
+                                        style={{
+                                          fontSize: ".55rem",
+                                          maxWidth: 140,
+                                          overflow: "hidden",
+                                          textOverflow: "ellipsis",
+                                          whiteSpace: "nowrap",
+                                        }}
+                                      >
+                                        {f.name}
+                                      </span>
+                                    )}
                                     <button
                                       onClick={() =>
                                         evidence.removeFile({

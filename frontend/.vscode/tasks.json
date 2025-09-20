@@ -10,6 +10,14 @@
 				"$eslint-stylish"
 			],
 			"group": "build"
+		},
+		{
+			"label": "run-jest-once",
+			"type": "shell",
+			"command": "npm test -- --watchAll=false",
+			"problemMatcher": [
+				"$jest-stare"
+			]
 		}
 	]
 }

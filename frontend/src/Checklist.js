@@ -731,12 +731,12 @@ function Checklist({ audit, onUpdate }) {
   };
 
   // Funzione per gestire selezione file con fallback automatico
-  const handleFileSelect = (category, itemIndex, source) => {
+  const handleFileSelect = (category, itemLabel, source) => {
     const input = document.createElement("input");
     input.type = "file";
     input.multiple = true;
 
-  if (source === "camera") {
+    if (source === "camera") {
       // Configurazione ottimizzata per fotocamera mobile
       input.accept = "image/*";
       input.capture = "environment"; // Fotocamera posteriore
@@ -747,18 +747,16 @@ function Checklist({ audit, onUpdate }) {
       input.accept = "*/*";
     }
 
-    input.onchange = (e) => handleFileUploadOptimized(category, itemIndex, e);
+    input.onchange = (e) => handleFileUploadOptimized(category, itemLabel, e);
     input.click();
   };
 
   // compressImageAggressive ora fornita dal hook evidence (se necessaria internamente)
 
   // Funzione di upload ottimizzata per dispositivi con limitazioni
-  const handleFileUploadOptimized = async (category, itemIndex, event) => {
+  const handleFileUploadOptimized = async (category, itemLabel, event) => {
     const fileList = Array.from(event.target.files);
     if (!fileList.length) return;
-    const itemData = filteredEsrsDetails[category][itemIndex];
-    const itemLabel = typeof itemData === "string" ? itemData : itemData.item;
     await evidence.addFiles({ category, itemLabel, fileList });
   };
 
@@ -1335,9 +1333,7 @@ function Checklist({ audit, onUpdate }) {
                       }}
                     >
                       <button
-                        onClick={() =>
-                          handleFileSelect(category, itemIndex, "gallery")
-                        }
+                        onClick={() => handleFileSelect(category, item, "gallery")}
                         style={{
                           padding: "8px 12px",
                           backgroundColor: "#007bff",
@@ -1354,9 +1350,7 @@ function Checklist({ audit, onUpdate }) {
                       </button>
 
                       <button
-                        onClick={() =>
-                          handleFileSelect(category, itemIndex, "camera")
-                        }
+                        onClick={() => handleFileSelect(category, item, "camera")}
                         style={{
                           padding: "8px 12px",
                           backgroundColor: "#28a745",

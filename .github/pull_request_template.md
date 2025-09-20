@@ -1,4 +1,25 @@
-## Titolo PR
+## Summary
+- Refactor + coverage + E2E stabilization for ESRS PWA Frontend.
+
+## Changes
+- Strict DR-level ESRS coverage script and CI gate.
+- KPI: persist state, snapshot v2 includes `kpiState`, E2E for refactored UI.
+- Evidence (legacy UI): gallery flow robust; FS-mode selector fix.
+- Docs: README updated (setup, scripts, coverage, E2E, KPI, evidence, CI).
+
+## Tests
+- Unit tests (Jest) passing.
+- E2E (Playwright) passing locally; CI uploads HTML report.
+- Coverage strict: 100% per categoria.
+
+## CI
+- GitHub Actions: build, unit tests, strict coverage gate, E2E.
+
+## Checklist
+- [ ] Changes align to project style
+- [ ] CI green
+- [ ] Strict ESRS coverage remains at 100%
+- [ ] E2E stable on CI## Titolo PR
 
 Breve descrizione: cosa cambia e perché.
 

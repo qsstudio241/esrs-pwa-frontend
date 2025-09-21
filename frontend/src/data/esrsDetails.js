@@ -31,29 +31,77 @@ function fromEsrsBaseJson(json) {
       const items = Array.isArray(cat.items) ? cat.items : [];
       out[catKey] = items.map((it) => ({
         item: it.text,
-        applicability: it.applicability || ["Micro", "Piccola", "Media", "Grande"],
+        applicability: it.applicability || [
+          "Micro",
+          "Piccola",
+          "Media",
+          "Grande",
+        ],
         mandatory: typeof it.mandatory === "boolean" ? it.mandatory : true,
       }));
     });
     return out;
   } catch (e) {
-    console.warn("Impossibile convertire esrs-base.json, uso fallback hardcoded", e);
+    console.warn(
+      "Impossibile convertire esrs-base.json, uso fallback hardcoded",
+      e
+    );
     return null;
   }
 }
 
 const rawEsrsDetails = fromEsrsBaseJson(esrsBase) || {
   Generale: [
-    { item: "Categorie di principi di rendicontazione di sostenibilità, ambiti di rendicontazione e convenzioni redazionali", applicability: ["Micro", "Piccola", "Media", "Grande"], mandatory: true },
-    { item: "Caratteristiche qualitative delle informazioni", applicability: ["Micro", "Piccola", "Media", "Grande"], mandatory: true },
-    { item: "Doppia rilevanza come base per l'informativa sulla sostenibilità", applicability: ["Piccola", "Media", "Grande"], mandatory: true },
-    { item: "Dovere di diligenza", applicability: ["Media", "Grande"], mandatory: true },
-    { item: "Catena del valore", applicability: ["Media", "Grande"], mandatory: true },
-    { item: "Orizzonti temporali", applicability: ["Micro", "Piccola", "Media", "Grande"], mandatory: true },
-    { item: "Redazione e presentazione delle informazioni sulla sostenibilità", applicability: ["Micro", "Piccola", "Media", "Grande"], mandatory: true },
-    { item: "Struttura della dichiarazione di sostenibilità", applicability: ["Micro", "Piccola", "Media", "Grande"], mandatory: true },
-    { item: "Collegamenti con altre parti della rendicontazione societaria e informazioni collegate", applicability: ["Piccola", "Media", "Grande"], mandatory: true },
-    { item: "Disposizioni transitorie", applicability: ["Micro", "Piccola", "Media", "Grande"], mandatory: true },
+    {
+      item: "Categorie di principi di rendicontazione di sostenibilità, ambiti di rendicontazione e convenzioni redazionali",
+      applicability: ["Micro", "Piccola", "Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Caratteristiche qualitative delle informazioni",
+      applicability: ["Micro", "Piccola", "Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Doppia rilevanza come base per l'informativa sulla sostenibilità",
+      applicability: ["Piccola", "Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Dovere di diligenza",
+      applicability: ["Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Catena del valore",
+      applicability: ["Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Orizzonti temporali",
+      applicability: ["Micro", "Piccola", "Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Redazione e presentazione delle informazioni sulla sostenibilità",
+      applicability: ["Micro", "Piccola", "Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Struttura della dichiarazione di sostenibilità",
+      applicability: ["Micro", "Piccola", "Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Collegamenti con altre parti della rendicontazione societaria e informazioni collegate",
+      applicability: ["Piccola", "Media", "Grande"],
+      mandatory: true,
+    },
+    {
+      item: "Disposizioni transitorie",
+      applicability: ["Micro", "Piccola", "Media", "Grande"],
+      mandatory: true,
+    },
   ],
 };
 

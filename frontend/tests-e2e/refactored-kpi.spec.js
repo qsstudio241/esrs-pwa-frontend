@@ -16,13 +16,19 @@ test.describe("Refactored KPI interactions", () => {
     // Enable refactored UI
     await page.check('label:has-text("Usa nuova checklist (beta)") >> input');
 
-    // Open first category
-    // Wait for refactored UI to mount and open first category
+    // Wait for refactored UI to mount and open a non-Generale category (E1)
     await expect(
       page.locator('[aria-label="Checklist Refactored"]')
     ).toBeVisible();
-    const firstHeader = page.locator('[role="button"][id^="hdr-"]').first();
-    await firstHeader.click();
+    const e1Header = page.getByRole("button", { name: "E1" });
+    await expect(e1Header).toBeVisible();
+    const e1List = page.locator('[aria-label="Lista items E1"]');
+    // Open E1 if not expanded
+    const expanded = await e1Header.getAttribute("aria-expanded");
+    if (expanded !== "true") {
+      await e1Header.click();
+    }
+    await expect(e1List).toBeVisible();
 
     // Find first item KPI button and click it
     const kpiBtn = page.locator('button[title="Cambia stato KPI"]').first();
@@ -35,20 +41,33 @@ test.describe("Refactored KPI interactions", () => {
 
     // Reload and verify it persisted
     await page.reload();
-    // Select the audit again (current selection isn't persisted across reload)
-    await page.locator("select").selectOption({ index: 1 });
+    // Select the audit again by label to avoid index flakiness
+    await page.locator("select").waitFor();
+    const opt = page
+      .locator("select option")
+      .filter({ hasText: "KPI Test SpA" })
+      .first();
+    const optValue = await opt.getAttribute("value");
+    await page.locator("select").selectOption({ value: optValue });
+    // Ensure refactored UI is enabled first, then wait for it to appear
+    await page.check('label:has-text("Usa nuova checklist (beta)") >> input');
     await expect(
       page.locator('[aria-label="Checklist Refactored"]')
     ).toBeVisible();
-    // Ensure refactored UI is enabled
-    await page.check('label:has-text("Usa nuova checklist (beta)") >> input');
-    const firstHeaderAfter = page
-      .locator('[role="button"][id^="hdr-"]')
-      .first();
-    await firstHeaderAfter.click();
+    const e1HeaderAfter = page.getByRole("button", { name: "E1" });
+    await expect(e1HeaderAfter).toBeVisible();
+    const e1ListAfter = page.locator('[aria-label="Lista items E1"]');
+    const expandedAfter = await e1HeaderAfter.getAttribute("aria-expanded");
+    if (expandedAfter !== "true") {
+      await e1HeaderAfter.click();
+    }
+    await expect(e1ListAfter).toBeVisible();
+    // Wait for KPI toggle buttons to render under E1
     const kpiBtnAfter = page
       .locator('button[title="Cambia stato KPI"]')
       .first();
+    await kpiBtnAfter.waitFor({ state: "attached" });
+    await expect(kpiBtnAfter).toBeVisible();
     await expect(kpiBtnAfter).not.toHaveText(initialText || "—");
   });
 });

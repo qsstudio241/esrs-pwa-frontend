@@ -15,6 +15,7 @@ export function buildSnapshot(audit) {
     comments = {},
     files = {},
     completed = {},
+    kpiInputs = {},
     exportHistory = [],
   } = audit;
   // Mappa category-> slug item -> itemId dal dataset attuale per migrazione
@@ -59,7 +60,7 @@ export function buildSnapshot(audit) {
       generatedAt: new Date().toISOString(),
       migratedFrom: audit?.meta?.schemaVersion || 1,
     },
-    audit: { azienda, dimensione, dataAvvio, stato },
+    audit: { azienda, dimensione, dataAvvio, stato, kpiInputs },
     exportHistory,
     items: Object.values(items),
   };

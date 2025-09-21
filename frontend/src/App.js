@@ -257,9 +257,15 @@ function AuditSelector({
                   exportHistory: [],
                   directoryHandle: null, // nuovo campo per la persistenza
                   metricheAziendali: {
-                    fatturato: fatturato ? Number(fatturato) : null,
-                    dipendenti: dipendenti ? Number(dipendenti) : null,
-                    totaleAttivo: totaleAttivo ? Number(totaleAttivo) : null,
+                    fatturato: fatturato
+                      ? Number(String(fatturato).replace(/[^0-9]/g, ""))
+                      : null,
+                    dipendenti: dipendenti
+                      ? Number(String(dipendenti).replace(/[^0-9]/g, ""))
+                      : null,
+                    totaleAttivo: totaleAttivo
+                      ? Number(String(totaleAttivo).replace(/[^0-9]/g, ""))
+                      : null,
                     dimensioneCalcolata: dimCalcolata,
                   },
                 });

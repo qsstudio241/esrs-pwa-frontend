@@ -51,3 +51,38 @@ export function aggregateCategoryStatus(itemStatuses) {
     return KPI_STATES.OK;
   return KPI_STATES.OK;
 }
+
+export function validateKpiInputs(schema, inputs, ctx = {}) {
+  if (!schema) return { status: null, errors: [] };
+  const errors = [];
+  const vals = inputs || {};
+  for (const f of schema.fields || []) {
+    const v = vals[f.key];
+    if (f.required && (v === undefined || v === null || v === "")) {
+      errors.push(`${f.label}: obbligatorio`);
+      continue;
+    }
+    if (v === undefined || v === null || v === "") continue;
+    if (f.type === "number") {
+      const n = Number(v);
+      if (!Number.isFinite(n)) errors.push(`${f.label}: valore non numerico`);
+      if (f.min !== undefined && n < f.min)
+        errors.push(`${f.label}: deve essere >= ${f.min}`);
+      if (f.max !== undefined && n > f.max)
+        errors.push(`${f.label}: deve essere <= ${f.max}`);
+    }
+    if (f.type === "enum" && Array.isArray(f.enum) && !f.enum.includes(v)) {
+      errors.push(`${f.label}: valore non ammesso`);
+    }
+  }
+  for (const c of schema.checks || []) {
+    try {
+      const ok = c.test(vals, ctx);
+      if (!ok) errors.push(c.message || c.code);
+    } catch (e) {
+      errors.push(c.message || c.code || "Errore validazione");
+    }
+  }
+  const status = errors.length ? KPI_STATES.NOK : KPI_STATES.OK;
+  return { status, errors };
+}

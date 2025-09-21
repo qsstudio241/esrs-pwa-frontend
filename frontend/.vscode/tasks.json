@@ -18,6 +18,15 @@
 			"problemMatcher": [
 				"$jest-stare"
 			]
+		},
+		{
+			"label": "jest - unit tests",
+			"type": "shell",
+			"command": "npm test --silent -- --runTestsByPath src/__tests__/dimensioneAzienda.test.js",
+			"problemMatcher": [
+				"$jest-stare"
+			],
+			"group": "build"
 		}
 	]
 }

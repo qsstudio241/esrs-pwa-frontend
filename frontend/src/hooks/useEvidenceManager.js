@@ -103,6 +103,22 @@ export function useEvidenceManager(audit, onUpdate) {
         count: fileList.length,
       });
 
+      // Ensure FS permission if in FS mode
+      if (window.showDirectoryPicker && storage.ready()) {
+        try {
+          await storage.ensurePermission("readwrite");
+        } catch (e) {
+          setError(
+            "Permessi mancanti per la cartella audit. Riseleziona la cartella e riprova."
+          );
+          profiler.end("evidence_upload", {
+            newCount: next.length,
+            error: e.message,
+          });
+          return;
+        }
+      }
+
       for (const file of fileList) {
         if (next.length >= 5) {
           setError("Limite 5 file per item");
@@ -174,13 +190,19 @@ export function useEvidenceManager(audit, onUpdate) {
       }
       const next = current.filter((_, i) => i !== index);
       safeUpdate({ files: { ...getFiles(), [key]: next } });
+      // Prova a mantenere aggiornata la sessione permessi per re-upload immediato
+      if (window.showDirectoryPicker && storage.ready()) {
+        try {
+          await storage.ensurePermission("readwrite");
+        } catch {}
+      }
       recordTelemetry("evidence_remove", {
         category,
         itemLabel,
         remaining: next.length,
       });
     },
-    [keyFrom, safeUpdate, getFiles]
+    [keyFrom, safeUpdate, getFiles, storage]
   );
 
   const list = useCallback(

@@ -1,10 +1,13 @@
 [build]
-# Esegue lo script "build" dal package.json
+# Esegue build nella sottocartella frontend
+base = "frontend"
 command = "npm run build"
-
-# Cartella generata da React/CRACO da pubblicare
 publish = "build"
 
 [build.environment]
-# Versione Node stabile
 NODE_VERSION = "18"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200

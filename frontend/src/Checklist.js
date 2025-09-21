@@ -215,10 +215,21 @@ function Checklist({ audit, onUpdate }) {
       // Aggiorna lo stato della directory con il percorso corretto
       const isReady = storage.ready();
       setAuditDirReady(isReady);
-      setAuditPath(
+      const structurePath =
         result?.structure ||
-          `${audit.azienda}/${new Date().getFullYear()}_ESRS_Bilancio`
-      );
+        `${audit.azienda}/${new Date().getFullYear()}_ESRS_Bilancio`;
+      setAuditPath(structurePath);
+
+      // Persisti lo stato di configurazione per mostrare "Precedentemente configurata" al riavvio
+      const auditKey = `auditDir_${audit.id}`;
+      try {
+        localStorage.setItem(
+          auditKey,
+          JSON.stringify({ configured: isReady, structure: structurePath })
+        );
+      } catch (e) {
+        console.warn("Impossibile salvare stato cartella audit:", e);
+      }
 
       console.log(`🔍 DEBUG FINAL STATE:`, {
         isReady,
@@ -696,10 +707,8 @@ function Checklist({ audit, onUpdate }) {
   };
   const safeUpdate = (updates) => {
     try {
-      const updatedAudit = { ...audit, ...updates };
-      const auditString = JSON.stringify(updatedAudit);
-      localStorage.setItem("audits", auditString);
-      onUpdate(updatedAudit);
+      // Passa solo la patch: la persistenza dell'array 'audits' è gestita in App.js
+      onUpdate(updates);
       setErrorMessage("");
     } catch (e) {
       if (e.name === "QuotaExceededError") {

@@ -628,26 +628,29 @@ function prepareTemplateDataFromSnapshot(snapshot) {
     ? Math.round((completedItems / totalItems) * 100)
     : 0;
 
-  const sezioniESRS = {};
+  const sezioniESRSMap = {};
   items.forEach((it) => {
-    if (!sezioniESRS[it.category]) {
-      sezioniESRS[it.category] = {
+    if (!sezioniESRSMap[it.category]) {
+      sezioniESRSMap[it.category] = {
         name: it.category,
         items: [],
         completed: 0,
         total: 0,
       };
     }
-    sezioniESRS[it.category].items.push({
+    sezioniESRSMap[it.category].items.push({
       name: it.item,
       comment: it.comment || "",
-      completed: !!it.completed,
+      completed: it.completed ? "✅ Completato" : "⏳ Da completare",
       filesCount: (it.files || []).length,
       kpiState: it.kpiState || null,
     });
-    sezioniESRS[it.category].total++;
-    if (it.completed) sezioniESRS[it.category].completed++;
+    sezioniESRSMap[it.category].total++;
+    if (it.completed) sezioniESRSMap[it.category].completed++;
   });
+
+  // Converti in array per docxtemplater
+  const sezioniESRS = Object.values(sezioniESRSMap);
 
   const evidenze = [];
   items.forEach((it) => {
@@ -672,18 +675,28 @@ function prepareTemplateDataFromSnapshot(snapshot) {
       kpiState: it.kpiState || null,
     }));
 
-  const kpiCounts = items.reduce((acc, it) => {
+  const kpiCountsMap = items.reduce((acc, it) => {
     if (it.kpiState) acc[it.kpiState] = (acc[it.kpiState] || 0) + 1;
     return acc;
   }, {});
 
+  // Converti KPI counts in array per docxtemplater
+  const kpiCounts = Object.entries(kpiCountsMap).map(([stato, count]) => ({
+    stato,
+    count,
+  }));
+
   return {
-    azienda: audit.azienda,
-    dimensione: audit.dimensione,
+    azienda: audit.azienda || "Nome Azienda",
+    dimensione: audit.dimensione || "Non specificata",
     anno: new Date().getFullYear(),
-    dataAvvio: new Date(audit.dataAvvio).toLocaleDateString("it-IT"),
-    dataGenerazione: new Date(meta.generatedAt).toLocaleDateString("it-IT"),
-    stato: audit.stato,
+    dataAvvio: audit.dataAvvio
+      ? new Date(audit.dataAvvio).toLocaleDateString("it-IT")
+      : "Non specificata",
+    dataGenerazione: meta.generatedAt
+      ? new Date(meta.generatedAt).toLocaleDateString("it-IT")
+      : new Date().toLocaleDateString("it-IT"),
+    stato: audit.stato || "In corso",
     completedItems,
     totalItems,
     completionPercentage,
@@ -691,7 +704,7 @@ function prepareTemplateDataFromSnapshot(snapshot) {
     evidenze,
     commenti,
     kpiCounts,
-    schemaVersion: meta.schemaVersion,
+    schemaVersion: meta.schemaVersion || "2.0",
   };
 }
 

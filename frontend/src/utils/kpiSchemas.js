@@ -1,6 +1,7 @@
 import esrsDetails from "../data/esrsDetails";
+import { getSectoralKpiSchemas, detectIndustrySector } from "./sectoralKpis";
 
-function findItemId(category, labelStartsWith) {
+export function findItemId(category, labelStartsWith) {
   const items = esrsDetails[category] || [];
   const lower = labelStartsWith.toLowerCase();
   const found = items.find((it) =>
@@ -142,4 +143,28 @@ export function getKpiSchemasGenerale() {
   }
 
   return schemas;
+}
+
+/**
+ * Funzione principale per ottenere tutti i KPI (generali + settoriali)
+ */
+export function getAllKpiSchemas(auditData) {
+  const generaleSchemas = getKpiSchemasGenerale();
+
+  // Rileva settore industriale e aggiungi KPI specifici
+  const detectedSector = detectIndustrySector(auditData || {});
+  const sectoralSchemas = getSectoralKpiSchemas(detectedSector);
+
+  return {
+    ...generaleSchemas,
+    ...sectoralSchemas,
+    _metadata: {
+      detectedSector,
+      totalSchemas:
+        Object.keys(generaleSchemas).length +
+        Object.keys(sectoralSchemas).length,
+      hasGenerale: Object.keys(generaleSchemas).length > 0,
+      hasSectoral: Object.keys(sectoralSchemas).length > 0,
+    },
+  };
 }

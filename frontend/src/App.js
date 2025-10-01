@@ -3,6 +3,7 @@ import requisitiDimensioni from "./requisiti_dimensioni_esrs.json";
 import Checklist from "./Checklist";
 import ChecklistRefactored from "./ChecklistRefactored";
 import ErrorBoundary from "./components/ErrorBoundary";
+import MaterialityManagement from "./components/MaterialityManagement";
 import { StorageProvider } from "./storage/StorageContext";
 import { calcolaDimensioneAzienda } from "./utils/auditBusinessLogic";
 import {
@@ -307,6 +308,7 @@ function App() {
   });
   const [currentAuditId, setCurrentAuditId] = useState("");
   const [showClosed, setShowClosed] = useState(false);
+  const [activeTab, setActiveTab] = useState("checklist"); // nuovo state per tab
   const [useRefactored, setUseRefactored] = useState(() => {
     try {
       return localStorage.getItem("feature_refactored_checklist") === "1";
@@ -469,56 +471,112 @@ function App() {
           )}
         </div>
         {currentAudit ? (
-          <ErrorBoundary
-            onReset={() => {
-              // Soft reset: ricarica audit corrente dall'array (già persistito) e forza re-render
-              setCurrentAuditId((id) => (id ? "" : currentAudit.id));
-              setTimeout(() => setCurrentAuditId(currentAudit.id), 0);
-            }}
-            renderExtra={({ error }) => (
-              <>
-                <button
-                  onClick={() => {
-                    try {
-                      const blob = new Blob(
-                        [JSON.stringify(currentAudit, null, 2)],
-                        { type: "application/json" }
-                      );
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = `audit_raw_${currentAudit.id}.json`;
-                      a.click();
-                      URL.revokeObjectURL(url);
-                    } catch (e) {
-                      console.error("Export raw audit failed", e);
-                    }
-                  }}
-                >
-                  Esporta dati grezzi
-                </button>
-                {error && (
+          <div>
+            {/* Tab Navigation */}
+            <div
+              style={{
+                display: "flex",
+                marginBottom: "1rem",
+                borderBottom: "2px solid #e9ecef",
+              }}
+            >
+              <button
+                onClick={() => setActiveTab("checklist")}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor:
+                    activeTab === "checklist" ? "#1976d2" : "white",
+                  color: activeTab === "checklist" ? "white" : "#1976d2",
+                  border: "2px solid #1976d2",
+                  borderBottom: "none",
+                  borderRadius: "6px 6px 0 0",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  marginRight: "0.25rem",
+                }}
+              >
+                📋 Checklist ESRS
+              </button>
+              <button
+                onClick={() => setActiveTab("materiality")}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor:
+                    activeTab === "materiality" ? "#1976d2" : "white",
+                  color: activeTab === "materiality" ? "white" : "#1976d2",
+                  border: "2px solid #1976d2",
+                  borderBottom: "none",
+                  borderRadius: "6px 6px 0 0",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                🎯 Analisi Materialità
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            <ErrorBoundary
+              onReset={() => {
+                // Soft reset: ricarica audit corrente dall'array (già persistito) e forza re-render
+                setCurrentAuditId((id) => (id ? "" : currentAudit.id));
+                setTimeout(() => setCurrentAuditId(currentAudit.id), 0);
+              }}
+              renderExtra={({ error }) => (
+                <>
                   <button
                     onClick={() => {
-                      console.error("Forzatura reload pagina dopo errore");
-                      window.location.reload();
+                      try {
+                        const blob = new Blob(
+                          [JSON.stringify(currentAudit, null, 2)],
+                          { type: "application/json" }
+                        );
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `audit_raw_${currentAudit.id}.json`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      } catch (e) {
+                        console.error("Export raw audit failed", e);
+                      }
                     }}
                   >
-                    Ricarica pagina
+                    Esporta dati grezzi
                   </button>
-                )}
-              </>
-            )}
-          >
-            {useRefactored ? (
-              <ChecklistRefactored
-                audit={currentAudit}
-                onUpdate={updateCurrentAudit}
-              />
-            ) : (
-              <Checklist audit={currentAudit} onUpdate={updateCurrentAudit} />
-            )}
-          </ErrorBoundary>
+                  {error && (
+                    <button
+                      onClick={() => {
+                        console.error("Forzatura reload pagina dopo errore");
+                        window.location.reload();
+                      }}
+                    >
+                      Ricarica pagina
+                    </button>
+                  )}
+                </>
+              )}
+            >
+              {activeTab === "checklist" ? (
+                useRefactored ? (
+                  <ChecklistRefactored
+                    audit={currentAudit}
+                    onUpdate={updateCurrentAudit}
+                  />
+                ) : (
+                  <Checklist
+                    audit={currentAudit}
+                    onUpdate={updateCurrentAudit}
+                  />
+                )
+              ) : (
+                <MaterialityManagement
+                  audit={currentAudit}
+                  onUpdate={updateCurrentAudit}
+                />
+              )}
+            </ErrorBoundary>
+          </div>
         ) : (
           <p>Seleziona un audit per iniziare.</p>
         )}

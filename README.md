@@ -1,6 +1,23 @@
 # ESRS PWA Frontend
 
-Applicazione React per la checklist ESRS/CSRD con supporto offline, export versionati e gestione evidenze su File System (quando disponibile) o in fallback su memoria del browser.
+Applicazione React per la ## UI: legacy vs refactored
+
+- Toggle: "Usa nuova checklist (beta)" abilita la UI refactor (`ChecklistRefactored`).
+- **Refactor (Beta UI)**: KPI con pulsante di ciclo stato, ricerca tempo reale, progress bar avanzata, gestione evidenze migliorata, export integrato
+- **Legacy UI**: Gestione completa evidenze con pulsanti "📁 Galleria" e "📷 Foto", export JSON/Word/HTML
+
+### 🚀 Roadmap UI Enhancement (In Progress)
+
+- **Ricerca tempo reale**: Migrazione da beta a legacy UI
+- **Progress bar avanzata**: Visualizzazione percentuale e contatori
+- **KPI management**: Sistema stati ciclico e validazione input
+- **Export buttons**: Integrazione pulsanti export miglioratilist ESRS/CSRD con supporto offline, export versionati e gestione evidenze su File System (quando disponibile) o in fallback su memoria del browser.
+
+## 🌐 Deployment Live
+
+- **Produzione**: https://esrs.netlify.app
+- **Auto-deploy**: Ogni push su `main` attiva deploy automatico Netlify
+- **Test produzione**: `npm run test:e2e -- prod-export-smoke.spec.ts`
 
 ## Requisiti
 
@@ -27,6 +44,22 @@ L’app è disponibile su `http://localhost:3000`.
 - `npm run test:e2e:headed` — E2E in modalità interattiva
 
 Report di copertura (strict) generato in `frontend/coverage-esrs/` con `coverage-report.json` e HTML.
+
+## 📊 Test Framework & Word Export
+
+### Test E2E Completi (Settembre 2024)
+
+- ✅ **Comprehensive Word Export**: Test completo audit con dati realistici
+- ✅ **Realistic Company Benchmarks**: Validazione con dati Maire Tecnimont
+- ✅ **Word Content Analysis**: Verifica contenuti con mammoth.js
+- ✅ **Production Validation**: Test su https://esrs.netlify.app
+
+### Word Export Dinamico
+
+- **Template Engine**: docxtemplater con placeholders dinamici
+- **File Generator**: `generateTemplateWithPlaceholders.js` per template Word
+- **Content Size**: ~43KB documenti professionali con audit completi
+- **Real Data**: Test con classificazione società, sezioni ESRS, KPI tracking
 
 ## UI: legacy vs refactored
 
@@ -67,11 +100,29 @@ Report di copertura (strict) generato in `frontend/coverage-esrs/` con `coverage
   - Copertura ESRS strict (gate)
   - E2E Playwright + upload report
 
+## 📋 Compliance Standard & Roadmap
+
+### PDR 134:2022 Compliance Status
+
+- **Stakeholder & Materialità**: 30% ⚠️ (Schema KPI base presente)
+- **Doppia Matrice Materialità**: 0% ❌ (Da implementare)
+- **Definizione KPI**: 75% ✅ (Sistema robusto, mancano KPI settoriali)
+- **Raccolta Dati**: 40% ⚠️ (Upload evidenze presente, mancano connettori automatici)
+- **Redazione Bilanci**: 90% ✅ (Export Word dinamico eccellente)
+
+**Compliance Media**: 47% - Vedi `REPORT_COMPLIANCE_PDR1342022.md` per dettagli completi
+
+### Roadmap UI Enhancement (In corso)
+
+- Migrazione features beta UI → legacy UI per consistenza interfaccia
+- Ricerca tempo reale, progress bar avanzata, gestione KPI migliorata
+
 ## Note di sviluppo
 
 - Dataset modulare: `src/data/esrsDetails.js` con `itemId` deterministici e classificazioni.
 - Refactor hooks: `useEvidenceManager`, `useKpiState`, `useAutosaveDebounce` (solo dove utile), `useEsrsData`.
 - Esportatori: `src/utils/exporters/index.js` (JSON/Word/HTML).
+- Checklist dinamica: `src/checklists/esrs-base.json` - Configurazione ESRS completa
 
 ## Netlify
 

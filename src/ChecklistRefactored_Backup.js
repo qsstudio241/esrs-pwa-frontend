@@ -11,51 +11,48 @@ import {
   exportHTML,
   exportWord,
   buildExportFileName,
-} from "./utils/exporters";
-import { useStorage } from "./storage/StorageContext";
+} from "./utils/exporters                                    {validation.errors.length > 0 && (
+                                      <ul
+                                        style={{
+                                          marginTop: 8,
+                                          color: "#c62828",
+                                          fontSize: ".65rem",
+                                        }}
+                                      >
+                                        {validation.errors.map((err, i) => (
+                                          <li key={i}>⚠️ {err}</li>
+                                        ))}
+                                      </ul>
+                                    )}
+                                  </div>
+                                )}
+                              </div>seStorage } from "./storage/StorageContext";
 
 // Helper function per tooltip informativi sui campi KPI
 function getKpiFieldTooltip(field, schema) {
-  const baseTooltip = `${field.label}${
-    field.unit ? ` (Unità: ${field.unit})` : ""
-  }`;
-  const requiredText = field.required
-    ? " • Campo obbligatorio per conformità ESRS"
-    : " • Campo opzionale";
-  const rangeText =
-    field.min !== undefined || field.max !== undefined
-      ? ` • Range: ${field.min ?? "min"} - ${field.max ?? "max"}`
-      : "";
-  const enumText = field.enum
-    ? ` • Valori ammessi: ${field.enum.join(", ")}`
+  const baseTooltip = `${field.label}${field.unit ? ` (Unità: ${field.unit})` : ""}`;
+  const requiredText = field.required ? " • Campo obbligatorio per conformità ESRS" : " • Campo opzionale";
+  const rangeText = field.min !== undefined || field.max !== undefined 
+    ? ` • Range: ${field.min ?? "min"} - ${field.max ?? "max"}` 
     : "";
-
+  const enumText = field.enum ? ` • Valori ammessi: ${field.enum.join(", ")}` : "";
+  
   // Descrizioni specifiche per campi comuni
   const descriptions = {
-    valutazione_materialita_eseguita:
-      "Indica se è stata condotta l'analisi di doppia materialità secondo PDR 134:2022",
-    coinvolgimento_stakeholder:
-      "Conferma il coinvolgimento degli stakeholder nell'analisi di materialità",
-    metodologia: "Metodologia utilizzata per l'analisi di materialità",
-    data: "Data di completamento della valutazione",
-    confini_reporting_definiti:
-      "Definizione dei confini di rendicontazione della catena del valore",
-    copertura_upstream:
-      "Percentuale di copertura della catena del valore a monte",
-    copertura_downstream:
-      "Percentuale di copertura della catena del valore a valle",
-    orizzonte_breve_anni:
-      "Orizzonte temporale di breve periodo (tipicamente 1-3 anni)",
-    orizzonte_medio_anni:
-      "Orizzonte temporale di medio periodo (tipicamente 3-10 anni)",
-    orizzonte_lungo_anni:
-      "Orizzonte temporale di lungo periodo (oltre 10 anni)",
+    "valutazione_materialita_eseguita": "Indica se è stata condotta l'analisi di doppia materialità secondo PDR 134:2022",
+    "coinvolgimento_stakeholder": "Conferma il coinvolgimento degli stakeholder nell'analisi di materialità",
+    "metodologia": "Metodologia utilizzata per l'analisi di materialità",
+    "data": "Data di completamento della valutazione",
+    "confini_reporting_definiti": "Definizione dei confini di rendicontazione della catena del valore",
+    "copertura_upstream": "Percentuale di copertura della catena del valore a monte",
+    "copertura_downstream": "Percentuale di copertura della catena del valore a valle",
+    "orizzonte_breve_anni": "Orizzonte temporale di breve periodo (tipicamente 1-3 anni)",
+    "orizzonte_medio_anni": "Orizzonte temporale di medio periodo (tipicamente 3-10 anni)", 
+    "orizzonte_lungo_anni": "Orizzonte temporale di lungo periodo (oltre 10 anni)"
   };
-
-  const description = descriptions[field.key]
-    ? ` • ${descriptions[field.key]}`
-    : "";
-
+  
+  const description = descriptions[field.key] ? ` • ${descriptions[field.key]}` : "";
+  
   return `${baseTooltip}${requiredText}${rangeText}${enumText}${description}`;
 }
 
@@ -132,7 +129,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
 
   return (
     <div style={{ padding: "1rem" }} aria-label="Checklist Refactored">
-      <h2 tabIndex={0}>📋 Checklist ESRS (Enhanced con KPI)</h2>
+      <h2 tabIndex={0}>Checklist (Refactored Preview)</h2>
       <div style={{ display: "flex", gap: 8, margin: "0.5rem 0 1rem" }}>
         <button
           type="button"
@@ -284,32 +281,18 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                     const itemLabel = it.item;
                     const evidList = evidence.list(cat, itemLabel);
                     // Ottieni schema KPI: prima da allKpiSchemas (include settoriali), poi da generali
-                    const schema =
-                      allKpiSchemas[it.itemId] ||
-                      (cat === "Generale"
-                        ? kpiSchemasGenerale[it.itemId]
-                        : null);
+                    const schema = allKpiSchemas[it.itemId] || 
+                      (cat === "Generale" ? kpiSchemasGenerale[it.itemId] : null);
                     const inputs = schema ? kpiInputs.getFor(it.itemId) : {};
                     const validation = schema
                       ? validateKpiInputs(schema, inputs, { dimensione })
                       : { status: null, errors: [] };
-
-                    const hasRequiredFields =
-                      schema &&
-                      schema.fields.some(
-                        (f) =>
-                          f.required &&
-                          (inputs[f.key] === undefined ||
-                            inputs[f.key] === null ||
-                            inputs[f.key] === "")
-                      );
-
                     return (
                       <li
                         key={key}
                         style={{
                           display: "flex",
-                          alignItems: "flex-start",
+                          alignItems: "center",
                           gap: ".5rem",
                           padding: ".25rem 0",
                           borderBottom: "1px solid #eee",
@@ -317,13 +300,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                         aria-label={`Item ${itemLabel}`}
                       >
                         {schema ? (
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: ".25rem",
-                            }}
-                          >
+                          <div style={{ display: "flex", alignItems: "center", gap: ".25rem" }}>
                             <button
                               onClick={() => {
                                 const res = validateKpiInputs(schema, inputs, {
@@ -340,28 +317,36 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                     },
                                   });
                               }}
-                              disabled={hasRequiredFields}
+                              disabled={
+                                schema.fields.some(f => f.required && 
+                                  (inputs[f.key] === undefined || inputs[f.key] === null || inputs[f.key] === "")
+                                )
+                              }
                               style={{
                                 minWidth: 90,
                                 fontSize: ".7rem",
                                 padding: ".25rem .4rem",
-                                cursor: hasRequiredFields
-                                  ? "not-allowed"
-                                  : "pointer",
+                                cursor: schema.fields.some(f => f.required && 
+                                  (inputs[f.key] === undefined || inputs[f.key] === null || inputs[f.key] === "")
+                                ) ? "not-allowed" : "pointer",
                                 borderRadius: 3,
                                 border: "1px solid #ccc",
                                 background: validation.status
-                                  ? validation.status === KPI_STATES.OK
-                                    ? "#d4edda"
-                                    : validation.status === KPI_STATES.NOK
-                                    ? "#f8d7da"
+                                  ? validation.status === KPI_STATES.OK 
+                                    ? "#d4edda" 
+                                    : validation.status === KPI_STATES.NOK 
+                                    ? "#f8d7da" 
                                     : "#fff3cd"
                                   : "#fafafa",
-                                opacity: hasRequiredFields ? 0.6 : 1,
+                                opacity: schema.fields.some(f => f.required && 
+                                  (inputs[f.key] === undefined || inputs[f.key] === null || inputs[f.key] === "")
+                                ) ? 0.6 : 1,
                               }}
                               aria-pressed={!!validation.status}
                               title={
-                                hasRequiredFields
+                                schema.fields.some(f => f.required && 
+                                  (inputs[f.key] === undefined || inputs[f.key] === null || inputs[f.key] === "")
+                                ) 
                                   ? "Completa i campi obbligatori prima di verificare"
                                   : "Verifica KPI"
                               }
@@ -374,19 +359,19 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                   fontSize: ".6rem",
                                   padding: ".1rem .3rem",
                                   borderRadius: 8,
-                                  background:
-                                    validation.status === KPI_STATES.OK
-                                      ? "#28a745"
-                                      : validation.status === KPI_STATES.NOK
-                                      ? "#dc3545"
+                                  background: 
+                                    validation.status === KPI_STATES.OK 
+                                      ? "#28a745" 
+                                      : validation.status === KPI_STATES.NOK 
+                                      ? "#dc3545" 
                                       : "#ffc107",
                                   color: "white",
                                   fontWeight: "bold",
                                 }}
                                 title={
-                                  validation.status === KPI_STATES.OK
+                                  validation.status === KPI_STATES.OK 
                                     ? "Tutti i KPI sono conformi"
-                                    : validation.status === KPI_STATES.NOK
+                                    : validation.status === KPI_STATES.NOK 
                                     ? "Alcuni KPI non sono conformi"
                                     : "Stato KPI intermedio"
                                 }
@@ -439,28 +424,20 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                     fontSize: ".7rem",
                                     fontWeight: 600,
                                     padding: "8px 12px",
-                                    background: validation.status
-                                      ? validation.status === KPI_STATES.OK
-                                        ? "#d4edda"
-                                        : validation.status === KPI_STATES.NOK
-                                        ? "#f8d7da"
+                                    background: validation.status 
+                                      ? validation.status === KPI_STATES.OK 
+                                        ? "#d4edda" 
+                                        : validation.status === KPI_STATES.NOK 
+                                        ? "#f8d7da" 
                                         : "#fff3cd"
                                       : "#f8f9fa",
                                     cursor: "pointer",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "space-between",
-                                    borderBottom: openKpiSections.has(it.itemId)
-                                      ? "1px solid #ddd"
-                                      : "none",
+                                    borderBottom: openKpiSections.has(it.itemId) ? "1px solid #ddd" : "none",
                                   }}
-                                  title={`Schema KPI per ${
-                                    schema.title
-                                  }. Clicca per ${
-                                    openKpiSections.has(it.itemId)
-                                      ? "nascondere"
-                                      : "mostrare"
-                                  } i parametri`}
+                                  title={`Schema KPI per ${schema.title}. Clicca per ${openKpiSections.has(it.itemId) ? 'nascondere' : 'mostrare'} i parametri`}
                                   role="button"
                                   tabIndex={0}
                                   onKeyDown={(e) => {
@@ -470,19 +447,13 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                     }
                                   }}
                                 >
-                                  <span
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: ".25rem",
-                                    }}
-                                  >
+                                  <span style={{ display: "flex", alignItems: "center", gap: ".25rem" }}>
                                     📊 Parametri KPI — {schema.title}
                                     <span
                                       style={{
                                         fontSize: ".6rem",
                                         color: "#666",
-                                        cursor: "help",
+                                        cursor: "help"
                                       }}
                                       title="Questi parametri sono richiesti dalla normativa ESRS per garantire la conformità della rendicontazione di sostenibilità"
                                       onClick={(e) => e.stopPropagation()}
@@ -490,9 +461,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                       ℹ️
                                     </span>
                                   </span>
-                                  <span
-                                    style={{ fontSize: ".8rem", color: "#666" }}
-                                  >
+                                  <span style={{ fontSize: ".8rem", color: "#666" }}>
                                     {openKpiSections.has(it.itemId) ? "▼" : "▶"}
                                   </span>
                                 </div>
@@ -512,139 +481,132 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                         marginBottom: 8,
                                       }}
                                     >
-                                      {schema.fields.map((f) => (
-                                        <label
-                                          key={f.key}
-                                          style={{
-                                            fontSize: ".65rem",
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            gap: 4,
-                                          }}
-                                        >
-                                          <span
-                                            title={getKpiFieldTooltip(
-                                              f,
-                                              schema
-                                            )}
-                                            style={{
-                                              cursor: "help",
-                                              textDecoration:
-                                                "underline dotted",
-                                              textUnderlineOffset: "2px",
-                                            }}
-                                          >
-                                            {f.label}
-                                            {f.unit ? ` (${f.unit})` : ""}
-                                            {f.required ? " *" : ""}
-                                          </span>
-                                          {f.type === "bool" && (
-                                            <select
-                                              value={
-                                                inputs[f.key] === true
-                                                  ? "true"
-                                                  : inputs[f.key] === false
-                                                  ? "false"
-                                                  : ""
-                                              }
-                                              onChange={(e) => {
-                                                const v = e.target.value;
-                                                kpiInputs.setField(
-                                                  it.itemId,
-                                                  f.key,
-                                                  v === "true"
-                                                    ? true
-                                                    : v === "false"
-                                                    ? false
-                                                    : ""
-                                                );
-                                              }}
-                                            >
-                                              <option value="">—</option>
-                                              <option value="true">Sì</option>
-                                              <option value="false">No</option>
-                                            </select>
-                                          )}
-                                          {f.type === "number" && (
-                                            <input
-                                              type="number"
-                                              value={inputs[f.key] ?? ""}
-                                              onChange={(e) =>
-                                                kpiInputs.setField(
-                                                  it.itemId,
-                                                  f.key,
-                                                  e.target.value === ""
-                                                    ? ""
-                                                    : Number(e.target.value)
-                                                )
-                                              }
-                                              min={f.min}
-                                              max={f.max}
-                                            />
-                                          )}
-                                          {f.type === "enum" && (
-                                            <select
-                                              value={inputs[f.key] ?? ""}
-                                              onChange={(e) =>
-                                                kpiInputs.setField(
-                                                  it.itemId,
-                                                  f.key,
-                                                  e.target.value
-                                                )
-                                              }
-                                            >
-                                              <option value="">—</option>
-                                              {f.enum.map((opt) => (
-                                                <option key={opt} value={opt}>
-                                                  {opt}
-                                                </option>
-                                              ))}
-                                            </select>
-                                          )}
-                                          {f.type === "date" && (
-                                            <input
-                                              type="date"
-                                              value={inputs[f.key] ?? ""}
-                                              onChange={(e) =>
-                                                kpiInputs.setField(
-                                                  it.itemId,
-                                                  f.key,
-                                                  e.target.value
-                                                )
-                                              }
-                                            />
-                                          )}
-                                          {f.type === "text" && (
-                                            <input
-                                              type="text"
-                                              value={inputs[f.key] ?? ""}
-                                              onChange={(e) =>
-                                                kpiInputs.setField(
-                                                  it.itemId,
-                                                  f.key,
-                                                  e.target.value
-                                                )
-                                              }
-                                            />
-                                          )}
-                                        </label>
-                                      ))}
-                                    </div>
-                                    {validation.errors.length > 0 && (
-                                      <ul
-                                        style={{
-                                          marginTop: 8,
-                                          color: "#c62828",
-                                          fontSize: ".65rem",
-                                          paddingLeft: "1rem",
+                                  {schema.fields.map((f) => (
+                                    <label
+                                      key={f.key}
+                                      style={{
+                                        fontSize: ".65rem",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: 4,
+                                      }}
+                                    >
+                                      <span
+                                        title={getKpiFieldTooltip(f, schema)}
+                                        style={{ 
+                                          cursor: "help", 
+                                          textDecoration: "underline dotted",
+                                          textUnderlineOffset: "2px"
                                         }}
                                       >
-                                        {validation.errors.map((err, i) => (
-                                          <li key={i}>⚠️ {err}</li>
-                                        ))}
-                                      </ul>
-                                    )}
-                                  </div>
+                                        {f.label}
+                                        {f.unit ? ` (${f.unit})` : ""}
+                                        {f.required ? " *" : ""}
+                                      </span>
+                                      {f.type === "bool" && (
+                                        <select
+                                          value={
+                                            inputs[f.key] === true
+                                              ? "true"
+                                              : inputs[f.key] === false
+                                              ? "false"
+                                              : ""
+                                          }
+                                          onChange={(e) => {
+                                            const v = e.target.value;
+                                            kpiInputs.setField(
+                                              it.itemId,
+                                              f.key,
+                                              v === "true"
+                                                ? true
+                                                : v === "false"
+                                                ? false
+                                                : ""
+                                            );
+                                          }}
+                                        >
+                                          <option value="">—</option>
+                                          <option value="true">Sì</option>
+                                          <option value="false">No</option>
+                                        </select>
+                                      )}
+                                      {f.type === "number" && (
+                                        <input
+                                          type="number"
+                                          value={inputs[f.key] ?? ""}
+                                          onChange={(e) =>
+                                            kpiInputs.setField(
+                                              it.itemId,
+                                              f.key,
+                                              e.target.value === ""
+                                                ? ""
+                                                : Number(e.target.value)
+                                            )
+                                          }
+                                          min={f.min}
+                                          max={f.max}
+                                        />
+                                      )}
+                                      {f.type === "enum" && (
+                                        <select
+                                          value={inputs[f.key] ?? ""}
+                                          onChange={(e) =>
+                                            kpiInputs.setField(
+                                              it.itemId,
+                                              f.key,
+                                              e.target.value
+                                            )
+                                          }
+                                        >
+                                          <option value="">—</option>
+                                          {f.enum.map((opt) => (
+                                            <option key={opt} value={opt}>
+                                              {opt}
+                                            </option>
+                                          ))}
+                                        </select>
+                                      )}
+                                      {f.type === "date" && (
+                                        <input
+                                          type="date"
+                                          value={inputs[f.key] ?? ""}
+                                          onChange={(e) =>
+                                            kpiInputs.setField(
+                                              it.itemId,
+                                              f.key,
+                                              e.target.value
+                                            )
+                                          }
+                                        />
+                                      )}
+                                      {f.type === "text" && (
+                                        <input
+                                          type="text"
+                                          value={inputs[f.key] ?? ""}
+                                          onChange={(e) =>
+                                            kpiInputs.setField(
+                                              it.itemId,
+                                              f.key,
+                                              e.target.value
+                                            )
+                                          }
+                                        />
+                                      )}
+                                    </label>
+                                  ))}
+                                </div>
+                                {validation.errors.length > 0 && (
+                                  <ul
+                                    style={{
+                                      marginTop: 8,
+                                      color: "#c62828",
+                                      fontSize: ".65rem",
+                                    }}
+                                  >
+                                    {validation.errors.map((err, i) => (
+                                      <li key={i}>⚠️ {err}</li>
+                                    ))}
+                                  </ul>
                                 )}
                               </div>
                             )}
@@ -673,7 +635,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                 textDecoration: "underline",
                               }}
                             >
-                              📎 Aggiungi evidenza
+                              Aggiungi evidenza
                             </label>
                             {evidence.error && (
                               <div
@@ -709,7 +671,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                         download={f.name}
                                         style={{ fontSize: ".55rem" }}
                                       >
-                                        📄 {f.name}
+                                        {f.name}
                                       </a>
                                     ) : f.path ? (
                                       <span
@@ -737,7 +699,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                             fontSize: ".55rem",
                                           }}
                                         >
-                                          📄 {f.name}
+                                          {f.name}
                                         </button>
                                         <button
                                           type="button"
@@ -758,7 +720,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                             padding: "0 4px",
                                           }}
                                         >
-                                          📋
+                                          Copia
                                         </button>
                                       </span>
                                     ) : (
@@ -771,7 +733,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                           whiteSpace: "nowrap",
                                         }}
                                       >
-                                        📄 {f.name}
+                                        {f.name}
                                       </span>
                                     )}
                                     <button

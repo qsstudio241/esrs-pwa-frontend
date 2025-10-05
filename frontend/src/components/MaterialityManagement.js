@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MaterialityMatrix from "./MaterialityMatrix";
 import SurveyBuilder from "./SurveyBuilder";
 import MaterialityReportDemo from "./MaterialityReportDemo";
+import StructuredMaterialityQuestionnaire from "./StructuredMaterialityQuestionnaire";
 import { useMaterialityData } from "../hooks/useMaterialityData";
 import {
   analyzeMaterialityPriority,
@@ -16,6 +17,7 @@ import {
 function MaterialityManagement({ audit, onUpdate }) {
   const [activeTab, setActiveTab] = useState("matrix");
   const [surveys, setSurveys] = useState([]);
+  const [structuredResults, setStructuredResults] = useState(null);
 
   const {
     topics,
@@ -216,6 +218,11 @@ function MaterialityManagement({ audit, onUpdate }) {
             label: "📄 Report Word Demo",
             count: "Test con dati reali",
           },
+          {
+            key: "structured",
+            label: "🏗️ Questionario ISO 26000",
+            count: structuredResults ? "Completato" : "Da avviare",
+          },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -334,6 +341,26 @@ function MaterialityManagement({ audit, onUpdate }) {
         )}
 
         {activeTab === "word-demo" && <MaterialityReportDemo />}
+
+        {activeTab === "structured" && (
+          <StructuredMaterialityQuestionnaire
+            onComplete={(results) => {
+              setStructuredResults(results);
+              // Integra i risultati nel sistema materialità principale
+              if (results.scoring && results.scoring.materialityMatrix) {
+                results.scoring.materialityMatrix.forEach((item) => {
+                  updateTopic(item.id, {
+                    insideOutScore: item.insideOut,
+                    outsideInScore: item.outsideIn,
+                  });
+                });
+              }
+            }}
+            selectedThemes={topics.filter(
+              (t) => t.insideOutScore > 3 || t.outsideInScore > 3
+            )}
+          />
+        )}
       </div>
     </div>
   );

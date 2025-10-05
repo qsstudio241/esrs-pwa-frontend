@@ -13,19 +13,23 @@ function MaterialityMatrix({
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Calcola quadranti della matrice
+  // Calcola quadranti della matrice - mappatura corretta inside-out/outside-in
   const quadrants = useMemo(() => {
+    // Usa insideOutScore e outsideInScore se disponibili, altrimenti fallback a impactScore/financialScore
+    const getInsideOut = (t) => t.insideOutScore ?? t.impactScore ?? 0;
+    const getOutsideIn = (t) => t.outsideInScore ?? t.financialScore ?? 0;
+
     const q1 = topics.filter(
-      (t) => t.impactScore >= threshold && t.financialScore >= threshold
+      (t) => getInsideOut(t) >= threshold && getOutsideIn(t) >= threshold
     );
     const q2 = topics.filter(
-      (t) => t.impactScore >= threshold && t.financialScore < threshold
+      (t) => getInsideOut(t) >= threshold && getOutsideIn(t) < threshold
     );
     const q3 = topics.filter(
-      (t) => t.impactScore < threshold && t.financialScore < threshold
+      (t) => getInsideOut(t) < threshold && getOutsideIn(t) < threshold
     );
     const q4 = topics.filter(
-      (t) => t.impactScore < threshold && t.financialScore >= threshold
+      (t) => getInsideOut(t) < threshold && getOutsideIn(t) >= threshold
     );
 
     return {
@@ -371,8 +375,11 @@ function MaterialityMatrix({
           </p>
           <p style={{ margin: 0, fontSize: "0.9rem" }}>
             Clicca sulla matrice per posizionare il tema. Posizione attuale:
-            Impatto {selectedTopic.impactScore}/5, Finanziario{" "}
-            {selectedTopic.financialScore}/5
+            Inside-out{" "}
+            {selectedTopic.insideOutScore ?? selectedTopic.impactScore ?? 0}/5,
+            Outside-in{" "}
+            {selectedTopic.outsideInScore ?? selectedTopic.financialScore ?? 0}
+            /5
           </p>
         </div>
       )}

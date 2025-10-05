@@ -179,6 +179,8 @@ function getDefaultESRSTopics() {
         "Emissioni GHG, transizione energetica, adattamento climatico",
       impactScore: 4,
       financialScore: 4,
+      insideOutScore: 4, // Impatto dell'azienda sull'ambiente
+      outsideInScore: 4, // Rischi climatici per l'azienda
       stakeholderRelevance: "High",
       regulatoryRequirement: true,
       esrsReference: "ESRS E1",

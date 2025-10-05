@@ -3,6 +3,7 @@ import MaterialityMatrix from "./MaterialityMatrix";
 import SurveyBuilder from "./SurveyBuilder";
 import MaterialityReportDemo from "./MaterialityReportDemo";
 import StructuredMaterialityQuestionnaire from "./StructuredMaterialityQuestionnaire";
+import { integrateISO26000Results } from "../utils/materialityIntegration";
 import { useMaterialityData } from "../hooks/useMaterialityData";
 import {
   analyzeMaterialityPriority,
@@ -345,20 +346,138 @@ function MaterialityManagement({ audit, onUpdate }) {
         {activeTab === "structured" && (
           <StructuredMaterialityQuestionnaire
             onComplete={(results) => {
+              console.log("🎯 Questionario completato, risultati:", results);
               setStructuredResults(results);
-              // Integra i risultati nel sistema materialità principale
-              if (results.scoring && results.scoring.materialityMatrix) {
-                results.scoring.materialityMatrix.forEach((item) => {
-                  updateTopic(item.id, {
-                    insideOutScore: item.insideOut,
-                    outsideInScore: item.outsideIn,
-                  });
+
+              // Verifica presenza dati scoring
+              if (!results?.scoring?.themeScores) {
+                console.error(
+                  "❌ Nessun dato di scoring trovato nei risultati"
+                );
+                alert("Errore: Risultati questionario incompleti. Riprova.");
+                return;
+              }
+
+              console.log(
+                "📊 Theme scores trovati:",
+                results.scoring.themeScores
+              );
+              console.log(
+                "📊 Topic attuali matrice PRIMA dell'integrazione:",
+                topics.map((t) => ({
+                  id: t.id,
+                  name: t.name,
+                  inside: t.insideOutScore ?? t.impactScore,
+                  outside: t.outsideInScore ?? t.financialScore,
+                }))
+              );
+
+              // Integra i risultati ISO 26000 con i topic della matrice esistente
+              try {
+                const updatedTopics = integrateISO26000Results(results, topics);
+                console.log(
+                  "🔄 Topic aggiornati dall'integrazione:",
+                  updatedTopics
+                );
+
+                let updatedCount = 0;
+                const topicsToUpdate = [];
+
+                // Identifica tutti i topic da aggiornare
+                updatedTopics.forEach((updatedTopic) => {
+                  const existingTopic = topics.find(
+                    (t) => t.id === updatedTopic.id
+                  );
+                  if (
+                    existingTopic &&
+                    (updatedTopic.insideOutScore !==
+                      existingTopic.insideOutScore ||
+                      updatedTopic.outsideInScore !==
+                        existingTopic.outsideInScore)
+                  ) {
+                    console.log(
+                      `📝 Preparando aggiornamento topic ${updatedTopic.id}:`,
+                      {
+                        old: {
+                          inside: existingTopic.insideOutScore,
+                          outside: existingTopic.outsideInScore,
+                        },
+                        new: {
+                          inside: updatedTopic.insideOutScore,
+                          outside: updatedTopic.outsideInScore,
+                        },
+                      }
+                    );
+
+                    topicsToUpdate.push({
+                      id: updatedTopic.id,
+                      updates: {
+                        insideOutScore: updatedTopic.insideOutScore,
+                        outsideInScore: updatedTopic.outsideInScore,
+                        isoThemeMapping: updatedTopic.isoThemeMapping,
+                        lastISOUpdate: updatedTopic.lastISOUpdate,
+                      },
+                    });
+                    updatedCount++;
+                  }
                 });
+
+                // Aggiornamento batch di tutti i topic
+                if (topicsToUpdate.length > 0) {
+                  console.log(
+                    `🔄 Eseguendo aggiornamento batch di ${topicsToUpdate.length} topic...`
+                  );
+                  topicsToUpdate.forEach(({ id, updates }) => {
+                    updateTopic(id, updates);
+                  });
+
+                  // Forza re-render forzando aggiornamento dello stato
+                  setTimeout(() => {
+                    console.log("🔄 Forzando refresh della matrice...");
+                    // Trigger re-render forzato
+                    setActiveTab("matrix"); // Assicura che siamo sul tab corretto
+                  }, 100);
+                }
+
+                console.log(
+                  `✅ Integrazione ISO 26000 completata: ${updatedCount} topic effettivamente aggiornati`
+                );
+
+                // Controllo finale: stato topic DOPO aggiornamento
+                setTimeout(() => {
+                  console.log(
+                    "📊 Topic matrice DOPO integrazione:",
+                    topics.map((t) => ({
+                      id: t.id,
+                      name: t.name,
+                      inside: t.insideOutScore ?? t.impactScore,
+                      outside: t.outsideInScore ?? t.financialScore,
+                      updated: t.lastISOUpdate ? "✅" : "❌",
+                    }))
+                  );
+                }, 500);
+
+                if (updatedCount > 0) {
+                  alert(
+                    `✅ Matrice aggiornata con successo!\n${updatedCount} topic sono stati aggiornati con i dati del questionario ISO 26000.`
+                  );
+                } else {
+                  alert(
+                    "⚠️ Nessun topic aggiornato. Verifica la mappatura dei temi."
+                  );
+                }
+              } catch (error) {
+                console.error("❌ Errore nell'integrazione:", error);
+                alert(
+                  "Errore nell'aggiornamento della matrice: " + error.message
+                );
               }
             }}
             selectedThemes={topics.filter(
               (t) => t.insideOutScore > 3 || t.outsideInScore > 3
             )}
+            audit={audit}
+            onUpdate={onUpdate}
           />
         )}
       </div>

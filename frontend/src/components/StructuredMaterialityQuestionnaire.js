@@ -3,6 +3,7 @@ import {
   generateStructuredQuestionnaire,
   calculateMaterialityScoring,
 } from "../utils/materialityFrameworkISO26000";
+import { useEvidenceManager } from "../hooks/useEvidenceManager";
 
 /**
  * Componente per questionario strutturato ISO 26000 basato su Materiality_.txt
@@ -11,6 +12,8 @@ import {
 function StructuredMaterialityQuestionnaire({
   onComplete,
   selectedThemes = [],
+  audit,
+  onUpdate,
 }) {
   const [questionnaire, setQuestionnaire] = useState(null);
   const [responses, setResponses] = useState({});
@@ -18,11 +21,58 @@ function StructuredMaterialityQuestionnaire({
   const [completedSections, setCompletedSections] = useState(new Set());
   const [scoring, setScoring] = useState(null);
 
+  // Hook per gestione evidenze (file e foto)
+  const evidence = useEvidenceManager(audit, onUpdate);
+
+  // Chiave per localStorage basata sui temi selezionati
+  const storageKey = `iso26000_responses_${JSON.stringify(
+    selectedThemes.map((t) => t.id).sort()
+  ).replace(/[^a-zA-Z0-9]/g, "_")}`;
+
   useEffect(() => {
     // Genera questionario strutturato
     const generated = generateStructuredQuestionnaire(selectedThemes);
     setQuestionnaire(generated);
-  }, [selectedThemes]);
+
+    // Carica risposte salvate se esistenti
+    try {
+      const savedData = localStorage.getItem(storageKey);
+      if (savedData) {
+        const {
+          responses: savedResponses,
+          currentSection: savedSection,
+          completedSections: savedCompleted,
+        } = JSON.parse(savedData);
+        setResponses(savedResponses || {});
+        setCurrentSection(savedSection || 0);
+        setCompletedSections(new Set(savedCompleted || []));
+        console.log(
+          "📥 Risposte questionario ISO ripristinate:",
+          savedResponses
+        );
+      }
+    } catch (error) {
+      console.warn("⚠️ Errore nel ripristino dati questionario:", error);
+    }
+  }, [selectedThemes, storageKey]);
+
+  // Salva automaticamente lo stato quando cambiano le risposte
+  useEffect(() => {
+    if (Object.keys(responses).length > 0) {
+      try {
+        const dataToSave = {
+          responses,
+          currentSection,
+          completedSections: Array.from(completedSections),
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem(storageKey, JSON.stringify(dataToSave));
+        console.log("💾 Stato questionario salvato automaticamente");
+      } catch (error) {
+        console.warn("⚠️ Errore nel salvataggio automatico:", error);
+      }
+    }
+  }, [responses, currentSection, completedSections, storageKey]);
 
   const handleResponseChange = (questionId, value, type = "rating") => {
     setResponses((prev) => ({
@@ -33,6 +83,40 @@ function StructuredMaterialityQuestionnaire({
         timestamp: new Date().toISOString(),
       },
     }));
+  };
+
+  // Gestione caricamento evidenze per questionario ISO 26000
+  const handleFileSelect = (questionId, source = "gallery") => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.accept = source === "camera" ? "image/*" : "*/*";
+    if (source === "camera") {
+      input.capture = "environment"; // Camera posteriore
+    }
+
+    input.onchange = async (e) => {
+      const fileList = Array.from(e.target.files || []);
+      if (fileList.length && evidence.ready) {
+        try {
+          await evidence.addFiles({
+            category: "ISO26000",
+            itemLabel: questionId,
+            fileList,
+          });
+          console.log(
+            `📎 Aggiunti ${fileList.length} file alla domanda ${questionId}`
+          );
+        } catch (error) {
+          console.error("❌ Errore caricamento file:", error);
+        }
+      }
+      // Pulisci l'input per permettere re-selezione dello stesso file
+      document.body.removeChild(input);
+    };
+
+    document.body.appendChild(input);
+    input.click();
   };
 
   const handleSectionComplete = () => {
@@ -95,7 +179,11 @@ function StructuredMaterialityQuestionnaire({
 
   if (scoring) {
     return (
-      <MaterialityResults scoring={scoring} questionnaire={questionnaire} />
+      <MaterialityResults
+        scoring={scoring}
+        questionnaire={questionnaire}
+        onComplete={onComplete}
+      />
     );
   }
 
@@ -127,6 +215,7 @@ function StructuredMaterialityQuestionnaire({
               display: "flex",
               justifyContent: "space-between",
               fontSize: "14px",
+              marginBottom: "10px",
             }}
           >
             <span>
@@ -140,7 +229,7 @@ function StructuredMaterialityQuestionnaire({
               height: "8px",
               backgroundColor: "#e0e0e0",
               borderRadius: "4px",
-              marginTop: "5px",
+              marginBottom: "15px",
             }}
           >
             <div
@@ -152,6 +241,141 @@ function StructuredMaterialityQuestionnaire({
                 transition: "width 0.3s ease",
               }}
             />
+          </div>
+        </div>
+
+        {/* Navigazione Sezioni e Controlli */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10px",
+            alignItems: "center",
+            justifyContent: "space-between",
+            backgroundColor: "#f0f4f8",
+            padding: "10px",
+            borderRadius: "8px",
+            marginTop: "10px",
+          }}
+        >
+          {/* Pulsanti navigazione sezioni */}
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            {questionnaire.sections.map((section, idx) => {
+              // Estrae il codice dalla sezione (DU, LA, AM, etc.)
+              const sectionCode = section.title.split(" - ")[0];
+              const isCompleted = completedSections.has(idx);
+              const isCurrent = idx === currentSection;
+
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSection(idx)}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                    border: "2px solid",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    minWidth: "50px",
+                    backgroundColor: isCurrent
+                      ? "#1976d2"
+                      : isCompleted
+                      ? "#4caf50"
+                      : "#fff",
+                    color: isCurrent || isCompleted ? "white" : "#333",
+                    borderColor: isCurrent
+                      ? "#1976d2"
+                      : isCompleted
+                      ? "#4caf50"
+                      : "#ddd",
+                    transition: "all 0.2s ease",
+                  }}
+                  title={section.title}
+                >
+                  {sectionCode}
+                  {isCompleted && " ✓"}
+                  {isCurrent && " →"}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Controlli Import/Reset */}
+          <div style={{ display: "flex", gap: "8px" }}>
+            <input
+              type="file"
+              accept=".json"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    try {
+                      const importedData = JSON.parse(event.target.result);
+                      if (importedData.responses) {
+                        setResponses(importedData.responses);
+                        setCurrentSection(importedData.currentSection || 0);
+                        setCompletedSections(
+                          new Set(importedData.completedSections || [])
+                        );
+                        console.log(
+                          "📥 Dati questionario importati con successo"
+                        );
+                        alert("✅ Questionario importato con successo!");
+                      }
+                    } catch (error) {
+                      alert("❌ Errore nell'importazione: file non valido");
+                    }
+                  };
+                  reader.readAsText(file);
+                }
+              }}
+              style={{ display: "none" }}
+              id="import-questionnaire"
+            />
+            <label
+              htmlFor="import-questionnaire"
+              style={{
+                padding: "6px 12px",
+                backgroundColor: "#4caf50",
+                color: "white",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+                border: "none",
+              }}
+            >
+              📥 Importa JSON
+            </label>
+
+            <button
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "⚠️ Vuoi resettare tutto il questionario? Tutti i dati andranno persi."
+                  )
+                ) {
+                  setResponses({});
+                  setCurrentSection(0);
+                  setCompletedSections(new Set());
+                  setScoring(null);
+                  localStorage.removeItem(storageKey);
+                  console.log("🔄 Questionario resettato");
+                }
+              }}
+              style={{
+                padding: "6px 12px",
+                backgroundColor: "#f44336",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+              }}
+            >
+              🔄 Reset
+            </button>
           </div>
         </div>
       </div>
@@ -254,21 +478,178 @@ function StructuredMaterialityQuestionnaire({
               )}
 
               {question.type === "open_text" && (
-                <textarea
-                  placeholder="Inserisci il tuo commento..."
-                  value={responses[question.id]?.value || ""}
-                  onChange={(e) =>
-                    handleResponseChange(question.id, e.target.value, "text")
-                  }
-                  style={{
-                    width: "100%",
-                    minHeight: "80px",
-                    padding: "8px",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    fontSize: "14px",
-                  }}
-                />
+                <div>
+                  <textarea
+                    placeholder="Inserisci il tuo commento..."
+                    value={responses[question.id]?.value || ""}
+                    onChange={(e) =>
+                      handleResponseChange(question.id, e.target.value, "text")
+                    }
+                    style={{
+                      width: "100%",
+                      minHeight: "80px",
+                      padding: "8px",
+                      border: "1px solid #ddd",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                    }}
+                  />
+
+                  {/* Controlli evidenze per domande con dettagli */}
+                  {evidence.ready && (
+                    <div
+                      style={{
+                        marginTop: "12px",
+                        padding: "10px",
+                        backgroundColor: "#f8f9fa",
+                        borderRadius: "6px",
+                        border: "1px solid #e9ecef",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "8px",
+                          alignItems: "center",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        <button
+                          onClick={() =>
+                            handleFileSelect(question.id, "gallery")
+                          }
+                          style={{
+                            padding: "6px 12px",
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            fontSize: "13px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                        >
+                          📁 Aggiungi File
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleFileSelect(question.id, "camera")
+                          }
+                          style={{
+                            padding: "6px 12px",
+                            backgroundColor: "#28a745",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            fontSize: "13px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                        >
+                          📷 Scatta Foto
+                        </button>
+
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: "#666",
+                            marginLeft: "8px",
+                          }}
+                        >
+                          Evidenze:{" "}
+                          {evidence.list("ISO26000", question.id).length}
+                        </span>
+                      </div>
+
+                      {/* Lista evidenze esistenti */}
+                      {evidence.list("ISO26000", question.id).length > 0 && (
+                        <div style={{ marginTop: "8px" }}>
+                          <div
+                            style={{
+                              fontSize: "12px",
+                              fontWeight: "bold",
+                              marginBottom: "4px",
+                            }}
+                          >
+                            📎 Evidenze allegate:
+                          </div>
+                          {evidence
+                            .list("ISO26000", question.id)
+                            .map((file, index) => (
+                              <div
+                                key={index}
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  padding: "4px 8px",
+                                  backgroundColor: "white",
+                                  borderRadius: "4px",
+                                  marginBottom: "2px",
+                                  fontSize: "12px",
+                                }}
+                              >
+                                <span style={{ color: "#495057" }}>
+                                  📄 {file.name}
+                                  {file.size && (
+                                    <span
+                                      style={{
+                                        color: "#6c757d",
+                                        marginLeft: "8px",
+                                      }}
+                                    >
+                                      ({Math.round(file.size / 1024)}KB)
+                                    </span>
+                                  )}
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    evidence.removeFile({
+                                      category: "ISO26000",
+                                      itemLabel: question.id,
+                                      index,
+                                    })
+                                  }
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    color: "#dc3545",
+                                    cursor: "pointer",
+                                    fontSize: "14px",
+                                    padding: "2px",
+                                  }}
+                                  title="Rimuovi evidenza"
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+
+                      {/* Messaggio di errore se presente */}
+                      {evidence.error && (
+                        <div
+                          style={{
+                            color: "#dc3545",
+                            fontSize: "11px",
+                            marginTop: "4px",
+                            padding: "4px 8px",
+                            backgroundColor: "#f8d7da",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          ⚠️ {evidence.error}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           ))}
@@ -364,7 +745,7 @@ function StructuredMaterialityQuestionnaire({
 /**
  * Componente per visualizzazione risultati materialità
  */
-function MaterialityResults({ scoring, questionnaire }) {
+function MaterialityResults({ scoring, questionnaire, onComplete }) {
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "20px" }}>
       <h2 style={{ color: "#1976d2", marginBottom: "20px" }}>
@@ -525,7 +906,14 @@ function MaterialityResults({ scoring, questionnaire }) {
       </div>
 
       {/* Export risultati */}
-      <div style={{ textAlign: "center" }}>
+      <div
+        style={{
+          textAlign: "center",
+          display: "flex",
+          gap: "15px",
+          justifyContent: "center",
+        }}
+      >
         <button
           onClick={() => {
             const results = {
@@ -563,6 +951,36 @@ function MaterialityResults({ scoring, questionnaire }) {
           }}
         >
           📄 Esporta Risultati Completi
+        </button>
+
+        <button
+          onClick={() => {
+            console.log("🧪 TEST - Trigger manuale aggiornamento matrice");
+            console.log("🧪 TEST - Scoring corrente:", scoring);
+
+            // Chiama direttamente onComplete per testare
+            if (onComplete) {
+              const testResults = {
+                responses: [],
+                scoring,
+                questionnaire,
+              };
+              console.log("🧪 TEST - Chiamando onComplete con:", testResults);
+              onComplete(testResults);
+            }
+          }}
+          style={{
+            padding: "12px 24px",
+            backgroundColor: "#ff9800",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "16px",
+          }}
+        >
+          🧪 Test Aggiorna Matrice
         </button>
       </div>
     </div>

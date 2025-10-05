@@ -15,9 +15,9 @@
     "web-vitals": "^5.1.0"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "validate:snapshot": "node scripts/validate-esrs-snapshot.js",
     "report:coverage:esrs": "node scripts/esrs-coverage.js",
     "report:coverage:esrs:strict": "node scripts/esrs-coverage.js --mode=strict --normalize-esrs2",
@@ -45,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.27.1",
     "@craco/craco": "^7.1.0",
     "@playwright/test": "^1.55.0",
     "@testing-library/jest-dom": "^6.8.0",

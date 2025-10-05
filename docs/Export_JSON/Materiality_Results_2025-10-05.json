@@ -1,0 +1,215 @@
+{
+  "timestamp": "2025-10-05T14:34:02.773Z",
+  "questionnaire": "Questionario Materialità Strutturato ISO 26000",
+  "scoring": {
+    "themeScores": {
+      "Diritti Umani": {
+        "code": "DU",
+        "score": 3.3333333333333335,
+        "priority": "CRITICAL",
+        "aspectCount": 3
+      },
+      "Pratiche del Lavoro": {
+        "code": "LA",
+        "score": 3.4,
+        "priority": "HIGH",
+        "aspectCount": 5
+      },
+      "Ambiente": {
+        "code": "AM",
+        "score": 2.75,
+        "priority": "CRITICAL",
+        "aspectCount": 4
+      },
+      "Corrette Prassi Gestionali": {
+        "code": "CP",
+        "score": 2.5,
+        "priority": "HIGH",
+        "aspectCount": 3
+      },
+      "Aspetti relativi ai Consumatori": {
+        "code": "CO",
+        "score": 1.25,
+        "priority": "MEDIUM",
+        "aspectCount": 6
+      },
+      "Coinvolgimento e Sviluppo della Comunità": {
+        "code": "SC",
+        "score": 1.875,
+        "priority": "MEDIUM",
+        "aspectCount": 4
+      }
+    },
+    "aspectScores": {
+      "DU1": {
+        "name": "Rischi, Complicità, Controversie",
+        "score": 3,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "DU2": {
+        "name": "Discriminazione e gruppi vulnerabili",
+        "score": 4,
+        "responseCount": 3,
+        "priority": "HIGH"
+      },
+      "DU3": {
+        "name": "Diritti civili, politici, economici, sociali, culturali",
+        "score": 3,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "LA1": {
+        "name": "Occupazione e rapporti di lavoro",
+        "score": 4,
+        "responseCount": 3,
+        "priority": "HIGH"
+      },
+      "LA2": {
+        "name": "Condizioni di lavoro e protezione sociale",
+        "score": 3,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "LA3": {
+        "name": "Dialogo sociale",
+        "score": 3,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "LA4": {
+        "name": "Salute e sicurezza sul lavoro",
+        "score": 3.5,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "LA5": {
+        "name": "Sviluppo delle risorse umane e formazione",
+        "score": 3.5,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "AM1": {
+        "name": "Prevenzione dell'inquinamento",
+        "score": 2.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "AM2": {
+        "name": "Uso sostenibile delle risorse",
+        "score": 3,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "AM3": {
+        "name": "Mitigazione e adattamento cambiamenti climatici",
+        "score": 2.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "AM4": {
+        "name": "Protezione biodiversità e habitat naturali",
+        "score": 3,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "CP1": {
+        "name": "Lotta alla corruzione",
+        "score": 2,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "CP2": {
+        "name": "Concorrenza leale",
+        "score": 3,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "CP3": {
+        "name": "Responsabilità sociale nella catena del valore",
+        "score": 2.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "CO1": {
+        "name": "Comunicazione commerciale onesta",
+        "score": 1.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "CO2": {
+        "name": "Protezione salute e sicurezza consumatori",
+        "score": 1,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "CO3": {
+        "name": "Consumo sostenibile",
+        "score": 1.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "CO4": {
+        "name": "Servizi e supporto ai consumatori",
+        "score": 1,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "CO5": {
+        "name": "Protezione dati e riservatezza consumatore",
+        "score": 1,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "CO6": {
+        "name": "Educazione e consapevolezza",
+        "score": 1.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "SC1": {
+        "name": "Coinvolgimento comunità, istruzione e cultura",
+        "score": 1.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "SC2": {
+        "name": "Creazione occupazione e sviluppo competenze",
+        "score": 2.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "SC3": {
+        "name": "Sviluppo tecnologico e accesso tecnologia",
+        "score": 2,
+        "responseCount": 3,
+        "priority": "LOW"
+      },
+      "SC4": {
+        "name": "Investimento sociale",
+        "score": 1.5,
+        "responseCount": 3,
+        "priority": "LOW"
+      }
+    },
+    "overallPriority": [
+      "Pratiche del Lavoro",
+      "Diritti Umani",
+      "Ambiente",
+      "Corrette Prassi Gestionali",
+      "Coinvolgimento e Sviluppo della Comunità"
+    ],
+    "recommendations": []
+  },
+  "summary": {
+    "totalThemes": 6,
+    "topThemes": [
+      "Pratiche del Lavoro",
+      "Diritti Umani",
+      "Ambiente",
+      "Corrette Prassi Gestionali",
+      "Coinvolgimento e Sviluppo della Comunità"
+    ],
+    "recommendations": []
+  }
+}

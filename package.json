@@ -36,6 +36,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.27.1",
     "@craco/craco": "^7.1.0"
   }
 }

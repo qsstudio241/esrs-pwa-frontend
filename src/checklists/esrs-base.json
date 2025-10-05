@@ -1,0 +1,596 @@
+{
+  "metadata": {
+    "name": "ESRS Base Checklist",
+    "version": "1.3",
+    "standard": "ESRS",
+    "description": "Checklist elementi base ESRS per audit di sostenibilità - Espansione E1 + E2 + S1",
+    "lastUpdated": "2025-09-11",
+    "author": "QS Studio",
+    "compatibleWith": ["Micro", "Piccola", "Media", "Grande"],
+    "totalItems": 45
+  },
+  "categories": {
+    "Generale": {
+      "title": "Principi Generali ESRS",
+      "description": "Principi fondamentali di rendicontazione di sostenibilità",
+      "code": "ESRS-1",
+      "items": [
+        {
+          "id": "G001",
+          "text": "Categorie di principi di rendicontazione di sostenibilità, ambiti di rendicontazione e convenzioni redazionali",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G002",
+          "text": "Caratteristiche qualitative delle informazioni",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G003",
+          "text": "Doppia rilevanza come base per l'informativa sulla sostenibilità",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G004",
+          "text": "Dovere di diligenza",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G005",
+          "text": "Catena del valore",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G006",
+          "text": "Orizzonti temporali",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G007",
+          "text": "Redazione e presentazione delle informazioni sulla sostenibilità",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G008",
+          "text": "Struttura della dichiarazione di sostenibilità",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G009",
+          "text": "Collegamenti con altre parti della rendicontazione societaria e informazioni collegate",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        },
+        {
+          "id": "G010",
+          "text": "Disposizioni transitorie",
+          "applicability": ["Micro", "Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS 1"
+        }
+      ]
+    },
+    "E1": {
+      "title": "Cambiamenti Climatici",
+      "description": "🌍 Standard ambientale sui cambiamenti climatici - CRITICO per tutte le aziende Media/Grande",
+      "code": "ESRS-E1",
+      "items": [
+        {
+          "id": "E1001",
+          "text": "🎯 Piano di transizione verso la neutralità climatica",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E1-1",
+          "description": "Piano dettagliato per raggiungere la neutralità climatica entro il 2050, con obiettivi intermedi e azioni concrete"
+        },
+        {
+          "id": "E1002",
+          "text": "🏭 Politiche e azioni di mitigazione dei cambiamenti climatici",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E1-2",
+          "description": "Politiche e azioni per ridurre le emissioni di gas serra dirette e indirette (Scope 1, 2, 3)"
+        },
+        {
+          "id": "E1003",
+          "text": "⚡ Politiche energetiche e mix energetico",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E1-3",
+          "description": "Politiche energetiche, consumo totale di energia e percentuale di energia rinnovabile utilizzata"
+        },
+        {
+          "id": "E1004",
+          "text": "🛡️ Adattamento ai cambiamenti climatici",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E1-4",
+          "description": "Strategie e azioni per adattarsi agli impatti fisici dei cambiamenti climatici sui processi aziendali"
+        },
+        {
+          "id": "E1005",
+          "text": "📊 Obiettivi di riduzione delle emissioni GHG",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E1-5",
+          "description": "Obiettivi quantitativi per la riduzione delle emissioni di gas serra con timeline definite"
+        },
+        {
+          "id": "E1006",
+          "text": "🔢 Inventario delle emissioni GHG (Scope 1, 2, 3)",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E1-6",
+          "description": "Inventario completo delle emissioni dirette (Scope 1), indirette da energia (Scope 2) e altre indirette (Scope 3)"
+        }
+      ]
+    },
+    "E2": {
+      "title": "Inquinamento",
+      "description": "🏭 Standard ambientale sull'inquinamento - Prevenzione e controllo dell'inquinamento di aria, acqua e suolo",
+      "code": "ESRS-E2",
+      "items": [
+        {
+          "id": "E2001",
+          "text": "💨 Politiche per la prevenzione e il controllo dell'inquinamento atmosferico",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E2-1",
+          "description": "Politiche e azioni per prevenire, ridurre e controllare le emissioni atmosferiche inquinanti (NOx, SOx, PM, etc.)"
+        },
+        {
+          "id": "E2002",
+          "text": "🌊 Politiche per la prevenzione e il controllo dell'inquinamento idrico",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E2-2",
+          "description": "Politiche per prevenire la contaminazione di acque superficiali, sotterranee e marine attraverso scarichi industriali"
+        },
+        {
+          "id": "E2003",
+          "text": "🌍 Politiche per la prevenzione e il controllo dell'inquinamento del suolo",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E2-3",
+          "description": "Politiche per prevenire la contaminazione del suolo e gestire i siti contaminati attraverso bonifiche"
+        },
+        {
+          "id": "E2004",
+          "text": "🔬 Azioni per la gestione delle sostanze chimiche e dei materiali pericolosi",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E2-4",
+          "description": "Gestione sicura di sostanze chimiche, riduzione dell'uso di sostanze pericolose e sostituzione con alternative più sicure"
+        },
+        {
+          "id": "E2005",
+          "text": "📊 Obiettivi per la riduzione dell'inquinamento",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E2-5",
+          "description": "Obiettivi quantitativi per ridurre le emissioni inquinanti in aria, acqua e suolo con timeline definite"
+        },
+        {
+          "id": "E2006",
+          "text": "📈 Monitoraggio e reporting delle emissioni inquinanti",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E2-6",
+          "description": "Sistemi di monitoraggio continuo e reporting delle emissioni di sostanze inquinanti nell'ambiente"
+        }
+      ]
+    },
+    "E3": {
+      "title": "Risorse Idriche",
+      "description": "💧 Standard ambientale sulla gestione e protezione delle risorse idriche",
+      "code": "ESRS-E3",
+      "items": [
+        {
+          "id": "E3001",
+          "text": "Politiche per la gestione sostenibile delle risorse idriche",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E3-1",
+          "description": "Politiche e azioni per ridurre il consumo idrico, migliorare l'efficienza e prevenire lo spreco."
+        },
+        {
+          "id": "E3002",
+          "text": "Monitoraggio e reporting del consumo idrico e delle fonti di approvvigionamento",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E3-2",
+          "description": "Raccolta dati e reporting su consumo idrico, fonti utilizzate e impatti sulle risorse locali."
+        }
+      ]
+    },
+    "E4": {
+      "title": "Biodiversità ed Ecosistemi",
+      "description": "🌱 Standard ambientale sulla tutela della biodiversità e degli ecosistemi",
+      "code": "ESRS-E4",
+      "items": [
+        {
+          "id": "E4001",
+          "text": "Politiche per la protezione e il ripristino della biodiversità",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E4-1",
+          "description": "Azioni per proteggere habitat naturali, specie minacciate e promuovere la biodiversità aziendale."
+        },
+        {
+          "id": "E4002",
+          "text": "Valutazione degli impatti aziendali su ecosistemi e biodiversità",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E4-2",
+          "description": "Analisi degli impatti diretti e indiretti delle attività aziendali su ecosistemi locali e globali."
+        }
+      ]
+    },
+    "E5": {
+      "title": "Risorse e Economia Circolare",
+      "description": "♻️ Standard ambientale su uso risorse e modelli di economia circolare",
+      "code": "ESRS-E5",
+      "items": [
+        {
+          "id": "E5001",
+          "text": "Politiche per la gestione sostenibile delle risorse materiali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E5-1",
+          "description": "Azioni per ridurre l'uso di materie prime vergini, promuovere il riciclo e l'uso di materiali riciclati."
+        },
+        {
+          "id": "E5002",
+          "text": "Implementazione di modelli di economia circolare",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS E5-2",
+          "description": "Adozione di strategie di riuso, riparazione, riciclo e design circolare dei prodotti."
+        }
+      ]
+    },
+    "S1": {
+      "title": "Forza Lavoro Propria",
+      "description": "👥 Standard sociale sulla forza lavoro propria - CRITICO per tutte le aziende Media/Grande",
+      "code": "ESRS-S1",
+      "items": [
+        {
+          "id": "S1001",
+          "text": "👷 Politiche per le condizioni di lavoro",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S1-1",
+          "description": "Politiche per garantire condizioni di lavoro eque, sicure e dignitose per tutti i dipendenti"
+        },
+        {
+          "id": "S1002",
+          "text": "🛡️ Processi per la gestione della salute e sicurezza sul lavoro",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S1-2",
+          "description": "Processi per identificare, valutare e gestire i rischi per la salute e sicurezza dei lavoratori"
+        },
+        {
+          "id": "S1003",
+          "text": "📈 Processi per l'impegno con la forza lavoro e i rappresentanti dei lavoratori",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S1-3",
+          "description": "Processi per coinvolgere i dipendenti nelle decisioni che li riguardano attraverso dialogo sociale"
+        },
+        {
+          "id": "S1004",
+          "text": "⚖️ Azioni per l'uguaglianza di trattamento e opportunità",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S1-4",
+          "description": "Azioni concrete per promuovere diversità, inclusione e parità di opportunità nel posto di lavoro"
+        },
+        {
+          "id": "S1005",
+          "text": "🎯 Obiettivi per la gestione degli impatti sulla forza lavoro",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S1-5",
+          "description": "Obiettivi quantitativi e qualitativi per migliorare le condizioni e l'engagement dei dipendenti"
+        },
+        {
+          "id": "S1006",
+          "text": "📊 Caratteristiche della forza lavoro (diversità, formazione, turnover)",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S1-6",
+          "description": "Dati quantitativi su composizione, diversità, formazione e sviluppo della forza lavoro"
+        }
+      ]
+    },
+    "S2": {
+      "title": "Lavoratori nella Catena del Valore",
+      "description": "👥 Standard sociale sui lavoratori nella catena del valore",
+      "code": "ESRS-S2",
+      "items": [
+        {
+          "id": "S2001",
+          "text": "Politiche per la tutela dei diritti dei lavoratori nella catena del valore",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S2-1",
+          "description": "Azioni per garantire condizioni di lavoro eque, sicurezza e rispetto dei diritti umani presso fornitori e subappaltatori."
+        },
+        {
+          "id": "S2002",
+          "text": "Monitoraggio e reporting delle condizioni dei lavoratori nella catena del valore",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S2-2",
+          "description": "Raccolta dati e audit sulle condizioni di lavoro, inclusi salari, orari, sicurezza e diritti."
+        }
+      ]
+    },
+    "S3": {
+      "title": "Comunità Interessate",
+      "description": "🏘️ Standard sociale sulle comunità interessate dalle attività aziendali",
+      "code": "ESRS-S3",
+      "items": [
+        {
+          "id": "S3001",
+          "text": "Politiche per la gestione degli impatti sulle comunità locali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S3-1",
+          "description": "Azioni per minimizzare impatti negativi e promuovere benefici sociali nelle comunità dove opera l'azienda."
+        },
+        {
+          "id": "S3002",
+          "text": "Coinvolgimento e consultazione delle comunità interessate",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S3-2",
+          "description": "Processi di dialogo, consultazione e partecipazione delle comunità alle decisioni aziendali."
+        }
+      ]
+    },
+    "S4": {
+      "title": "Consumatori e Utilizzatori Finali",
+      "description": "Standard sociale su consumatori e utilizzatori finali",
+      "code": "ESRS-S4",
+      "items": [
+        {
+          "id": "S4001",
+          "text": "Consumatori e utilizzatori finali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4-1"
+        },
+        {
+          "id": "S4002",
+          "text": "Politiche per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4-2"
+        },
+        {
+          "id": "S4003",
+          "text": "Processi per l'impegno con i consumatori e gli utilizzatori finali riguardo agli impatti materiali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4-3"
+        },
+        {
+          "id": "S4004",
+          "text": "Processi per rimediare agli impatti negativi materiali e canali per i consumatori e gli utilizzatori finali per esprimere preoccupazioni",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4-4"
+        },
+        {
+          "id": "S4005",
+          "text": "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per i consumatori e agli utilizzatori finali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4-5"
+        },
+        {
+          "id": "S4006",
+          "text": "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati ai consumatori e agli utilizzatori finali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS S4-6"
+        }
+      ]
+    },
+    "G1": {
+      "title": "Condotta Aziendale",
+      "description": "Standard di governance sulla condotta aziendale",
+      "code": "ESRS-G1",
+      "items": [
+        {
+          "id": "G1001",
+          "text": "Condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-1"
+        },
+        {
+          "id": "G1002",
+          "text": "Politiche per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-2"
+        },
+        {
+          "id": "G1003",
+          "text": "Processi per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-3"
+        },
+        {
+          "id": "G1004",
+          "text": "Azioni per la gestione degli impatti materiali e approcci alla mitigazione degli impatti negativi materiali per la condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-4"
+        },
+        {
+          "id": "G1005",
+          "text": "Obiettivi per la gestione degli impatti materiali, rischi e opportunità legati alla condotta delle imprese",
+          "applicability": ["Piccola", "Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-5"
+        },
+        {
+          "id": "G1006",
+          "text": "Cultura aziendale",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-6"
+        },
+        {
+          "id": "G1007",
+          "text": "Gestione dei rapporti con i fornitori",
+          "applicability": ["Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-7"
+        },
+        {
+          "id": "G1008",
+          "text": "Formazione e sensibilizzazione su anti-corruzione e anti-bribery",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-8"
+        },
+        {
+          "id": "G1009",
+          "text": "Incidenti di corruzione o bribery",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-9"
+        },
+        {
+          "id": "G1010",
+          "text": "Attività di lobbying",
+          "applicability": ["Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-10"
+        },
+        {
+          "id": "G1011",
+          "text": "Pratiche di pagamento",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G1-11"
+        }
+      ]
+    },
+    "G2": {
+      "title": "Governance, Rischi e Controlli Interni",
+      "description": "🛡️ Standard di governance su rischi, controlli e struttura organizzativa",
+      "code": "ESRS-G2",
+      "items": [
+        {
+          "id": "G2001",
+          "text": "Struttura di governance e responsabilità ESG",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G2-1",
+          "description": "Definizione di ruoli, responsabilità e processi di supervisione ESG a livello di board e management."
+        },
+        {
+          "id": "G2002",
+          "text": "Gestione dei rischi di sostenibilità e controlli interni",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G2-2",
+          "description": "Processi di identificazione, valutazione e gestione dei rischi ESG, inclusi controlli interni e audit."
+        }
+      ]
+    },
+    "G3": {
+      "title": "Remunerazione e Incentivi",
+      "description": "💶 Standard di governance su politiche di remunerazione e incentivi",
+      "code": "ESRS-G3",
+      "items": [
+        {
+          "id": "G3001",
+          "text": "Politiche di remunerazione legate agli obiettivi ESG",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G3-1",
+          "description": "Definizione di sistemi di incentivazione e remunerazione collegati a performance di sostenibilità."
+        },
+        {
+          "id": "G3002",
+          "text": "Trasparenza e reporting sulle politiche di remunerazione",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G3-2",
+          "description": "Comunicazione chiara e trasparente delle politiche di remunerazione e dei criteri ESG adottati."
+        }
+      ]
+    },
+    "G4": {
+      "title": "Gestione dei Rischi di Sostenibilità",
+      "description": "⚠️ Standard di governance sulla gestione dei rischi di sostenibilità",
+      "code": "ESRS-G4",
+      "items": [
+        {
+          "id": "G4001",
+          "text": "Processi di identificazione e gestione dei rischi di sostenibilità",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G4-1",
+          "description": "Metodologie e strumenti per identificare, valutare e mitigare i rischi ESG aziendali."
+        },
+        {
+          "id": "G4002",
+          "text": "Reporting e trasparenza sui rischi di sostenibilità",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G4-2",
+          "description": "Comunicazione e disclosure dei principali rischi ESG e delle strategie di gestione adottate."
+        }
+      ]
+    },
+    "G5": {
+      "title": "Comunicazione e Trasparenza",
+      "description": "📢 Standard di governance su comunicazione, trasparenza e reporting",
+      "code": "ESRS-G5",
+      "items": [
+        {
+          "id": "G5001",
+          "text": "Politiche di comunicazione e trasparenza ESG",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G5-1",
+          "description": "Definizione di strategie di comunicazione, stakeholder engagement e trasparenza sui temi ESG."
+        },
+        {
+          "id": "G5002",
+          "text": "Reporting e disclosure ESG secondo standard internazionali",
+          "applicability": ["Media", "Grande"],
+          "mandatory": true,
+          "reference": "ESRS G5-2",
+          "description": "Adozione di framework di reporting ESG (GRI, SASB, ESRS) e pubblicazione di bilanci di sostenibilità."
+        }
+      ]
+    }
+  }
+}

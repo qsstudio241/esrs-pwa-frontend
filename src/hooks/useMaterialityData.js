@@ -134,23 +134,12 @@ export function useMaterialityData(auditId) {
     };
   };
 
-  // Filtra solo i temi custom
-  const customTopics = topics.filter((topic) => topic.isCustom === true);
-
-  // Aggiorna i temi custom (mantiene quelli ESRS)
-  const updateCustomTopics = (updatedCustomTopics) => {
-    const esrsTopics = topics.filter((topic) => !topic.isCustom);
-    setTopics([...esrsTopics, ...updatedCustomTopics]);
-  };
-
   return {
     topics,
     threshold,
     isLoading,
-    customTopics,
     updateTopic,
     addCustomTopic,
-    updateCustomTopics,
     removeTopic,
     setThreshold,
     getMaterialityAnalysis,

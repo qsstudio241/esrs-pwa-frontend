@@ -411,9 +411,9 @@ function MaterialityManagement({ audit, onUpdate }) {
 
   // Funzione per eliminare un tema custom
   const deleteCustomTopic = (topicId) => {
-    const updatedCustoms = customTopics.filter((topic) => topic.id !== topicId);
+    const updatedCustoms = customTopics.filter(topic => topic.id !== topicId);
     updateCustomTopics(updatedCustoms);
-
+    
     // Rimuovi anche commenti e foto dal audit
     const key = `custom_${topicId}`;
     if (audit?.comments?.[key] || audit?.photos?.[key]) {
@@ -493,7 +493,7 @@ function MaterialityManagement({ audit, onUpdate }) {
                 fontWeight: "bold",
               }}
             >
-              📋 Export JSON
+              � Export JSON
             </button>
             <button
               onClick={async () => {
@@ -555,7 +555,7 @@ function MaterialityManagement({ audit, onUpdate }) {
           },
           {
             key: "survey",
-            label: "📋 Stakeholder Engagement",
+            label: "� Stakeholder Engagement",
             count: `${surveys.length} survey + validation`,
           },
           {
@@ -566,7 +566,7 @@ function MaterialityManagement({ audit, onUpdate }) {
 
           {
             key: "structured",
-            label: "📋 Questionario Materialità",
+            label: "� Questionario Materialità",
             count: structuredResults ? "✅ Completato" : "📝 Configura ora",
           },
         ].map((tab) => (
@@ -965,104 +965,463 @@ function MaterialityManagement({ audit, onUpdate }) {
             <h3 style={{ marginTop: 0, color: "#333" }}>
               {selectedCustomTopic.name}
             </h3>
+            
+            {/* Descrizione */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Descrizione:
+              </label>
+              <textarea
+                value={customTopicDetails.description}
+                onChange={(e) =>
+                  setCustomTopicDetails(prev => ({
+                    ...prev,
+                    description: e.target.value
+                  }))
+                }
+                style={{
+                  width: "100%",
+                  minHeight: "100px",
+                  padding: "0.5rem",
+                  border: "1px solid #ddd",
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                }}
+                placeholder="Inserisci una descrizione dettagliata del tema..."
+              />
+            </div>
 
-            {/* Scoring personalizzato */}
-            <div
-              style={{
-                marginBottom: "1.5rem",
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "1rem",
-              }}
-            >
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "0.5rem",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Impact Score: {selectedCustomTopic.impactScore || 3}/5
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="5"
-                  step="1"
-                  value={selectedCustomTopic.impactScore || 3}
-                  onChange={(e) => {
-                    const newScore = parseInt(e.target.value);
-                    const updatedTopics = customTopics.map((topic) =>
-                      topic.id === selectedCustomTopic.id
-                        ? { ...topic, impactScore: newScore }
-                        : topic
-                    );
-                    updateCustomTopics(updatedTopics);
-                    setSelectedCustomTopic((prev) => ({
-                      ...prev,
-                      impactScore: newScore,
-                    }));
-                  }}
-                  style={{ width: "100%", marginBottom: "0.5rem" }}
-                />
+            {/* Commenti */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Commenti ({customTopicDetails.comments.length}):
+              </label>
+              
+              {customTopicDetails.comments.map((comment) => (
                 <div
+                  key={comment.id}
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: "0.8rem",
-                    color: "#666",
+                    backgroundColor: "#f8f9fa",
+                    padding: "0.75rem",
+                    marginBottom: "0.5rem",
+                    borderRadius: "4px",
+                    border: "1px solid #e9ecef",
+                    position: "relative",
                   }}
                 >
-                  <span>Basso</span>
-                  <span>Alto</span>
+                  <div style={{ paddingRight: "2rem" }}>{comment.text}</div>
+                  <button
+                    onClick={() => removeCustomComment(comment.id)}
+                    style={{
+                      position: "absolute",
+                      top: "0.5rem",
+                      right: "0.5rem",
+                      background: "none",
+                      border: "none",
+                      color: "#dc3545",
+                      cursor: "pointer",
+                      fontSize: "18px",
+                    }}
+                  >
+                    ×
+                  </button>
                 </div>
-              </div>
+              ))}
 
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "0.5rem",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Financial Score: {selectedCustomTopic.financialScore || 3}/5
-                </label>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
                 <input
-                  type="range"
-                  min="0"
-                  max="5"
-                  step="1"
-                  value={selectedCustomTopic.financialScore || 3}
-                  onChange={(e) => {
-                    const newScore = parseInt(e.target.value);
-                    const updatedTopics = customTopics.map((topic) =>
-                      topic.id === selectedCustomTopic.id
-                        ? { ...topic, financialScore: newScore }
-                        : topic
-                    );
-                    updateCustomTopics(updatedTopics);
-                    setSelectedCustomTopic((prev) => ({
-                      ...prev,
-                      financialScore: newScore,
-                    }));
-                  }}
-                  style={{ width: "100%", marginBottom: "0.5rem" }}
-                />
-                <div
+                  type="text"
+                  placeholder="Aggiungi un commento..."
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: "0.8rem",
-                    color: "#666",
+                    flex: 1,
+                    padding: "0.5rem",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter" && e.target.value.trim()) {
+                      addCustomComment(e.target.value.trim());
+                      e.target.value = "";
+                    }
+                  }}
+                />
+                <button
+                  onClick={(e) => {
+                    const input = e.target.parentElement.querySelector('input');
+                    if (input.value.trim()) {
+                      addCustomComment(input.value.trim());
+                      input.value = "";
+                    }
+                  }}
+                  style={{
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
                   }}
                 >
-                  <span>Basso</span>
-                  <span>Alto</span>
-                </div>
+                  Aggiungi
+                </button>
               </div>
             </div>
+
+            {/* Foto */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Foto allegati ({customTopicDetails.photos.length}):
+              </label>
+              
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
+                {customTopicDetails.photos.map((photo) => (
+                  <div
+                    key={photo.id}
+                    style={{
+                      position: "relative",
+                      border: "1px solid #ddd",
+                      borderRadius: "4px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <img
+                      src={photo.data}
+                      alt={photo.name}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                        display: "block",
+                      }}
+                    />
+                    <button
+                      onClick={() => removeCustomPhoto(photo.id)}
+                      style={{
+                        position: "absolute",
+                        top: "2px",
+                        right: "2px",
+                        background: "rgba(220, 53, 69, 0.8)",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "20px",
+                        height: "20px",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      ×
+                    </button>
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        padding: "2px",
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                        color: "white",
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        textAlign: "center",
+                      }}
+                    >
+                      {photo.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    addCustomPhoto(file);
+                    e.target.value = ""; // Reset input
+                  }
+                }}
+                style={{ marginBottom: "1rem" }}
+              />
+            </div>
+
+            {/* Pulsanti azione */}
+            <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+              <button
+                onClick={() => setSelectedCustomTopic(null)}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: "#6c757d",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Annulla
+              </button>
+              <button
+                onClick={saveCustomTopicDetails}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Salva
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Componente per visualizzazione analisi e raccomandazioni
+function MaterialityAnalysisView({ analysis, validation, topics, threshold }) {
+  return (
+    <div>
+      <h3 style={{ margin: "0 0 1.5rem 0", color: "#1976d2" }}>
+        📈 Analisi Materialità e Raccomandazioni
+      </h3>
+
+      {/* Riepilogo esecutivo */}
+      <div
+        style={{
+          padding: "1rem",
+          backgroundColor: "#e3f2fd",
+          borderRadius: "6px",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <h4 style={{ margin: "0 0 1rem 0" }}>📋 Riepilogo Esecutivo</h4>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "1rem",
+            textAlign: "center",
+          }}
+        >
+          <div>
+            <div
+              style={{ fontSize: "2rem", fontWeight: "bold", color: "#d32f2f" }}
+            >
+              {analysis.critical.length}
+            </div>
+            <div style={{ fontSize: "0.9rem" }}>Temi Critici</div>
+          </div>
+          <div>
+            <div
+              style={{ fontSize: "2rem", fontWeight: "bold", color: "#f57c00" }}
+            >
+              {analysis.impactFocus.length}
+            </div>
+            <div style={{ fontSize: "0.9rem" }}>Focus Impatto</div>
+          </div>
+          <div>
+            <div
+              style={{ fontSize: "2rem", fontWeight: "bold", color: "#1976d2" }}
+            >
+              {analysis.financialFocus.length}
+            </div>
+            <div style={{ fontSize: "0.9rem" }}>Rilevanza Finanziaria</div>
+          </div>
+          <div>
+            <div
+              style={{ fontSize: "2rem", fontWeight: "bold", color: "#689f38" }}
+            >
+              {analysis.monitoring.length}
+            </div>
+            <div style={{ fontSize: "0.9rem" }}>Monitoraggio</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Raccomandazioni */}
+      <div style={{ marginBottom: "1.5rem" }}>
+        <h4 style={{ margin: "0 0 1rem 0" }}>🎯 Raccomandazioni Strategiche</h4>
+        {analysis.recommendations.map((rec, idx) => (
+          <div
+            key={idx}
+            style={{
+              marginBottom: "1rem",
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "6px",
+              backgroundColor:
+                rec.priority === "IMMEDIATE"
+                  ? "#ffebee"
+                  : rec.priority === "HIGH"
+                  ? "#fff3e0"
+                  : "#f3e5f5",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "0.5rem",
+              }}
+            >
+              <h5 style={{ margin: 0 }}>{rec.title}</h5>
+              <span
+                style={{
+                  padding: "0.25rem 0.5rem",
+                  backgroundColor:
+                    rec.priority === "IMMEDIATE"
+                      ? "#d32f2f"
+                      : rec.priority === "HIGH"
+                      ? "#f57c00"
+                      : "#9c27b0",
+                  color: "white",
+                  borderRadius: "4px",
+                  fontSize: "0.8rem",
+                }}
+              >
+                {rec.priority}
+              </span>
+            </div>
+            <p style={{ margin: "0 0 0.75rem 0", color: "#666" }}>
+              {rec.description}
+            </p>
+            <ul style={{ margin: 0, paddingLeft: "1.5rem" }}>
+              {rec.actions.map((action, actionIdx) => (
+                <li key={actionIdx} style={{ marginBottom: "0.25rem" }}>
+                  {action}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {/* Dettaglio per quadrante */}
+      <div>
+        <h4 style={{ margin: "0 0 1rem 0" }}>📊 Dettaglio per Quadrante</h4>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "1rem",
+          }}
+        >
+          {[
+            {
+              key: "critical",
+              data: analysis.critical,
+              title: "Temi Critici",
+              color: "#d32f2f",
+            },
+            {
+              key: "impactFocus",
+              data: analysis.impactFocus,
+              title: "Focus Impatto",
+              color: "#f57c00",
+            },
+            {
+              key: "financialFocus",
+              data: analysis.financialFocus,
+              title: "Rilevanza Finanziaria",
+              color: "#1976d2",
+            },
+            {
+              key: "monitoring",
+              data: analysis.monitoring,
+              title: "Monitoraggio",
+              color: "#689f38",
+            },
+          ].map((quadrant) => (
+            <div
+              key={quadrant.key}
+              style={{
+                padding: "1rem",
+                border: `2px solid ${quadrant.color}`,
+                borderRadius: "6px",
+                backgroundColor: "white",
+              }}
+            >
+              <h5 style={{ margin: "0 0 1rem 0", color: quadrant.color }}>
+                {quadrant.title} ({quadrant.data.length})
+              </h5>
+              {quadrant.data.length > 0 ? (
+                <div style={{ fontSize: "0.9rem" }}>
+                  {quadrant.data.map((topic, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        padding: "0.5rem",
+                        marginBottom: "0.5rem",
+                        backgroundColor: "#f8f9fa",
+                        borderRadius: "4px",
+                        borderLeft: `3px solid ${quadrant.color}`,
+                      }}
+                    >
+                      <div style={{ fontWeight: "bold" }}>{topic.name}</div>
+                      <div style={{ fontSize: "0.8rem", color: "#666" }}>
+                        Impatto: {topic.impactScore}/5 • Finanziario:{" "}
+                        {topic.financialScore}/5
+                      </div>
+                      <div style={{ fontSize: "0.8rem", marginTop: "0.25rem" }}>
+                        {topic.action}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    color: "#666",
+                    fontStyle: "italic",
+                    textAlign: "center",
+                  }}
+                >
+                  Nessun tema in questo quadrante
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Modal per temi custom */}
+      {selectedCustomTopic && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "8px",
+              padding: "2rem",
+              width: "90%",
+              maxWidth: "600px",
+              maxHeight: "80vh",
+              overflow: "auto",
+            }}
+          >
+            <h3 style={{ marginTop: 0, color: "#333" }}>
+              {selectedCustomTopic.name}
+            </h3>
 
             {/* Descrizione */}
             <div style={{ marginBottom: "1.5rem" }}>
@@ -1309,245 +1668,6 @@ function MaterialityManagement({ audit, onUpdate }) {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-// Componente per visualizzazione analisi e raccomandazioni
-function MaterialityAnalysisView({ analysis, validation, topics, threshold }) {
-  return (
-    <div>
-      <h3 style={{ margin: "0 0 1.5rem 0", color: "#1976d2" }}>
-        📈 Analisi Materialità e Raccomandazioni
-      </h3>
-
-      {/* Riepilogo esecutivo */}
-      <div
-        style={{
-          padding: "1rem",
-          backgroundColor: "#e3f2fd",
-          borderRadius: "6px",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <h4 style={{ margin: "0 0 1rem 0" }}>📋 Riepilogo Esecutivo</h4>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "1rem",
-          }}
-        >
-          <div>
-            <strong>Temi Analizzati:</strong>{" "}
-            <span style={{ color: "#1976d2" }}>{analysis.totalTopics}</span>
-          </div>
-          <div>
-            <strong>Alta Materialità:</strong>{" "}
-            <span style={{ color: "#4caf50" }}>{analysis.highMateriality}</span>
-          </div>
-          <div>
-            <strong>Focus Impatto:</strong>{" "}
-            <span style={{ color: "#ff9800" }}>{analysis.impactFocus}</span>
-          </div>
-          <div>
-            <strong>Focus Finanziario:</strong>{" "}
-            <span style={{ color: "#2196f3" }}>{analysis.financialFocus}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Validazione assessment */}
-      <div
-        style={{
-          padding: "1rem",
-          backgroundColor: validation.isValid ? "#e8f5e8" : "#ffebee",
-          borderRadius: "6px",
-          marginBottom: "1.5rem",
-          border: `2px solid ${validation.isValid ? "#4caf50" : "#f44336"}`,
-        }}
-      >
-        <h4
-          style={{
-            margin: "0 0 1rem 0",
-            color: validation.isValid ? "#2e7d32" : "#c62828",
-          }}
-        >
-          {validation.isValid ? "✅" : "⚠️"} Validazione Assessment
-        </h4>
-        <div style={{ marginBottom: "0.5rem" }}>
-          <strong>Status:</strong>{" "}
-          <span
-            style={{
-              color: validation.isValid ? "#2e7d32" : "#c62828",
-              fontWeight: "bold",
-            }}
-          >
-            {validation.isValid ? "VALIDO" : "RICHIEDE ATTENZIONE"}
-          </span>
-        </div>
-        {validation.warnings.length > 0 && (
-          <div>
-            <strong>Avvisi:</strong>
-            <ul style={{ margin: "0.5rem 0 0 1rem", padding: 0 }}>
-              {validation.warnings.map((warning, idx) => (
-                <li key={idx} style={{ color: "#f57c00" }}>
-                  {warning}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {validation.errors.length > 0 && (
-          <div>
-            <strong>Errori:</strong>
-            <ul style={{ margin: "0.5rem 0 0 1rem", padding: 0 }}>
-              {validation.errors.map((error, idx) => (
-                <li key={idx} style={{ color: "#c62828" }}>
-                  {error}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {/* Raccomandazioni strategiche */}
-      <div
-        style={{
-          padding: "1rem",
-          backgroundColor: "#fff3e0",
-          borderRadius: "6px",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <h4 style={{ margin: "0 0 1rem 0", color: "#ef6c00" }}>
-          🎯 Raccomandazioni Strategiche
-        </h4>
-        <div style={{ fontSize: "0.95rem" }}>
-          {analysis.recommendations.length > 0 ? (
-            <ul style={{ margin: 0, paddingLeft: "1.5rem" }}>
-              {analysis.recommendations.map((rec, idx) => (
-                <li key={idx} style={{ marginBottom: "0.5rem" }}>
-                  {rec}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p style={{ margin: 0, fontStyle: "italic", color: "#666" }}>
-              Nessuna raccomandazione disponibile
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Distribuzione quadranti */}
-      <div
-        style={{
-          padding: "1rem",
-          backgroundColor: "white",
-          borderRadius: "6px",
-          border: "1px solid #e0e0e0",
-        }}
-      >
-        <h4 style={{ margin: "0 0 1rem 0", color: "#1976d2" }}>
-          📊 Distribuzione per Quadranti
-        </h4>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: "1rem",
-          }}
-        >
-          {[
-            {
-              title: "Q1: Alta Materialità",
-              count: analysis.highMateriality,
-              color: "#4caf50",
-              data: topics.filter(
-                (t) =>
-                  t.impactScore >= threshold && t.financialScore >= threshold
-              ),
-            },
-            {
-              title: "Q2: Focus Impatto",
-              count: analysis.impactFocus,
-              color: "#ff9800",
-              data: topics.filter(
-                (t) =>
-                  t.impactScore >= threshold && t.financialScore < threshold
-              ),
-            },
-            {
-              title: "Q3: Bassa Materialità",
-              count: analysis.lowMateriality,
-              color: "#9e9e9e",
-              data: topics.filter(
-                (t) => t.impactScore < threshold && t.financialScore < threshold
-              ),
-            },
-            {
-              title: "Q4: Focus Finanziario",
-              count: analysis.financialFocus,
-              color: "#2196f3",
-              data: topics.filter(
-                (t) =>
-                  t.impactScore < threshold && t.financialScore >= threshold
-              ),
-            },
-          ].map((quadrant, idx) => (
-            <div
-              key={idx}
-              style={{
-                padding: "1rem",
-                border: `2px solid ${quadrant.color}`,
-                borderRadius: "6px",
-                backgroundColor: "white",
-              }}
-            >
-              <h5 style={{ margin: "0 0 1rem 0", color: quadrant.color }}>
-                {quadrant.title} ({quadrant.data.length})
-              </h5>
-              {quadrant.data.length > 0 ? (
-                <div style={{ fontSize: "0.9rem" }}>
-                  {quadrant.data.map((topic, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        padding: "0.5rem",
-                        marginBottom: "0.5rem",
-                        backgroundColor: "#f8f9fa",
-                        borderRadius: "4px",
-                        borderLeft: `3px solid ${quadrant.color}`,
-                      }}
-                    >
-                      <div style={{ fontWeight: "bold" }}>{topic.name}</div>
-                      <div style={{ fontSize: "0.8rem", color: "#666" }}>
-                        Impatto: {topic.impactScore}/5 • Finanziario:{" "}
-                        {topic.financialScore}/5
-                      </div>
-                      <div style={{ fontSize: "0.8rem", marginTop: "0.25rem" }}>
-                        {topic.action}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div
-                  style={{
-                    color: "#666",
-                    fontStyle: "italic",
-                    textAlign: "center",
-                  }}
-                >
-                  Nessun tema in questo quadrante
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

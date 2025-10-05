@@ -3,7 +3,7 @@ import {
   generateStructuredQuestionnaire,
   calculateMaterialityScoring,
 } from "../utils/materialityFrameworkISO26000";
-import { useEvidenceManager } from "../hooks/useEvidenceManager";
+import useEvidenceManager from "../hooks/useEvidenceManager";
 
 /**
  * Componente per questionario strutturato ISO 26000 basato su Materiality_.txt

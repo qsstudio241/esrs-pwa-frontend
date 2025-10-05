@@ -1,0 +1,1555 @@
+import React, { useState } from "react";
+import MaterialityMatrix from "./MaterialityMatrix";
+import SurveyBuilder from "./SurveyBuilder";
+import StructuredMaterialityQuestionnaire from "./StructuredMaterialityQuestionnaire";
+import { integrateISO26000Results } from "../utils/materialityIntegration";
+import { useMaterialityData } from "../hooks/useMaterialityData";
+import {
+  analyzeMaterialityPriority,
+  validateMaterialityAssessment,
+  exportForESRSReporting,
+} from "../utils/materialityAnalysis";
+
+// Helper functions per export Word
+function getTopicQuadrant(topic, threshold) {
+  const insideOut = topic.insideOutScore ?? topic.impactScore ?? 0;
+  const outsideIn = topic.outsideInScore ?? topic.financialScore ?? 0;
+
+  if (insideOut >= threshold && outsideIn >= threshold)
+    return "Q1_HIGH_MATERIALITY";
+  if (insideOut >= threshold && outsideIn < threshold) return "Q2_IMPACT_FOCUS";
+  if (insideOut < threshold && outsideIn < threshold)
+    return "Q3_LOW_MATERIALITY";
+  return "Q4_FINANCIAL_FOCUS";
+}
+
+function generateMaterialityRecommendations(topics, threshold) {
+  const criticalTopics = topics.filter(
+    (t) =>
+      (t.insideOutScore ?? t.impactScore ?? 0) >= threshold &&
+      (t.outsideInScore ?? t.financialScore ?? 0) >= threshold
+  );
+
+  return {
+    immediate: criticalTopics
+      .slice(0, 3)
+      .map(
+        (t) =>
+          `Priorità massima per ${t.name}: sviluppare piano di gestione integrato`
+      ),
+    strategic: criticalTopics
+      .slice(3, 6)
+      .map(
+        (t) =>
+          `Pianificare interventi strategici per ${t.name} nel medio termine`
+      ),
+    monitoring: topics
+      .filter(
+        (t) =>
+          (t.insideOutScore ?? t.impactScore ?? 0) < threshold &&
+          (t.outsideInScore ?? t.financialScore ?? 0) < threshold
+      )
+      .slice(0, 3)
+      .map((t) => `Monitoraggio continuo per ${t.name} con review annuale`),
+  };
+}
+
+async function generateWordReportWithMateriality(snapshot) {
+  // Per ora generiamo un report HTML avanzato che simula il Word
+  // TODO: Integrare con template Word reale
+  const reportHTML = generateMaterialityReportHTML(snapshot);
+
+  const blob = new Blob([reportHTML], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${snapshot.meta.azienda || "Azienda"}_Report_Materialita_${
+    new Date().toISOString().split("T")[0]
+  }.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function generateMaterialityReportHTML(snapshot) {
+  const { meta, materiality, recommendations } = snapshot;
+
+  return `<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Report Materialità - ${meta.azienda}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2cm; line-height: 1.6; }
+    h1, h2, h3 { color: #1976d2; }
+    .matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+    .quadrant { padding: 15px; border-radius: 8px; }
+    .q1 { background: #ffebee; border: 2px solid #d32f2f; }
+    .q2 { background: #fff3e0; border: 2px solid #f57c00; }
+    .q3 { background: #e8f5e8; border: 2px solid #689f38; }
+    .q4 { background: #e3f2fd; border: 2px solid #1976d2; }
+    .topic { margin: 5px 0; padding: 5px; background: white; border-radius: 4px; }
+    .recommendations { background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>📊 Report di Materialità ESG</h1>
+  <h2>${meta.azienda} - ${meta.dimensione}</h2>
+  <p><strong>Data generazione:</strong> ${new Date(
+    meta.timestamp
+  ).toLocaleDateString("it-IT")}</p>
+  
+  <h2>📈 Executive Summary</h2>
+  <p>L'analisi di materialità ha identificato <strong>${
+    materiality.analysis.materialTopics
+  }</strong> temi materiali su ${materiality.analysis.totalTopics} analizzati, 
+  per un tasso di materialità del <strong>${Math.round(
+    materiality.analysis.materialityRate
+  )}%</strong>.</p>
+  
+  <h2>🎯 Matrice di Materialità</h2>
+  <p>Soglia di materialità: <strong>${materiality.threshold}/5.0</strong></p>
+  
+  <div class="matrix">
+    <div class="quadrant q1">
+      <h3>🔴 ALTA MATERIALITÀ</h3>
+      <p><strong>Impatto Alto + Rilevanza Finanziaria Alta</strong></p>
+      ${materiality.topics
+        .filter((t) => t.quadrant === "Q1_HIGH_MATERIALITY")
+        .map(
+          (t) =>
+            `<div class="topic">${t.name} (${
+              t.insideOutScore ?? t.impactScore
+            }/${t.outsideInScore ?? t.financialScore})</div>`
+        )
+        .join("")}
+    </div>
+    
+    <div class="quadrant q2">
+      <h3>🟠 FOCUS IMPATTO</h3>
+      <p><strong>Impatto Alto + Rilevanza Finanziaria Bassa</strong></p>
+      ${materiality.topics
+        .filter((t) => t.quadrant === "Q2_IMPACT_FOCUS")
+        .map(
+          (t) =>
+            `<div class="topic">${t.name} (${
+              t.insideOutScore ?? t.impactScore
+            }/${t.outsideInScore ?? t.financialScore})</div>`
+        )
+        .join("")}
+    </div>
+    
+    <div class="quadrant q4">
+      <h3>🔵 RILEVANZA FINANZIARIA</h3>
+      <p><strong>Impatto Basso + Rilevanza Finanziaria Alta</strong></p>
+      ${materiality.topics
+        .filter((t) => t.quadrant === "Q4_FINANCIAL_FOCUS")
+        .map(
+          (t) =>
+            `<div class="topic">${t.name} (${
+              t.insideOutScore ?? t.impactScore
+            }/${t.outsideInScore ?? t.financialScore})</div>`
+        )
+        .join("")}
+    </div>
+    
+    <div class="quadrant q3">
+      <h3>🟢 MONITORAGGIO</h3>
+      <p><strong>Impatto Basso + Rilevanza Finanziaria Bassa</strong></p>
+      ${materiality.topics
+        .filter((t) => t.quadrant === "Q3_LOW_MATERIALITY")
+        .map(
+          (t) =>
+            `<div class="topic">${t.name} (${
+              t.insideOutScore ?? t.impactScore
+            }/${t.outsideInScore ?? t.financialScore})</div>`
+        )
+        .join("")}
+    </div>
+  </div>
+  
+  <div class="recommendations">
+    <h2>🎯 Raccomandazioni Strategiche</h2>
+    
+    <h3>⚡ Azioni Immediate</h3>
+    <ul>${recommendations.immediate.map((r) => `<li>${r}</li>`).join("")}</ul>
+    
+    <h3>📊 Azioni Strategiche</h3>
+    <ul>${recommendations.strategic.map((r) => `<li>${r}</li>`).join("")}</ul>
+    
+    <h3>👁️ Monitoraggio</h3>
+    <ul>${recommendations.monitoring.map((r) => `<li>${r}</li>`).join("")}</ul>
+  </div>
+  
+  <hr>
+  <p style="font-size: 0.9em; color: #666;">
+    Report generato automaticamente dal sistema ESRS PWA - ${new Date().toLocaleString(
+      "it-IT"
+    )}
+  </p>
+</body>
+</html>`;
+}
+
+/**
+ * Componente principale per gestione completa della materialità
+ * Integra matrice, survey, analisi e export secondo PDR 134:2022
+ */
+function MaterialityManagement({ audit, onUpdate }) {
+  const [activeTab, setActiveTab] = useState("matrix");
+  const [surveys, setSurveys] = useState([]);
+  const [structuredResults, setStructuredResults] = useState(null);
+  const [selectedCustomTopic, setSelectedCustomTopic] = useState(null);
+  const [customTopicDetails, setCustomTopicDetails] = useState({});
+
+  const {
+    topics,
+    threshold,
+    isLoading,
+    customTopics,
+    updateTopic,
+    addCustomTopic,
+    updateCustomTopics,
+    setThreshold,
+    getMaterialityAnalysis,
+  } = useMaterialityData(audit?.id);
+
+  const analysis = getMaterialityAnalysis();
+  const priorityAnalysis = analyzeMaterialityPriority(topics, threshold);
+  const validation = validateMaterialityAssessment(topics, threshold);
+
+  // Gestisce aggiornamenti alla matrice
+  const handleTopicUpdate = (topicId, updates) => {
+    updateTopic(topicId, updates);
+
+    // Notifica cambiamenti all'audit parent se necessario
+    if (onUpdate) {
+      onUpdate({
+        ...audit,
+        materialityData: {
+          topics: topics.map((t) =>
+            t.id === topicId ? { ...t, ...updates } : t
+          ),
+          threshold,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
+    }
+  };
+
+  // Gestisce creazione nuovo survey
+  const handleSurveyCreate = (survey) => {
+    setSurveys((prev) => [...prev, survey]);
+
+    // Salva survey in localStorage
+    try {
+      localStorage.setItem(
+        `surveys_${audit?.id}`,
+        JSON.stringify([...surveys, survey])
+      );
+    } catch (error) {
+      console.error("Errore salvataggio survey:", error);
+    }
+  };
+
+  // Gestisce aggiornamento survey esistente
+  const handleSurveyUpdate = (surveyId, updates) => {
+    setSurveys((prev) =>
+      prev.map((s) => (s.id === surveyId ? { ...s, ...updates } : s))
+    );
+  };
+
+  // Export report materialità per ESRS
+  const handleExportReport = () => {
+    try {
+      const reportData = exportForESRSReporting(
+        { topics, threshold },
+        {
+          azienda: audit?.azienda,
+          dimensione: audit?.dimensione,
+          dataAvvio: audit?.dataAvvio,
+        }
+      );
+
+      const blob = new Blob([JSON.stringify(reportData, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${audit?.azienda || "Azienda"}_MaterialityReport_${
+        new Date().toISOString().split("T")[0]
+      }.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      alert("Errore durante l'export: " + error.message);
+    }
+  };
+
+  // Export Word completo con analisi materialità e evidenze
+  const handleExportWordWithMateriality = async () => {
+    try {
+      console.log("🚀 Avvio export Word con materialità...");
+
+      // Prepara snapshot completo con dati materialità
+      const materialitySnapshot = {
+        meta: {
+          version: "2.0",
+          schemaVersion: "1.0",
+          timestamp: new Date().toISOString(),
+          auditId: audit?.id,
+          azienda: audit?.azienda,
+          dimensione: audit?.dimensione,
+        },
+        materiality: {
+          topics: topics.map((topic) => ({
+            ...topic,
+            isMaterial:
+              topic.insideOutScore >= threshold ||
+              topic.outsideInScore >= threshold,
+            quadrant: getTopicQuadrant(topic, threshold),
+          })),
+          threshold,
+          analysis: getMaterialityAnalysis(),
+          priorityAnalysis,
+          validation,
+          structuredResults,
+        },
+        audit: audit || {},
+        surveys,
+        recommendations: generateMaterialityRecommendations(topics, threshold),
+      };
+
+      // Crea report Word avanzato
+      await generateWordReportWithMateriality(materialitySnapshot);
+
+      console.log("✅ Export Word completato con successo!");
+    } catch (error) {
+      console.error("❌ Errore nell'export Word:", error);
+      throw error;
+    }
+  };
+
+  // Functions for custom topic modal
+  const openCustomTopicModal = (customTopic) => {
+    setSelectedCustomTopic(customTopic);
+    const key = `custom_${customTopic.id}`;
+    setCustomTopicDetails({
+      description: customTopic.description || "",
+      comments: audit?.comments?.[key] || [],
+      photos: audit?.photos?.[key] || [],
+    });
+  };
+
+  const saveCustomTopicDetails = () => {
+    if (!selectedCustomTopic) return;
+
+    const key = `custom_${selectedCustomTopic.id}`;
+
+    // Update custom topic description
+    const updatedTopics = customTopics.map((topic) =>
+      topic.id === selectedCustomTopic.id
+        ? { ...topic, description: customTopicDetails.description }
+        : topic
+    );
+    updateCustomTopics(updatedTopics);
+
+    // Update comments and photos in audit
+    const updatedAudit = {
+      ...audit,
+      comments: {
+        ...audit.comments,
+        [key]: customTopicDetails.comments,
+      },
+      photos: {
+        ...audit.photos,
+        [key]: customTopicDetails.photos,
+      },
+    };
+
+    onUpdate(updatedAudit);
+    setSelectedCustomTopic(null);
+  };
+
+  const addCustomComment = (newComment) => {
+    setCustomTopicDetails((prev) => ({
+      ...prev,
+      comments: [...prev.comments, { id: Date.now(), text: newComment }],
+    }));
+  };
+
+  const removeCustomComment = (commentId) => {
+    setCustomTopicDetails((prev) => ({
+      ...prev,
+      comments: prev.comments.filter((comment) => comment.id !== commentId),
+    }));
+  };
+
+  const addCustomPhoto = (photoFile) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const photoData = {
+        id: Date.now(),
+        name: photoFile.name,
+        data: e.target.result,
+        type: photoFile.type,
+      };
+      setCustomTopicDetails((prev) => ({
+        ...prev,
+        photos: [...prev.photos, photoData],
+      }));
+    };
+    reader.readAsDataURL(photoFile);
+  };
+
+  const removeCustomPhoto = (photoId) => {
+    setCustomTopicDetails((prev) => ({
+      ...prev,
+      photos: prev.photos.filter((photo) => photo.id !== photoId),
+    }));
+  };
+
+  // Funzione per eliminare un tema custom
+  const deleteCustomTopic = (topicId) => {
+    const updatedCustoms = customTopics.filter((topic) => topic.id !== topicId);
+    updateCustomTopics(updatedCustoms);
+
+    // Rimuovi anche commenti e foto dal audit
+    const key = `custom_${topicId}`;
+    if (audit?.comments?.[key] || audit?.photos?.[key]) {
+      const updatedAudit = { ...audit };
+      if (updatedAudit.comments) {
+        delete updatedAudit.comments[key];
+      }
+      if (updatedAudit.photos) {
+        delete updatedAudit.photos[key];
+      }
+      onUpdate(updatedAudit);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: "2rem", textAlign: "center" }}>
+        <div>🔄 Caricamento analisi materialità...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: "1rem" }}>
+      {/* Header con navigazione */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "1.5rem",
+          borderBottom: "2px solid #e9ecef",
+          paddingBottom: "1rem",
+        }}
+      >
+        <div>
+          <h2 style={{ margin: 0, color: "#1976d2" }}>
+            🎯 Gestione Materialità - {audit?.azienda || "Audit"}
+          </h2>
+          <p
+            style={{
+              margin: "0.5rem 0 0 0",
+              color: "#666",
+              fontSize: "0.9rem",
+            }}
+          >
+            Analisi doppia materialità secondo PDR 134:2022 • {topics.length}{" "}
+            temi valutati
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          {/* Indicatore completezza */}
+          <div style={{ textAlign: "center" }}>
+            <div
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                color: validation.isValid ? "#28a745" : "#ffc107",
+              }}
+            >
+              {validation.completeness}%
+            </div>
+            <div style={{ fontSize: "0.8rem", color: "#666" }}>Completezza</div>
+          </div>
+
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button
+              onClick={handleExportReport}
+              style={{
+                padding: "0.75rem 1.5rem",
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              📋 Export JSON
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  // Genera report Word completo con materialità ed evidenze
+                  await handleExportWordWithMateriality();
+                } catch (error) {
+                  console.error("❌ Errore export Word:", error);
+                  alert("Errore durante l'export Word: " + error.message);
+                }
+              }}
+              style={{
+                padding: "0.75rem 1.5rem",
+                backgroundColor: "#1976d2",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              📄 Export Word + Materialità
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Alert validazione se necessario */}
+      {!validation.isValid && (
+        <div
+          style={{
+            padding: "1rem",
+            backgroundColor: "#fff3cd",
+            border: "1px solid #ffeaa7",
+            borderRadius: "6px",
+            marginBottom: "1rem",
+          }}
+        >
+          <strong>⚠️ Attenzione:</strong> Analisi materialità incompleta
+          <ul style={{ margin: "0.5rem 0", paddingLeft: "1.5rem" }}>
+            {validation.issues
+              .filter((i) => i.severity === "ERROR")
+              .map((issue, idx) => (
+                <li key={idx} style={{ color: "#d32f2f" }}>
+                  {issue.message}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Navigation tabs */}
+      <div style={{ display: "flex", marginBottom: "1.5rem" }}>
+        {[
+          {
+            key: "matrix",
+            label: "🎯 Matrice Materialità",
+            count: `${analysis.materialTopics} materiali`,
+          },
+          {
+            key: "survey",
+            label: "📋 Stakeholder Engagement",
+            count: `${surveys.length} survey + validation`,
+          },
+          {
+            key: "analysis",
+            label: "📈 Analisi & Report",
+            count: `${priorityAnalysis.critical.length} critici`,
+          },
+
+          {
+            key: "structured",
+            label: "📋 Questionario Materialità",
+            count: structuredResults ? "✅ Completato" : "📝 Configura ora",
+          },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            style={{
+              padding: "1rem 1.5rem",
+              backgroundColor: activeTab === tab.key ? "#1976d2" : "white",
+              color: activeTab === tab.key ? "white" : "#1976d2",
+              border: "2px solid #1976d2",
+              borderRadius: activeTab === tab.key ? "6px 6px 0 0" : "6px",
+              cursor: "pointer",
+              marginRight: "0.5rem",
+              fontWeight: "bold",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "0.25rem",
+            }}
+          >
+            <span>{tab.label}</span>
+            <span style={{ fontSize: "0.8rem", opacity: 0.8 }}>
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Contenuto tab */}
+      <div
+        style={{
+          backgroundColor: "white",
+          borderRadius: activeTab === "matrix" ? "0 6px 6px 6px" : "6px",
+          padding: "1.5rem",
+          border: "2px solid #1976d2",
+        }}
+      >
+        {activeTab === "matrix" && (
+          <div>
+            <MaterialityMatrix
+              topics={topics}
+              onTopicUpdate={handleTopicUpdate}
+              onThresholdChange={setThreshold}
+              threshold={threshold}
+            />
+
+            {/* Controlli aggiuntivi matrice */}
+            <div
+              style={{
+                marginTop: "1.5rem",
+                padding: "1rem",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "6px",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "1rem",
+              }}
+            >
+              <div>
+                <h5 style={{ margin: "0 0 0.5rem 0" }}>🎛️ Gestione Temi</h5>
+                <button
+                  onClick={() => {
+                    const name = prompt("Nome del nuovo tema:");
+                    if (name) addCustomTopic(name);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "0.5rem",
+                    backgroundColor: "#17a2b8",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  + Aggiungi Tema Custom
+                </button>
+              </div>
+
+              <div>
+                <h5 style={{ margin: "0 0 0.5rem 0" }}>
+                  📊 Statistiche Rapide
+                </h5>
+                <div style={{ fontSize: "0.9rem" }}>
+                  <div>🔴 Critici: {priorityAnalysis.critical.length}</div>
+                  <div>
+                    🟡 Alto impatto: {priorityAnalysis.impactFocus.length}
+                  </div>
+                  <div>
+                    🔵 Rilevanza finanziaria:{" "}
+                    {priorityAnalysis.financialFocus.length}
+                  </div>
+                  <div>
+                    🟢 Monitoraggio: {priorityAnalysis.monitoring.length}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Gestione Temi Custom */}
+            {topics.some((t) => t.isCustom) && (
+              <div
+                style={{
+                  backgroundColor: "#f8f9fa",
+                  padding: "1rem",
+                  borderRadius: "6px",
+                  marginTop: "1rem",
+                  border: "1px solid #dee2e6",
+                }}
+              >
+                <h5 style={{ margin: "0 0 1rem 0", color: "#495057" }}>
+                  🎨 Gestione Temi Custom
+                </h5>
+                <div style={{ display: "grid", gap: "0.5rem" }}>
+                  {topics
+                    .filter((t) => t.isCustom)
+                    .map((topic) => (
+                      <div
+                        key={topic.id}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "0.75rem",
+                          backgroundColor: "white",
+                          borderRadius: "4px",
+                          border: "1px solid #e9ecef",
+                        }}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div
+                            style={{ fontWeight: "bold", fontSize: "0.9rem" }}
+                          >
+                            {topic.name}
+                          </div>
+                          {topic.description && (
+                            <div
+                              style={{
+                                fontSize: "0.8rem",
+                                color: "#666",
+                                marginTop: "0.25rem",
+                              }}
+                            >
+                              {topic.description}
+                            </div>
+                          )}
+                          <div
+                            style={{
+                              fontSize: "0.8rem",
+                              color: "#28a745",
+                              marginTop: "0.25rem",
+                            }}
+                          >
+                            Impact: {topic.impactScore || 0}/5 • Financial:{" "}
+                            {topic.financialScore || 0}/5
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "0.5rem",
+                            alignItems: "center",
+                          }}
+                        >
+                          <button
+                            onClick={() => openCustomTopicModal(topic)}
+                            style={{
+                              padding: "0.25rem 0.5rem",
+                              fontSize: "0.8rem",
+                              backgroundColor: "#007bff",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "3px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            📝 Dettagli
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              if (
+                                window.confirm(
+                                  `Eliminare il tema custom "${topic.name}"?`
+                                )
+                              ) {
+                                deleteCustomTopic(topic.id);
+                              }
+                            }}
+                            style={{
+                              padding: "0.25rem 0.5rem",
+                              fontSize: "0.8rem",
+                              backgroundColor: "#dc3545",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "3px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === "survey" && (
+          <SurveyBuilder
+            existingSurveys={surveys}
+            onSurveyCreate={handleSurveyCreate}
+            onSurveyUpdate={handleSurveyUpdate}
+          />
+        )}
+
+        {activeTab === "analysis" && (
+          <MaterialityAnalysisView
+            analysis={priorityAnalysis}
+            validation={validation}
+            topics={topics}
+            threshold={threshold}
+          />
+        )}
+
+        {activeTab === "structured" && (
+          <StructuredMaterialityQuestionnaire
+            onComplete={(results) => {
+              console.log("🎯 Questionario completato, risultati:", results);
+              setStructuredResults(results);
+
+              // Verifica presenza dati scoring
+              if (!results?.scoring?.themeScores) {
+                console.error(
+                  "❌ Nessun dato di scoring trovato nei risultati"
+                );
+                alert("Errore: Risultati questionario incompleti. Riprova.");
+                return;
+              }
+
+              console.log(
+                "📊 Theme scores trovati:",
+                results.scoring.themeScores
+              );
+              console.log(
+                "📊 Topic attuali matrice PRIMA dell'integrazione:",
+                topics.map((t) => ({
+                  id: t.id,
+                  name: t.name,
+                  inside: t.insideOutScore ?? t.impactScore,
+                  outside: t.outsideInScore ?? t.financialScore,
+                }))
+              );
+
+              // Integra i risultati ISO 26000 con i topic della matrice esistente
+              try {
+                const updatedTopics = integrateISO26000Results(results, topics);
+                console.log(
+                  "🔄 Topic aggiornati dall'integrazione:",
+                  updatedTopics
+                );
+
+                let updatedCount = 0;
+                const topicsToUpdate = [];
+
+                // Identifica tutti i topic da aggiornare
+                updatedTopics.forEach((updatedTopic) => {
+                  const existingTopic = topics.find(
+                    (t) => t.id === updatedTopic.id
+                  );
+                  if (
+                    existingTopic &&
+                    (updatedTopic.insideOutScore !==
+                      existingTopic.insideOutScore ||
+                      updatedTopic.outsideInScore !==
+                        existingTopic.outsideInScore)
+                  ) {
+                    console.log(
+                      `📝 Preparando aggiornamento topic ${updatedTopic.id}:`,
+                      {
+                        old: {
+                          inside: existingTopic.insideOutScore,
+                          outside: existingTopic.outsideInScore,
+                        },
+                        new: {
+                          inside: updatedTopic.insideOutScore,
+                          outside: updatedTopic.outsideInScore,
+                        },
+                      }
+                    );
+
+                    topicsToUpdate.push({
+                      id: updatedTopic.id,
+                      updates: {
+                        insideOutScore: updatedTopic.insideOutScore,
+                        outsideInScore: updatedTopic.outsideInScore,
+                        isoThemeMapping: updatedTopic.isoThemeMapping,
+                        lastISOUpdate: updatedTopic.lastISOUpdate,
+                      },
+                    });
+                    updatedCount++;
+                  }
+                });
+
+                // Aggiornamento batch di tutti i topic
+                if (topicsToUpdate.length > 0) {
+                  console.log(
+                    `🔄 Eseguendo aggiornamento batch di ${topicsToUpdate.length} topic...`
+                  );
+                  topicsToUpdate.forEach(({ id, updates }) => {
+                    updateTopic(id, updates);
+                  });
+
+                  // Forza re-render forzando aggiornamento dello stato
+                  setTimeout(() => {
+                    console.log("🔄 Forzando refresh della matrice...");
+                    // Trigger re-render forzato
+                    setActiveTab("matrix"); // Assicura che siamo sul tab corretto
+                  }, 100);
+                }
+
+                console.log(
+                  `✅ Integrazione ISO 26000 completata: ${updatedCount} topic effettivamente aggiornati`
+                );
+
+                // Controllo finale: stato topic DOPO aggiornamento
+                setTimeout(() => {
+                  console.log(
+                    "📊 Topic matrice DOPO integrazione:",
+                    topics.map((t) => ({
+                      id: t.id,
+                      name: t.name,
+                      inside: t.insideOutScore ?? t.impactScore,
+                      outside: t.outsideInScore ?? t.financialScore,
+                      updated: t.lastISOUpdate ? "✅" : "❌",
+                    }))
+                  );
+                }, 500);
+
+                if (updatedCount > 0) {
+                  alert(
+                    `✅ Matrice aggiornata con successo!\n${updatedCount} topic sono stati aggiornati con i dati del questionario ISO 26000.`
+                  );
+                } else {
+                  alert(
+                    "⚠️ Nessun topic aggiornato. Verifica la mappatura dei temi."
+                  );
+                }
+              } catch (error) {
+                console.error("❌ Errore nell'integrazione:", error);
+                alert(
+                  "Errore nell'aggiornamento della matrice: " + error.message
+                );
+              }
+            }}
+            selectedThemes={topics.filter(
+              (t) => t.insideOutScore > 3 || t.outsideInScore > 3
+            )}
+            audit={audit}
+            onUpdate={onUpdate}
+          />
+        )}
+      </div>
+
+      {/* Modal per temi custom */}
+      {selectedCustomTopic && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "8px",
+              padding: "2rem",
+              width: "90%",
+              maxWidth: "600px",
+              maxHeight: "80vh",
+              overflow: "auto",
+            }}
+          >
+            <h3 style={{ marginTop: 0, color: "#333" }}>
+              {selectedCustomTopic.name}
+            </h3>
+
+            {/* Scoring personalizzato */}
+            <div
+              style={{
+                marginBottom: "1.5rem",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "1rem",
+              }}
+            >
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Impact Score: {selectedCustomTopic.impactScore || 3}/5
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="1"
+                  value={selectedCustomTopic.impactScore || 3}
+                  onChange={(e) => {
+                    const newScore = parseInt(e.target.value);
+                    const updatedTopics = customTopics.map((topic) =>
+                      topic.id === selectedCustomTopic.id
+                        ? { ...topic, impactScore: newScore }
+                        : topic
+                    );
+                    updateCustomTopics(updatedTopics);
+                    setSelectedCustomTopic((prev) => ({
+                      ...prev,
+                      impactScore: newScore,
+                    }));
+                  }}
+                  style={{ width: "100%", marginBottom: "0.5rem" }}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "0.8rem",
+                    color: "#666",
+                  }}
+                >
+                  <span>Basso</span>
+                  <span>Alto</span>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Financial Score: {selectedCustomTopic.financialScore || 3}/5
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="1"
+                  value={selectedCustomTopic.financialScore || 3}
+                  onChange={(e) => {
+                    const newScore = parseInt(e.target.value);
+                    const updatedTopics = customTopics.map((topic) =>
+                      topic.id === selectedCustomTopic.id
+                        ? { ...topic, financialScore: newScore }
+                        : topic
+                    );
+                    updateCustomTopics(updatedTopics);
+                    setSelectedCustomTopic((prev) => ({
+                      ...prev,
+                      financialScore: newScore,
+                    }));
+                  }}
+                  style={{ width: "100%", marginBottom: "0.5rem" }}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "0.8rem",
+                    color: "#666",
+                  }}
+                >
+                  <span>Basso</span>
+                  <span>Alto</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Descrizione */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Descrizione:
+              </label>
+              <textarea
+                value={customTopicDetails.description}
+                onChange={(e) =>
+                  setCustomTopicDetails((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                style={{
+                  width: "100%",
+                  minHeight: "100px",
+                  padding: "0.5rem",
+                  border: "1px solid #ddd",
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                }}
+                placeholder="Inserisci una descrizione dettagliata del tema..."
+              />
+            </div>
+
+            {/* Commenti */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Commenti ({customTopicDetails.comments.length}):
+              </label>
+
+              {customTopicDetails.comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  style={{
+                    backgroundColor: "#f8f9fa",
+                    padding: "0.75rem",
+                    marginBottom: "0.5rem",
+                    borderRadius: "4px",
+                    border: "1px solid #e9ecef",
+                    position: "relative",
+                  }}
+                >
+                  <div style={{ paddingRight: "2rem" }}>{comment.text}</div>
+                  <button
+                    onClick={() => removeCustomComment(comment.id)}
+                    style={{
+                      position: "absolute",
+                      top: "0.5rem",
+                      right: "0.5rem",
+                      background: "none",
+                      border: "none",
+                      color: "#dc3545",
+                      cursor: "pointer",
+                      fontSize: "18px",
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Aggiungi un commento..."
+                  style={{
+                    flex: 1,
+                    padding: "0.5rem",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter" && e.target.value.trim()) {
+                      addCustomComment(e.target.value.trim());
+                      e.target.value = "";
+                    }
+                  }}
+                />
+                <button
+                  onClick={(e) => {
+                    const input = e.target.parentElement.querySelector("input");
+                    if (input.value.trim()) {
+                      addCustomComment(input.value.trim());
+                      input.value = "";
+                    }
+                  }}
+                  style={{
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Aggiungi
+                </button>
+              </div>
+            </div>
+
+            {/* Foto */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Foto allegati ({customTopicDetails.photos.length}):
+              </label>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "0.5rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                {customTopicDetails.photos.map((photo) => (
+                  <div
+                    key={photo.id}
+                    style={{
+                      position: "relative",
+                      border: "1px solid #ddd",
+                      borderRadius: "4px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <img
+                      src={photo.data}
+                      alt={photo.name}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                        display: "block",
+                      }}
+                    />
+                    <button
+                      onClick={() => removeCustomPhoto(photo.id)}
+                      style={{
+                        position: "absolute",
+                        top: "2px",
+                        right: "2px",
+                        background: "rgba(220, 53, 69, 0.8)",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "20px",
+                        height: "20px",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      ×
+                    </button>
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        padding: "2px",
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                        color: "white",
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        textAlign: "center",
+                      }}
+                    >
+                      {photo.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    addCustomPhoto(file);
+                    e.target.value = ""; // Reset input
+                  }
+                }}
+                style={{ marginBottom: "1rem" }}
+              />
+            </div>
+
+            {/* Pulsanti azione */}
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                onClick={() => setSelectedCustomTopic(null)}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: "#6c757d",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Annulla
+              </button>
+              <button
+                onClick={saveCustomTopicDetails}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Salva
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Componente per visualizzazione analisi e raccomandazioni
+function MaterialityAnalysisView({ analysis, validation, topics, threshold }) {
+  return (
+    <div>
+      <h3 style={{ margin: "0 0 1.5rem 0", color: "#1976d2" }}>
+        📈 Analisi Materialità e Raccomandazioni
+      </h3>
+
+      {/* Riepilogo esecutivo */}
+      <div
+        style={{
+          padding: "1rem",
+          backgroundColor: "#e3f2fd",
+          borderRadius: "6px",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <h4 style={{ margin: "0 0 1rem 0" }}>📋 Riepilogo Esecutivo</h4>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "1rem",
+          }}
+        >
+          <div>
+            <strong>Temi Analizzati:</strong>{" "}
+            <span style={{ color: "#1976d2" }}>{analysis.totalTopics}</span>
+          </div>
+          <div>
+            <strong>Alta Materialità:</strong>{" "}
+            <span style={{ color: "#4caf50" }}>{analysis.highMateriality}</span>
+          </div>
+          <div>
+            <strong>Focus Impatto:</strong>{" "}
+            <span style={{ color: "#ff9800" }}>{analysis.impactFocus}</span>
+          </div>
+          <div>
+            <strong>Focus Finanziario:</strong>{" "}
+            <span style={{ color: "#2196f3" }}>{analysis.financialFocus}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Validazione assessment */}
+      <div
+        style={{
+          padding: "1rem",
+          backgroundColor: validation.isValid ? "#e8f5e8" : "#ffebee",
+          borderRadius: "6px",
+          marginBottom: "1.5rem",
+          border: `2px solid ${validation.isValid ? "#4caf50" : "#f44336"}`,
+        }}
+      >
+        <h4
+          style={{
+            margin: "0 0 1rem 0",
+            color: validation.isValid ? "#2e7d32" : "#c62828",
+          }}
+        >
+          {validation.isValid ? "✅" : "⚠️"} Validazione Assessment
+        </h4>
+        <div style={{ marginBottom: "0.5rem" }}>
+          <strong>Status:</strong>{" "}
+          <span
+            style={{
+              color: validation.isValid ? "#2e7d32" : "#c62828",
+              fontWeight: "bold",
+            }}
+          >
+            {validation.isValid ? "VALIDO" : "RICHIEDE ATTENZIONE"}
+          </span>
+        </div>
+        {validation.warnings.length > 0 && (
+          <div>
+            <strong>Avvisi:</strong>
+            <ul style={{ margin: "0.5rem 0 0 1rem", padding: 0 }}>
+              {validation.warnings.map((warning, idx) => (
+                <li key={idx} style={{ color: "#f57c00" }}>
+                  {warning}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {validation.errors.length > 0 && (
+          <div>
+            <strong>Errori:</strong>
+            <ul style={{ margin: "0.5rem 0 0 1rem", padding: 0 }}>
+              {validation.errors.map((error, idx) => (
+                <li key={idx} style={{ color: "#c62828" }}>
+                  {error}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* Raccomandazioni strategiche */}
+      <div
+        style={{
+          padding: "1rem",
+          backgroundColor: "#fff3e0",
+          borderRadius: "6px",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <h4 style={{ margin: "0 0 1rem 0", color: "#ef6c00" }}>
+          🎯 Raccomandazioni Strategiche
+        </h4>
+        <div style={{ fontSize: "0.95rem" }}>
+          {analysis.recommendations.length > 0 ? (
+            <ul style={{ margin: 0, paddingLeft: "1.5rem" }}>
+              {analysis.recommendations.map((rec, idx) => (
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>
+                  {rec}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ margin: 0, fontStyle: "italic", color: "#666" }}>
+              Nessuna raccomandazione disponibile
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Distribuzione quadranti */}
+      <div
+        style={{
+          padding: "1rem",
+          backgroundColor: "white",
+          borderRadius: "6px",
+          border: "1px solid #e0e0e0",
+        }}
+      >
+        <h4 style={{ margin: "0 0 1rem 0", color: "#1976d2" }}>
+          📊 Distribuzione per Quadranti
+        </h4>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, 1fr)",
+            gap: "1rem",
+          }}
+        >
+          {[
+            {
+              title: "Q1: Alta Materialità",
+              count: analysis.highMateriality,
+              color: "#4caf50",
+              data: topics.filter(
+                (t) =>
+                  t.impactScore >= threshold && t.financialScore >= threshold
+              ),
+            },
+            {
+              title: "Q2: Focus Impatto",
+              count: analysis.impactFocus,
+              color: "#ff9800",
+              data: topics.filter(
+                (t) =>
+                  t.impactScore >= threshold && t.financialScore < threshold
+              ),
+            },
+            {
+              title: "Q3: Bassa Materialità",
+              count: analysis.lowMateriality,
+              color: "#9e9e9e",
+              data: topics.filter(
+                (t) => t.impactScore < threshold && t.financialScore < threshold
+              ),
+            },
+            {
+              title: "Q4: Focus Finanziario",
+              count: analysis.financialFocus,
+              color: "#2196f3",
+              data: topics.filter(
+                (t) =>
+                  t.impactScore < threshold && t.financialScore >= threshold
+              ),
+            },
+          ].map((quadrant, idx) => (
+            <div
+              key={idx}
+              style={{
+                padding: "1rem",
+                border: `2px solid ${quadrant.color}`,
+                borderRadius: "6px",
+                backgroundColor: "white",
+              }}
+            >
+              <h5 style={{ margin: "0 0 1rem 0", color: quadrant.color }}>
+                {quadrant.title} ({quadrant.data.length})
+              </h5>
+              {quadrant.data.length > 0 ? (
+                <div style={{ fontSize: "0.9rem" }}>
+                  {quadrant.data.map((topic, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        padding: "0.5rem",
+                        marginBottom: "0.5rem",
+                        backgroundColor: "#f8f9fa",
+                        borderRadius: "4px",
+                        borderLeft: `3px solid ${quadrant.color}`,
+                      }}
+                    >
+                      <div style={{ fontWeight: "bold" }}>{topic.name}</div>
+                      <div style={{ fontSize: "0.8rem", color: "#666" }}>
+                        Impatto: {topic.impactScore}/5 • Finanziario:{" "}
+                        {topic.financialScore}/5
+                      </div>
+                      <div style={{ fontSize: "0.8rem", marginTop: "0.25rem" }}>
+                        {topic.action}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    color: "#666",
+                    fontStyle: "italic",
+                    textAlign: "center",
+                  }}
+                >
+                  Nessun tema in questo quadrante
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default MaterialityManagement;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import requisitiDimensioni from "./requisiti_dimensioni_esrs.json";
-import Checklist from "./Checklist";
 import ChecklistRefactored from "./ChecklistRefactored";
 import ErrorBoundary from "./components/ErrorBoundary";
 import MaterialityManagement from "./components/MaterialityManagement";
 import ExportProfessional from "./components/ExportProfessional";
+import StorageManager from "./components/StorageManager";
 import { StorageProvider } from "./storage/StorageContext";
 import { calcolaDimensioneAzienda } from "./utils/auditBusinessLogic";
 import {
@@ -12,6 +12,124 @@ import {
   recordTelemetry,
   dumpTelemetry,
 } from "./utils/telemetry";
+
+// Componente Settings Panel Collapsabile
+function SettingsPanel({
+  telemetryOptIn,
+  toggleTelemetry,
+  dumpTelemetry,
+  resetAudits,
+  isDev,
+  currentAudit,
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      style={{
+        marginBottom: 8,
+        border: "1px solid #e0e0e0",
+        borderRadius: 4,
+        background: "#fafafa",
+      }}
+    >
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          width: "100%",
+          padding: "6px 12px",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          fontSize: "12px",
+          color: "#555",
+        }}
+      >
+        <span>⚙️ Impostazioni Avanzate</span>
+        <span>{isOpen ? "▼" : "▶"}</span>
+      </button>
+      {isOpen && (
+        <div
+          style={{
+            padding: "8px 12px",
+            borderTop: "1px solid #e0e0e0",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}
+        >
+          {/* Storage Manager */}
+          <StorageManager audit={currentAudit} />
+
+          {/* Divider */}
+          <div style={{ borderTop: "1px solid #e0e0e0", margin: "4px 0" }} />
+
+          <label
+            style={{
+              fontSize: "12px",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={telemetryOptIn}
+              onChange={toggleTelemetry}
+            />
+            <span>📊 Telemetria anonima (opt-in)</span>
+          </label>
+          {telemetryOptIn && (
+            <button
+              style={{
+                fontSize: "11px",
+                padding: "4px 8px",
+                cursor: "pointer",
+                borderRadius: 3,
+                background: "#e3f2fd",
+                border: "1px solid #90caf9",
+                alignSelf: "flex-start",
+              }}
+              onClick={() => {
+                const data = dumpTelemetry();
+                const blob = new Blob([JSON.stringify(data, null, 2)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "telemetry_dump.json";
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+            >
+              📥 Esporta Telemetria
+            </button>
+          )}
+          {isDev && (
+            <button
+              onClick={resetAudits}
+              style={{
+                fontSize: "11px",
+                background: "#ffe0e0",
+                border: "1px solid #ffb0b0",
+                cursor: "pointer",
+                padding: "4px 8px",
+                borderRadius: 3,
+                alignSelf: "flex-start",
+              }}
+            >
+              🗑️ Reset audit locali (DEV)
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Utility per generare un ID univoco
 const generateId = () => "audit_" + Date.now();
@@ -309,14 +427,7 @@ function App() {
   });
   const [currentAuditId, setCurrentAuditId] = useState("");
   const [showClosed, setShowClosed] = useState(false);
-  const [activeTab, setActiveTab] = useState("checklist"); // nuovo state per tab
-  const [useRefactored, setUseRefactored] = useState(() => {
-    try {
-      return localStorage.getItem("feature_refactored_checklist") === "1";
-    } catch {
-      return false;
-    }
-  });
+  const [activeTab, setActiveTab] = useState("kpi"); // nuovo state per tab (rinominato da "checklist")
   const [telemetryOptIn, setTelemetryOptInState] = useState(() => {
     try {
       return localStorage.getItem("telemetry_opt_in") === "1";
@@ -361,20 +472,6 @@ function App() {
     });
   };
 
-  const toggleRefactored = () => {
-    setUseRefactored((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem("feature_refactored_checklist", next ? "1" : "0");
-        recordTelemetry("feature_toggle", {
-          feature: "refactored_checklist",
-          enabled: next,
-        });
-      } catch {}
-      return next;
-    });
-  };
-
   const toggleTelemetry = () => {
     setTelemetryOptInState((prev) => {
       const next = !prev;
@@ -412,82 +509,35 @@ function App() {
           showClosed={showClosed}
           setShowClosed={setShowClosed}
         />
-        <div
-          style={{
-            marginBottom: 8,
-            display: "flex",
-            gap: 16,
-            alignItems: "center",
-          }}
-        >
-          <label style={{ fontSize: "12px" }}>
-            <input
-              type="checkbox"
-              checked={useRefactored}
-              onChange={toggleRefactored}
-            />{" "}
-            Usa nuova checklist (beta)
-          </label>
-          <label style={{ fontSize: "12px" }}>
-            <input
-              type="checkbox"
-              checked={telemetryOptIn}
-              onChange={toggleTelemetry}
-            />{" "}
-            Telemetria anonima (opt-in)
-          </label>
-          {telemetryOptIn && (
-            <button
-              style={{ fontSize: "11px" }}
-              onClick={() => {
-                const data = dumpTelemetry();
-                const blob = new Blob([JSON.stringify(data, null, 2)], {
-                  type: "application/json",
-                });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "telemetry_dump.json";
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-            >
-              Esporta Telemetria
-            </button>
-          )}
-          {process.env.NODE_ENV !== "production" && (
-            <button
-              onClick={resetAudits}
-              style={{
-                fontSize: "11px",
-                background: "#ffe0e0",
-                border: "1px solid #ffb0b0",
-                cursor: "pointer",
-                padding: "4px 8px",
-                borderRadius: 4,
-              }}
-            >
-              Reset audit locali
-            </button>
-          )}
-        </div>
+        {/* Impostazioni Avanzate - Collapsabile */}
+        <SettingsPanel
+          telemetryOptIn={telemetryOptIn}
+          toggleTelemetry={toggleTelemetry}
+          dumpTelemetry={dumpTelemetry}
+          resetAudits={resetAudits}
+          isDev={process.env.NODE_ENV !== "production"}
+          currentAudit={currentAudit}
+        />
         {currentAudit ? (
           <div>
+            {/* Storage Status Indicator - Compact */}
+            <StorageManager audit={currentAudit} compact={true} />
+
             {/* Tab Navigation */}
             <div
               style={{
                 display: "flex",
                 marginBottom: "1rem",
+                marginTop: "0.5rem",
                 borderBottom: "2px solid #e9ecef",
               }}
             >
               <button
-                onClick={() => setActiveTab("checklist")}
+                onClick={() => setActiveTab("kpi")}
                 style={{
                   padding: "0.75rem 1.5rem",
-                  backgroundColor:
-                    activeTab === "checklist" ? "#1976d2" : "white",
-                  color: activeTab === "checklist" ? "white" : "#1976d2",
+                  backgroundColor: activeTab === "kpi" ? "#1976d2" : "white",
+                  color: activeTab === "kpi" ? "white" : "#1976d2",
                   border: "2px solid #1976d2",
                   borderBottom: "none",
                   borderRadius: "6px 6px 0 0",
@@ -496,7 +546,7 @@ function App() {
                   marginRight: "0.25rem",
                 }}
               >
-                📋 Checklist ESRS
+                � Raccolta KPI
               </button>
               <button
                 onClick={() => setActiveTab("materiality")}
@@ -573,18 +623,11 @@ function App() {
                 </>
               )}
             >
-              {activeTab === "checklist" ? (
-                useRefactored ? (
-                  <ChecklistRefactored
-                    audit={currentAudit}
-                    onUpdate={updateCurrentAudit}
-                  />
-                ) : (
-                  <Checklist
-                    audit={currentAudit}
-                    onUpdate={updateCurrentAudit}
-                  />
-                )
+              {activeTab === "kpi" ? (
+                <ChecklistRefactored
+                  audit={currentAudit}
+                  onUpdate={updateCurrentAudit}
+                />
               ) : activeTab === "materiality" ? (
                 <MaterialityManagement
                   audit={currentAudit}

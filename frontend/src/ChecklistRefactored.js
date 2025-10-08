@@ -60,8 +60,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
   const progress = computeProgress(audit);
 
   return (
-    <div style={{ padding: "1rem" }} aria-label="Checklist Refactored">
-      <h2 tabIndex={0}>Checklist (Refactored Preview)</h2>
+    <div style={{ padding: "1rem" }} aria-label="Raccolta KPI">
+      <h2 tabIndex={0}>📊 Raccolta KPI e Indicatori ESRS</h2>
       <div style={{ display: "flex", gap: 8, margin: "0.5rem 0 1rem" }}>
         <button
           type="button"

@@ -5,6 +5,7 @@ import StructuredMaterialityQuestionnaire from "./StructuredMaterialityQuestionn
 import { integrateISO26000Results } from "../utils/materialityIntegration";
 import { useMaterialityData } from "../hooks/useMaterialityData";
 import { analyzeMaterialityPriority } from "../utils/materialityAnalysis";
+import { getAllESRSMandatoryThemes } from "../utils/materialityFrameworkISO26000";
 
 function MaterialityManagement({ audit, onUpdate }) {
   const [activeTab, setActiveTab] = useState("matrix");
@@ -27,7 +28,9 @@ function MaterialityManagement({ audit, onUpdate }) {
               audit={audit}
               onUpdate={onUpdate}
               topics={materialityData.topics}
-              onTopicsUpdate={materialityData.updateTopics}
+              onTopicUpdate={materialityData.updateTopic}
+              threshold={materialityData.threshold}
+              onThresholdChange={materialityData.setThreshold}
             />
           </div>
         );
@@ -146,9 +149,7 @@ function MaterialityManagement({ audit, onUpdate }) {
                 );
               }
             }}
-            selectedThemes={materialityData.topics.filter(
-              (t) => t.insideOutScore > 3 || t.outsideInScore > 3
-            )}
+            selectedThemes={getAllESRSMandatoryThemes()}
             audit={audit}
             onUpdate={onUpdate}
           />

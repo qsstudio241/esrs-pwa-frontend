@@ -320,63 +320,511 @@ export const materialityFrameworkISO26000 = {
       },
     },
   },
+
+  // ==================== TEMI ESRS SPECIFICI ====================
+
+  "E1 - Cambiamenti Climatici": {
+    code: "E1",
+    priority: "CRITICAL",
+    esrsStandard: true,
+    aspects: {
+      E1_1: {
+        name: "Piano di transizione climatica",
+        description:
+          "Piano aziendale per garantire che il modello di business e la strategia siano compatibili con la transizione verso un'economia sostenibile e con la limitazione del riscaldamento globale a 1,5°C",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "L'organizzazione ha un piano di transizione climatica allineato agli Accordi di Parigi?",
+          "Quali sono gli obiettivi di riduzione delle emissioni GHG (Scope 1, 2, 3)?",
+          "Come viene monitorato l'avanzamento del piano di transizione?",
+        ],
+      },
+      E1_2: {
+        name: "Politiche di mitigazione e adattamento",
+        description:
+          "Azioni per ridurre emissioni GHG e adattarsi ai cambiamenti climatici",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Quali politiche di mitigazione delle emissioni sono implementate?",
+          "Esistono piani di adattamento ai rischi climatici fisici?",
+          "Come viene gestita la resilienza climatica?",
+        ],
+      },
+      E1_3: {
+        name: "Emissioni GHG",
+        description:
+          "Misurazione e rendicontazione delle emissioni di gas serra Scope 1, 2 e 3",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Quali sono le emissioni GHG totali (Scope 1, 2, 3) dell'organizzazione?",
+          "Come vengono calcolate e verificate le emissioni?",
+          "Quali sono gli obiettivi di riduzione rispetto all'anno base?",
+        ],
+      },
+    },
+  },
+
+  "E2 - Inquinamento": {
+    code: "E2",
+    priority: "HIGH",
+    esrsStandard: true,
+    aspects: {
+      E2_1: {
+        name: "Emissioni inquinanti in aria",
+        description:
+          "Emissioni di sostanze inquinanti nell'atmosfera (NOx, SOx, PM, COV, ecc.)",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Quali sono le principali fonti di emissioni inquinanti in aria?",
+          "Come vengono monitorate e ridotte le emissioni atmosferiche?",
+          "Esistono obiettivi di riduzione delle emissioni inquinanti?",
+        ],
+      },
+      E2_2: {
+        name: "Inquinamento acque e suolo",
+        description:
+          "Scarichi idrici, inquinamento del suolo e gestione sostanze pericolose",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Come vengono gestiti gli scarichi idrici e il loro impatto?",
+          "Esistono rischi di contaminazione del suolo?",
+          "Come vengono gestite le sostanze chimiche pericolose?",
+        ],
+      },
+      E2_3: {
+        name: "Sostanze di grande preoccupazione",
+        description:
+          "Gestione di sostanze estremamente preoccupanti (SVHC), microplastiche, ecc.",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "L'organizzazione utilizza sostanze SVHC o microplastiche?",
+          "Esistono piani di sostituzione per sostanze pericolose?",
+          "Come viene garantita la sicurezza chimica dei prodotti?",
+        ],
+      },
+    },
+  },
+
+  "E3 - Risorse Idriche e Marine": {
+    code: "E3",
+    priority: "HIGH",
+    esrsStandard: true,
+    aspects: {
+      E3_1: {
+        name: "Prelievi e consumi idrici",
+        description:
+          "Gestione sostenibile delle risorse idriche, prelievi, consumi e intensità idrica",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Qual è il consumo idrico totale dell'organizzazione?",
+          "Da quali fonti proviene l'acqua utilizzata (rete, pozzi, superficiali)?",
+          "Esistono aree con stress idrico nelle operazioni?",
+        ],
+      },
+      E3_2: {
+        name: "Scarichi idrici",
+        description:
+          "Gestione degli scarichi idrici e qualità dell'acqua rilasciata",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Qual è il volume degli scarichi idrici?",
+          "Come viene garantita la qualità degli scarichi?",
+          "Esistono sistemi di trattamento delle acque reflue?",
+        ],
+      },
+      E3_3: {
+        name: "Risorse marine",
+        description: "Impatti su oceani, mari e risorse marine",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Le operazioni impattano su ecosistemi marini?",
+          "Come vengono protette le risorse marine?",
+          "Esistono politiche contro l'inquinamento marino?",
+        ],
+      },
+    },
+  },
+
+  "E4 - Biodiversità ed Ecosistemi": {
+    code: "E4",
+    priority: "HIGH",
+    esrsStandard: true,
+    aspects: {
+      E4_1: {
+        name: "Driver di perdita di biodiversità",
+        description:
+          "Identificazione e gestione dei principali driver di perdita di biodiversità (cambiamento uso suolo, sovrasfruttamento, cambiamenti climatici, inquinamento, specie invasive)",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Quali sono i principali impatti dell'organizzazione sulla biodiversità?",
+          "Le operazioni avvengono in o vicino ad aree protette/sensibili?",
+          "Come vengono mitigati gli impatti sulla biodiversità?",
+        ],
+      },
+      E4_2: {
+        name: "Stato delle specie ed ecosistemi",
+        description:
+          "Monitoraggio e protezione di specie ed ecosistemi impattati",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "L'organizzazione monitora lo stato della biodiversità nelle aree operative?",
+          "Esistono programmi di conservazione o ripristino degli ecosistemi?",
+          "Come viene valutato l'impatto su specie a rischio?",
+        ],
+      },
+      E4_3: {
+        name: "Impatti ed dipendenze",
+        description: "Valutazione di impatti e dipendenze dalla biodiversità",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Quali servizi ecosistemici sono cruciali per il business?",
+          "Come viene valutata la dipendenza dalla natura?",
+          "Esistono rischi legati alla perdita di biodiversità?",
+        ],
+      },
+    },
+  },
+
+  "E5 - Economia Circolare": {
+    code: "E5",
+    priority: "HIGH",
+    esrsStandard: true,
+    aspects: {
+      E5_1: {
+        name: "Uso delle risorse ed economia circolare",
+        description:
+          "Flussi di risorse in entrata e uscita, efficienza nell'uso delle risorse",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Quali sono i principali flussi di materiali in entrata e uscita?",
+          "Quale percentuale di materiali utilizzati è riciclata o rinnovabile?",
+          "Esistono programmi di efficienza nell'uso delle risorse?",
+        ],
+      },
+      E5_2: {
+        name: "Gestione rifiuti",
+        description:
+          "Generazione, gestione e riduzione rifiuti secondo gerarchia dei rifiuti",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Qual è la produzione totale di rifiuti dell'organizzazione?",
+          "Quale percentuale di rifiuti viene riciclata/recuperata?",
+          "Esistono obiettivi di riduzione dei rifiuti e aumento del riciclo?",
+        ],
+      },
+      E5_3: {
+        name: "Ecodesign e circolarità prodotti",
+        description:
+          "Design circolare dei prodotti per durabilità, riparabilità, riciclabilità",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "I prodotti sono progettati secondo principi di economia circolare?",
+          "Esistono programmi di take-back o riuso/ricondizionamento?",
+          "Come viene garantita la durabilità e riparabilità?",
+        ],
+      },
+    },
+  },
+
+  "S1 - Forza Lavoro Propria": {
+    code: "S1",
+    priority: "CRITICAL",
+    esrsStandard: true,
+    aspects: {
+      S1_1: {
+        name: "Condizioni di lavoro",
+        description:
+          "Salute e sicurezza, orario di lavoro, retribuzione adeguata, dialogo sociale",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Come vengono garantite condizioni di lavoro sicure e dignitose?",
+          "Qual è il tasso di incidenti e infortuni sul lavoro?",
+          "Esistono politiche per l'equilibrio vita-lavoro?",
+        ],
+      },
+      S1_2: {
+        name: "Pari opportunità e non discriminazione",
+        description:
+          "Diversità, equità, inclusione, parità di genere, lotta alle discriminazioni",
+        baseScore: 3,
+        stakeholderQuestions: [
+          "Qual è la composizione della forza lavoro per genere, età, diversità?",
+          "Esistono gap retributivi di genere?",
+          "Come vengono garantite pari opportunità e prevenute discriminazioni?",
+        ],
+      },
+      S1_3: {
+        name: "Formazione e sviluppo",
+        description:
+          "Investimenti in formazione, sviluppo competenze, crescita professionale",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Quante ore medie di formazione per dipendente all'anno?",
+          "Esistono programmi di upskilling e reskilling?",
+          "Come viene supportato lo sviluppo di carriera?",
+        ],
+      },
+      S1_4: {
+        name: "Diritti umani sul lavoro",
+        description:
+          "Libertà di associazione, contrattazione collettiva, lavoro forzato, lavoro minorile",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Come vengono tutelati i diritti fondamentali dei lavoratori?",
+          "Esiste libertà di associazione sindacale?",
+          "Come viene garantita l'assenza di lavoro forzato o minorile?",
+        ],
+      },
+    },
+  },
+
+  "S2 - Lavoratori nella Catena del Valore": {
+    code: "S2",
+    priority: "HIGH",
+    esrsStandard: true,
+    aspects: {
+      S2_1: {
+        name: "Condizioni di lavoro nella supply chain",
+        description:
+          "Monitoraggio e gestione delle condizioni di lavoro nei fornitori",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Come vengono valutate le condizioni di lavoro nei fornitori?",
+          "Esistono audit sociali nella supply chain?",
+          "Come viene garantito il rispetto dei diritti dei lavoratori?",
+        ],
+      },
+      S2_2: {
+        name: "Diritti umani nella catena del valore",
+        description:
+          "Due diligence sui diritti umani, lavoro forzato, lavoro minorile nei fornitori",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Esiste un sistema di due diligence sui diritti umani?",
+          "Come vengono identificati i rischi nella supply chain?",
+          "Esistono meccanismi di rimedio per violazioni?",
+        ],
+      },
+    },
+  },
+
+  "S3 - Comunità Interessate": {
+    code: "S3",
+    priority: "MEDIUM",
+    esrsStandard: true,
+    aspects: {
+      S3_1: {
+        name: "Impatti economici sulle comunità",
+        description:
+          "Contributo economico locale, occupazione, sviluppo territoriale",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Qual è il contributo economico alle comunità locali?",
+          "Quanti lavoratori locali vengono impiegati?",
+          "Come viene supportato lo sviluppo economico territoriale?",
+        ],
+      },
+      S3_2: {
+        name: "Impatti sociali sulle comunità",
+        description:
+          "Diritti delle comunità, popoli indigeni, impatti sociali delle operazioni",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Come vengono coinvolte le comunità nelle decisioni che le riguardano?",
+          "Esistono impatti negativi su comunità locali o indigene?",
+          "Come vengono gestiti i conflitti con le comunità?",
+        ],
+      },
+      S3_3: {
+        name: "Diritti umani delle comunità",
+        description:
+          "Rispetto dei diritti umani delle comunità impattate, popoli indigeni",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Come vengono tutelati i diritti delle comunità indigene?",
+          "Esistono processi di consenso libero, previo e informato?",
+          "Come vengono gestiti gli impatti su diritti alla terra e risorse?",
+        ],
+      },
+    },
+  },
+
+  "S4 - Consumatori e Utilizzatori Finali": {
+    code: "S4",
+    priority: "MEDIUM",
+    esrsStandard: true,
+    aspects: {
+      S4_1: {
+        name: "Informazione sui prodotti/servizi",
+        description:
+          "Trasparenza, etichettatura, informazioni su impatti sociali e ambientali",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "Come vengono comunicate le caratteristiche sostenibili dei prodotti?",
+          "Esistono etichette o certificazioni di sostenibilità?",
+          "Come viene garantita la trasparenza verso i consumatori?",
+        ],
+      },
+      S4_2: {
+        name: "Sicurezza consumatori",
+        description: "Salute e sicurezza nell'uso di prodotti e servizi",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Come viene garantita la sicurezza dei prodotti/servizi?",
+          "Esistono sistemi di tracciabilità e richiamo prodotti?",
+          "Come vengono gestiti incidenti di sicurezza?",
+        ],
+      },
+      S4_3: {
+        name: "Inclusione consumatori",
+        description:
+          "Accessibilità prodotti/servizi, inclusione persone vulnerabili",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "I prodotti/servizi sono accessibili a persone con disabilità?",
+          "Come viene garantita l'inclusione di gruppi vulnerabili?",
+          "Esistono politiche di accesso equo ai prodotti/servizi?",
+        ],
+      },
+    },
+  },
+
+  "G1 - Condotta Aziendale": {
+    code: "G1",
+    priority: "CRITICAL",
+    esrsStandard: true,
+    aspects: {
+      G1_1: {
+        name: "Cultura aziendale e comportamento etico",
+        description:
+          "Codice etico, valori aziendali, integrità, protezione whistleblowing",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Esiste un codice etico e di condotta aziendale?",
+          "Come viene promossa una cultura di integrità?",
+          "Esistono canali di whistleblowing protetti?",
+        ],
+      },
+      G1_2: {
+        name: "Gestione relazioni con autorità pubbliche",
+        description:
+          "Lobbying, contributi politici, memberships, revolving doors",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "L'organizzazione svolge attività di lobbying?",
+          "Come vengono gestiti i rapporti con le autorità pubbliche?",
+          "Esistono politiche su contributi politici e conflitti d'interesse?",
+        ],
+      },
+      G1_3: {
+        name: "Anticorruzione e anti-concussione",
+        description:
+          "Politiche anti-corruzione, formazione, casi rilevati, rimedi",
+        baseScore: 1,
+        stakeholderQuestions: [
+          "Esistono politiche e procedure anti-corruzione?",
+          "Come vengono formati dipendenti e partner su questi temi?",
+          "Quanti casi di corruzione sono stati rilevati e come gestiti?",
+        ],
+      },
+      G1_4: {
+        name: "Influenza tramite associazioni di categoria",
+        description:
+          "Posizioni politiche attraverso associazioni di categoria, coerenza con impegni climatici",
+        baseScore: 2,
+        stakeholderQuestions: [
+          "A quali associazioni di categoria l'organizzazione aderisce?",
+          "Le posizioni delle associazioni sono allineate agli impegni aziendali?",
+          "Come viene garantita la coerenza su temi climatici e sostenibilità?",
+        ],
+      },
+    },
+  },
 };
 
 /**
  * Mappatura tra nomi dei temi della matrice e nomi del framework ISO 26000
  */
 const THEME_NAME_MAPPING = {
-  // Temi ESRS -> ISO 26000
-  "Cambiamenti Climatici": "Ambiente",
-  "Climate Change": "Ambiente",
-  Inquinamento: "Ambiente",
-  Pollution: "Ambiente",
-  "Risorse Idriche": "Ambiente",
-  Water: "Ambiente",
-  Acqua: "Ambiente",
-  Biodiversità: "Ambiente",
-  Biodiversity: "Ambiente",
-  "Economia Circolare": "Ambiente",
-  "Circular Economy": "Ambiente",
-  Risorse: "Ambiente",
-  Resources: "Ambiente",
+  // === TEMI ESRS AMBIENTALI (E1-E5) ===
+  "Cambiamenti Climatici": "E1 - Cambiamenti Climatici",
+  "Climate Change": "E1 - Cambiamenti Climatici",
+  E1: "E1 - Cambiamenti Climatici",
 
-  // Codici ESRS -> ISO 26000
-  E1: "Ambiente",
-  E2: "Ambiente",
-  E3: "Ambiente",
-  E4: "Ambiente",
-  E5: "Ambiente",
+  Inquinamento: "E2 - Inquinamento",
+  Pollution: "E2 - Inquinamento",
+  E2: "E2 - Inquinamento",
 
-  // Temi sociali
-  "Forza Lavoro": "Pratiche del Lavoro",
-  Workforce: "Pratiche del Lavoro",
-  Lavoratori: "Pratiche del Lavoro",
-  Workers: "Pratiche del Lavoro",
-  S1: "Pratiche del Lavoro",
-  S2: "Corrette Prassi Gestionali",
-  S3: "Coinvolgimento e Sviluppo della Comunità",
-  S4: "Aspetti relativi ai Consumatori",
+  "Risorse Idriche": "E3 - Risorse Idriche e Marine",
+  Acqua: "E3 - Risorse Idriche e Marine",
+  Water: "E3 - Risorse Idriche e Marine",
+  "Risorse Marine": "E3 - Risorse Idriche e Marine",
+  E3: "E3 - Risorse Idriche e Marine",
 
-  // Governance
-  "Condotta Aziendale": "Corrette Prassi Gestionali",
-  "Business Conduct": "Corrette Prassi Gestionali",
-  Governance: "Corrette Prassi Gestionali",
-  G1: "Corrette Prassi Gestionali",
+  Biodiversità: "E4 - Biodiversità ed Ecosistemi",
+  Biodiversity: "E4 - Biodiversità ed Ecosistemi",
+  Ecosistemi: "E4 - Biodiversità ed Ecosistemi",
+  E4: "E4 - Biodiversità ed Ecosistemi",
 
-  // Diritti umani
+  "Economia Circolare": "E5 - Economia Circolare",
+  "Circular Economy": "E5 - Economia Circolare",
+  Risorse: "E5 - Economia Circolare",
+  Resources: "E5 - Economia Circolare",
+  Rifiuti: "E5 - Economia Circolare",
+  E5: "E5 - Economia Circolare",
+
+  // === TEMI ESRS SOCIALI (S1-S4) ===
+  "Forza Lavoro": "S1 - Forza Lavoro Propria",
+  Workforce: "S1 - Forza Lavoro Propria",
+  Lavoratori: "S1 - Forza Lavoro Propria",
+  Workers: "S1 - Forza Lavoro Propria",
+  Dipendenti: "S1 - Forza Lavoro Propria",
+  S1: "S1 - Forza Lavoro Propria",
+
+  "Catena del Valore": "S2 - Lavoratori nella Catena del Valore",
+  "Supply Chain": "S2 - Lavoratori nella Catena del Valore",
+  Fornitori: "S2 - Lavoratori nella Catena del Valore",
+  S2: "S2 - Lavoratori nella Catena del Valore",
+
+  Comunità: "S3 - Comunità Interessate",
+  Community: "S3 - Comunità Interessate",
+  Communities: "S3 - Comunità Interessate",
+  "Comunità Locali": "S3 - Comunità Interessate",
+  S3: "S3 - Comunità Interessate",
+
+  Consumatori: "S4 - Consumatori e Utilizzatori Finali",
+  Consumers: "S4 - Consumatori e Utilizzatori Finali",
+  Clienti: "S4 - Consumatori e Utilizzatori Finali",
+  Customers: "S4 - Consumatori e Utilizzatori Finali",
+  S4: "S4 - Consumatori e Utilizzatori Finali",
+
+  // === TEMI ESRS GOVERNANCE (G1) ===
+  "Condotta Aziendale": "G1 - Condotta Aziendale",
+  "Business Conduct": "G1 - Condotta Aziendale",
+  Governance: "G1 - Condotta Aziendale",
+  Etica: "G1 - Condotta Aziendale",
+  Ethics: "G1 - Condotta Aziendale",
+  G1: "G1 - Condotta Aziendale",
+
+  // === FALLBACK AI TEMI ISO 26000 LEGACY ===
   "Diritti Umani": "Diritti Umani",
   "Human Rights": "Diritti Umani",
 
-  // Comunità
-  Comunità: "Coinvolgimento e Sviluppo della Comunità",
-  Community: "Coinvolgimento e Sviluppo della Comunità",
-  Communities: "Coinvolgimento e Sviluppo della Comunità",
+  "Pratiche del Lavoro": "Pratiche del Lavoro",
+  "Labor Practices": "Pratiche del Lavoro",
 
-  // Consumatori
-  Consumatori: "Aspetti relativi ai Consumatori",
-  Consumers: "Aspetti relativi ai Consumatori",
-  Customers: "Aspetti relativi ai Consumatori",
+  Ambiente: "Ambiente",
+  Environment: "Ambiente",
+
+  "Corrette Prassi Gestionali": "Corrette Prassi Gestionali",
+  "Fair Operating Practices": "Corrette Prassi Gestionali",
+
+  "Aspetti relativi ai Consumatori": "Aspetti relativi ai Consumatori",
+  "Consumer Issues": "Aspetti relativi ai Consumatori",
+
+  "Coinvolgimento e Sviluppo della Comunità":
+    "Coinvolgimento e Sviluppo della Comunità",
+  "Community Involvement": "Coinvolgimento e Sviluppo della Comunità",
 };
 
 /**
@@ -549,6 +997,41 @@ export function calculateMaterialityScoring(
   results.recommendations = generateRecommendations(results);
 
   return results;
+}
+
+/**
+ * Restituisce tutti i temi ESRS obbligatori dal framework
+ * Utile per generare questionari completi indipendentemente dalla matrice
+ */
+export function getAllESRSMandatoryThemes() {
+  const allThemes = Object.keys(materialityFrameworkISO26000);
+
+  return allThemes
+    .filter((themeName) => {
+      const theme = materialityFrameworkISO26000[themeName];
+      // Filtra solo i temi con flag esrsStandard o che iniziano con E, S, G
+      return theme.esrsStandard === true || /^[ESG]\d/.test(themeName);
+    })
+    .map((themeName) => ({
+      id: themeName,
+      name: themeName,
+      code: materialityFrameworkISO26000[themeName].code,
+      priority: materialityFrameworkISO26000[themeName].priority,
+      esrsStandard: true,
+    }));
+}
+
+/**
+ * Restituisce TUTTI i temi del framework (ISO26000 + ESRS)
+ */
+export function getAllFrameworkThemes() {
+  return Object.keys(materialityFrameworkISO26000).map((themeName) => ({
+    id: themeName,
+    name: themeName,
+    code: materialityFrameworkISO26000[themeName].code,
+    priority: materialityFrameworkISO26000[themeName].priority,
+    esrsStandard: materialityFrameworkISO26000[themeName].esrsStandard || false,
+  }));
 }
 
 function generateRecommendations(scoringResults) {

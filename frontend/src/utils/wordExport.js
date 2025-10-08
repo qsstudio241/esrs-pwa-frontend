@@ -24,6 +24,12 @@ async function loadTemplate() {
 
 // Funzione per generare il documento Word con integrazione File System
 export async function generateWordReport(auditOrSnapshot, storageProvider) {
+  console.log("🚀 INIZIO generateWordReport - TRACCIAMENTO COMPLETO");
+  console.log("📦 Parametri ricevuti:", {
+    auditOrSnapshot: !!auditOrSnapshot,
+    storageProvider: !!storageProvider,
+  });
+
   try {
     const isSnapshot = !!(
       auditOrSnapshot &&
@@ -34,6 +40,11 @@ export async function generateWordReport(auditOrSnapshot, storageProvider) {
     const auditData = isSnapshot
       ? snapshotToLegacyAuditShape(snapshot)
       : auditOrSnapshot;
+
+    console.log(
+      "🔍 Tipo dati rilevato:",
+      isSnapshot ? "SNAPSHOT" : "LEGACY AUDIT"
+    );
     console.log(
       "🎯 Generazione report Word per:",
       auditData.azienda,
@@ -42,13 +53,24 @@ export async function generateWordReport(auditOrSnapshot, storageProvider) {
         : "(legacy audit)"
     );
 
+    console.log("📄 Tentativo caricamento template...");
     const templateBuffer = await loadTemplate();
+    console.log(
+      "📄 Template buffer:",
+      templateBuffer ? "TROVATO" : "NON TROVATO"
+    );
 
     if (!templateBuffer) {
+      console.log(
+        "⚡ Nessun template, uso generazione avanzata per:",
+        isSnapshot ? "SNAPSHOT" : "LEGACY"
+      );
       // Se non c'è template, creiamo un documento avanzato senza template
       if (isSnapshot) {
+        console.log("🎯 Chiamata generateAdvancedWordReportFromSnapshot...");
         await generateAdvancedWordReportFromSnapshot(snapshot, storageProvider);
       } else {
+        console.log("🎯 Chiamata generateAdvancedWordReport...");
         await generateAdvancedWordReport(auditData, storageProvider);
       }
       return;
@@ -929,23 +951,48 @@ async function generateAdvancedWordReportFromSnapshot(
   snapshot,
   storageProvider
 ) {
+  console.log(
+    "🎯 Generazione report avanzato da snapshot - VERSIONE PROFESSIONALE"
+  );
+  console.log("📋 Snapshot completo:", snapshot);
+  console.log("📋 Azienda da meta:", snapshot?.meta?.azienda);
+  console.log("📋 Azienda da audit:", snapshot?.audit?.azienda);
+
   const data = prepareTemplateDataFromSnapshot(snapshot);
-
-  // Genera documento HTML professionale che simula Word
+  console.log("📊 Dati preparati:", data);
+  console.log("📊 Chiavi dati:", Object.keys(data)); // Genera documento HTML professionale che simula Word
   const htmlContent = generateProfessionalHTMLReport(data);
+  console.log("✅ HTML professionale generato, lunghezza:", htmlContent.length);
 
-  // Crea blob HTML che può essere salvato come .docx per compatibilità Word
+  // Crea blob HTML professionale
   const blob = new Blob([htmlContent], {
-    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    type: "text/html",
   });
 
-  await saveReportToFileSystem(blob, data, storageProvider, "docx");
+  console.log("📄 Blob HTML professionale creato");
+  await saveReportToFileSystem(blob, data, storageProvider, "html");
+  console.log("✅ Report HTML professionale salvato con successo!");
+}
+
+// Funzione wrapper per export HTML
+export function generateProfessionalHTMLFromSnapshot(snapshot) {
+  const data = prepareTemplateDataFromSnapshot(snapshot);
+  return generateProfessionalHTMLReport(data);
 }
 
 // Nuova funzione per generare report HTML professionale
 function generateProfessionalHTMLReport(data) {
-  const { azienda, dimensione, dataAvvio, kpiInputs = {} } = data;
+  console.log("🔍 generateProfessionalHTMLReport - dati ricevuti:", data);
+
+  const {
+    azienda = "Azienda Non Specificata",
+    dimensione = "Non specificata",
+    dataAvvio = "Non specificata",
+    kpiInputs = {},
+  } = data;
   const now = new Date().toLocaleDateString("it-IT");
+
+  console.log("🔍 Valori estratti:", { azienda, dimensione, dataAvvio });
 
   // Calcola metriche avanzate
   const totalKpis = Object.keys(kpiInputs).length;

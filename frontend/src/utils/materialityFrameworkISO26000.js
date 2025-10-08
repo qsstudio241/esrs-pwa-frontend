@@ -323,6 +323,63 @@ export const materialityFrameworkISO26000 = {
 };
 
 /**
+ * Mappatura tra nomi dei temi della matrice e nomi del framework ISO 26000
+ */
+const THEME_NAME_MAPPING = {
+  // Temi ESRS -> ISO 26000
+  "Cambiamenti Climatici": "Ambiente",
+  "Climate Change": "Ambiente",
+  Inquinamento: "Ambiente",
+  Pollution: "Ambiente",
+  "Risorse Idriche": "Ambiente",
+  Water: "Ambiente",
+  Acqua: "Ambiente",
+  Biodiversità: "Ambiente",
+  Biodiversity: "Ambiente",
+  "Economia Circolare": "Ambiente",
+  "Circular Economy": "Ambiente",
+  Risorse: "Ambiente",
+  Resources: "Ambiente",
+
+  // Codici ESRS -> ISO 26000
+  E1: "Ambiente",
+  E2: "Ambiente",
+  E3: "Ambiente",
+  E4: "Ambiente",
+  E5: "Ambiente",
+
+  // Temi sociali
+  "Forza Lavoro": "Pratiche del Lavoro",
+  Workforce: "Pratiche del Lavoro",
+  Lavoratori: "Pratiche del Lavoro",
+  Workers: "Pratiche del Lavoro",
+  S1: "Pratiche del Lavoro",
+  S2: "Corrette Prassi Gestionali",
+  S3: "Coinvolgimento e Sviluppo della Comunità",
+  S4: "Aspetti relativi ai Consumatori",
+
+  // Governance
+  "Condotta Aziendale": "Corrette Prassi Gestionali",
+  "Business Conduct": "Corrette Prassi Gestionali",
+  Governance: "Corrette Prassi Gestionali",
+  G1: "Corrette Prassi Gestionali",
+
+  // Diritti umani
+  "Diritti Umani": "Diritti Umani",
+  "Human Rights": "Diritti Umani",
+
+  // Comunità
+  Comunità: "Coinvolgimento e Sviluppo della Comunità",
+  Community: "Coinvolgimento e Sviluppo della Comunità",
+  Communities: "Coinvolgimento e Sviluppo della Comunità",
+
+  // Consumatori
+  Consumatori: "Aspetti relativi ai Consumatori",
+  Consumers: "Aspetti relativi ai Consumatori",
+  Customers: "Aspetti relativi ai Consumatori",
+};
+
+/**
  * Funzione per generare questionario strutturato da framework ISO 26000
  */
 export function generateStructuredQuestionnaire(selectedThemes = []) {
@@ -334,13 +391,55 @@ export function generateStructuredQuestionnaire(selectedThemes = []) {
   };
 
   // Se non specificati temi, usa tutti
-  const themes =
+  // Se selectedThemes contiene oggetti con proprietà 'name', estrai i nomi
+  console.log("🔍 Debug generateStructuredQuestionnaire:", {
+    selectedThemes,
+    availableFrameworkThemes: Object.keys(materialityFrameworkISO26000),
+  });
+
+  const themeNames =
     selectedThemes.length > 0
       ? selectedThemes
+          .map((theme) => {
+            const extractedName =
+              typeof theme === "string"
+                ? theme
+                : theme.name || theme.id || theme.title || theme;
+
+            // Applica mappatura se esiste
+            const mappedName =
+              THEME_NAME_MAPPING[extractedName] || extractedName;
+
+            console.log("📝 Mapping theme:", {
+              theme,
+              extractedName,
+              mappedName,
+              exists: !!materialityFrameworkISO26000[mappedName],
+            });
+
+            return mappedName;
+          })
+          .filter((name) => {
+            const exists = materialityFrameworkISO26000[name];
+            if (!exists) {
+              console.warn(
+                `⚠️ Tema "${name}" non trovato nel framework ISO26000`
+              );
+            }
+            return exists;
+          })
       : Object.keys(materialityFrameworkISO26000);
 
-  themes.forEach((themeName) => {
+  console.log("✅ Final themeNames for questionnaire:", themeNames);
+
+  themeNames.forEach((themeName) => {
     const theme = materialityFrameworkISO26000[themeName];
+
+    // Verifica che il tema esista
+    if (!theme) {
+      console.warn(`Tema non trovato nel framework ISO26000: ${themeName}`);
+      return;
+    }
 
     const section = {
       title: `${theme.code} - ${themeName}`,

@@ -177,6 +177,54 @@ function StructuredMaterialityQuestionnaire({
     );
   }
 
+  // Verifica che il questionario sia stato generato correttamente
+  if (
+    !questionnaire ||
+    !questionnaire.sections ||
+    questionnaire.sections.length === 0
+  ) {
+    return (
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
+        <div
+          style={{
+            backgroundColor: "#fff3e0",
+            padding: "20px",
+            borderRadius: "8px",
+            textAlign: "center",
+            border: "1px solid #ffb74d",
+          }}
+        >
+          <h3 style={{ color: "#f57c00", margin: "0 0 10px 0" }}>
+            📋 Configurazione Questionario in Corso...
+          </h3>
+          <p style={{ margin: "0", color: "#666" }}>
+            {!questionnaire
+              ? "Generazione questionario in corso..."
+              : questionnaire.sections?.length === 0
+              ? "Nessun tema valido selezionato per il questionario ISO 26000. Aggiungi temi alla matrice di materialità prima di procedere."
+              : "Caricamento dati questionario..."}
+          </p>
+          {questionnaire?.sections?.length === 0 && (
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                marginTop: "15px",
+                padding: "10px 20px",
+                backgroundColor: "#1976d2",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              🔄 Ricarica Pagina
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (scoring) {
     return (
       <MaterialityResults

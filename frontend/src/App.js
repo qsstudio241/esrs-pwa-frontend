@@ -4,6 +4,7 @@ import Checklist from "./Checklist";
 import ChecklistRefactored from "./ChecklistRefactored";
 import ErrorBoundary from "./components/ErrorBoundary";
 import MaterialityManagement from "./components/MaterialityManagement";
+import ExportProfessional from "./components/ExportProfessional";
 import { StorageProvider } from "./storage/StorageContext";
 import { calcolaDimensioneAzienda } from "./utils/auditBusinessLogic";
 import {
@@ -513,6 +514,21 @@ function App() {
               >
                 🎯 Analisi Materialità
               </button>
+              <button
+                onClick={() => setActiveTab("export")}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: activeTab === "export" ? "#1976d2" : "white",
+                  color: activeTab === "export" ? "white" : "#1976d2",
+                  border: "2px solid #1976d2",
+                  borderBottom: "none",
+                  borderRadius: "6px 6px 0 0",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                📄 Export ESRS
+              </button>
             </div>
 
             {/* Tab Content */}
@@ -569,11 +585,13 @@ function App() {
                     onUpdate={updateCurrentAudit}
                   />
                 )
-              ) : (
+              ) : activeTab === "materiality" ? (
                 <MaterialityManagement
                   audit={currentAudit}
                   onUpdate={updateCurrentAudit}
                 />
+              ) : (
+                <ExportProfessional audit={currentAudit} />
               )}
             </ErrorBoundary>
           </div>

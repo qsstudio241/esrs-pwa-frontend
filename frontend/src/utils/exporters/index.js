@@ -1,7 +1,10 @@
 // Export Layer Unificato
 // Responsabilità: snapshot normalizzato + funzioni export formati (JSON, Word, HTML)
 
-import { generateWordReport } from "../wordExport";
+import {
+  generateWordReport,
+  generateProfessionalHTMLFromSnapshot,
+} from "../wordExport";
 import { recordTelemetry } from "../telemetry";
 import esrsDetails from "../../data/esrsDetails";
 
@@ -87,42 +90,11 @@ export function buildExportFileName(audit, type = "json") {
   return `${aziendaClean}_export_${ts}.${type}`;
 }
 
-// Placeholder for HTML export (future)
+// Export HTML Professionale
 export function exportHTML(audit) {
   const snapshot = buildSnapshot(audit);
   if (!snapshot) return "<p>Nessun dato</p>";
-  recordTelemetry("export_html", { items: snapshot.items.length });
-  const rows = snapshot.items
-    .map(
-      (it) => `
-    <tr data-itemid="${it.itemId || ""}">
-      <td>${escapeHtml(it.category)}</td>
-      <td>${escapeHtml(it.item)}</td>
-      <td>${it.completed ? "✅" : "❌"}</td>
-      <td>${escapeHtml(it.comment || "")}</td>
-      <td>${(it.files || []).map((f) => escapeHtml(f.name)).join("<br/>")}</td>
-    </tr>`
-    )
-    .join("");
-  const html = `<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"/><title>Export Audit ${escapeHtml(
-    snapshot.audit.azienda || ""
-  )}</title>
-  <style>body{font-family:Arial, sans-serif;margin:20px;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ccc;padding:4px;font-size:12px;}th{background:#f5f5f5;}caption{font-weight:bold;margin-bottom:8px;} .meta{font-size:11px;color:#555;margin-bottom:12px;} .completed{color:#2e7d32;} .incompleted{color:#c62828;} </style></head><body>
-  <h1>Audit ${escapeHtml(snapshot.audit.azienda || "")}</h1>
-  <div class="meta">Schema v${snapshot.meta.schemaVersion} • Generato ${
-    snapshot.meta.generatedAt
-  }</div>
-  <table aria-label="Riepilogo Audit"><caption>Checklist</caption>
-  <thead><tr><th>Categoria</th><th>Item</th><th>Stato</th><th>Commento</th><th>Evidenze</th></tr></thead><tbody>${rows}</tbody></table>
-  </body></html>`;
-  return html;
-}
+  recordTelemetry("export_html_professional", { items: snapshot.items.length });
 
-function escapeHtml(str) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return generateProfessionalHTMLFromSnapshot(snapshot);
 }

@@ -376,6 +376,8 @@ function AuditSelector({
                   photos: {},
                   exportHistory: [],
                   directoryHandle: null, // nuovo campo per la persistenza
+                  kpiMetadata: {}, // NUOVO: metadata raccolta KPI (referente, metodo, data)
+                  evidenceMetadata: {}, // NUOVO: metadata evidenze (descrizione, qualità, note)
                   metricheAziendali: {
                     fatturato: fatturato
                       ? Number(String(fatturato).replace(/[^0-9]/g, ""))

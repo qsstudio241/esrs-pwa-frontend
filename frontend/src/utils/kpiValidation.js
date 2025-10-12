@@ -53,9 +53,14 @@ export function aggregateCategoryStatus(itemStatuses) {
 }
 
 export function validateKpiInputs(schema, inputs, ctx = {}) {
-  if (!schema) return { status: null, errors: [] };
+  if (!schema) return { status: null, errors: [], warnings: [], infos: [] };
+
   const errors = [];
+  const warnings = [];
+  const infos = [];
   const vals = inputs || {};
+
+  // Validazione campi
   for (const f of schema.fields || []) {
     const v = vals[f.key];
     if (f.required && (v === undefined || v === null || v === "")) {
@@ -75,14 +80,92 @@ export function validateKpiInputs(schema, inputs, ctx = {}) {
       errors.push(`${f.label}: valore non ammesso`);
     }
   }
+
+  // Validazione checks con severity
   for (const c of schema.checks || []) {
     try {
       const ok = c.test(vals, ctx);
-      if (!ok) errors.push(c.message || c.code);
+      if (!ok) {
+        const issue = {
+          code: c.code,
+          message: c.message || c.code,
+          severity: c.severity || "error",
+          actionPlan: c.actionPlan || null,
+        };
+
+        if (c.severity === "error") {
+          errors.push(issue);
+        } else if (c.severity === "warning") {
+          warnings.push(issue);
+        } else if (c.severity === "info") {
+          infos.push(issue);
+        } else {
+          errors.push(issue); // fallback
+        }
+      }
     } catch (e) {
-      errors.push(c.message || c.code || "Errore validazione");
+      errors.push({
+        code: "VALIDATION_ERROR",
+        message: c.message || c.code || "Errore validazione",
+        severity: "error",
+      });
     }
   }
-  const status = errors.length ? KPI_STATES.NOK : KPI_STATES.OK;
-  return { status, errors };
+
+  // Status globale basato su severity più grave
+  let status = KPI_STATES.OK;
+  if (errors.length > 0) status = KPI_STATES.NOK;
+  else if (warnings.length > 0) status = "WARNING"; // nuovo stato
+
+  return { status, errors, warnings, infos };
+}
+
+/**
+ * Ottieni gravità massima da validation result
+ */
+export function getValidationSeverity(validation) {
+  if (!validation) return null;
+  if (validation.errors?.length > 0) return "error";
+  if (validation.warnings?.length > 0) return "warning";
+  if (validation.infos?.length > 0) return "info";
+  return "ok";
+}
+
+/**
+ * Colore badge per severity
+ */
+export function getSeverityColor(severity) {
+  const colors = {
+    error: "#c62828",
+    warning: "#f57c00",
+    info: "#1976d2",
+    ok: "#2e7d32",
+  };
+  return colors[severity] || "#666";
+}
+
+/**
+ * Background badge per severity
+ */
+export function getSeverityBackground(severity) {
+  const backgrounds = {
+    error: "#ffebee",
+    warning: "#fff3e0",
+    info: "#e3f2fd",
+    ok: "#e8f5e9",
+  };
+  return backgrounds[severity] || "#f5f5f5";
+}
+
+/**
+ * Label per severity
+ */
+export function getSeverityLabel(severity) {
+  const labels = {
+    error: "❌ Errore",
+    warning: "⚠️ Attenzione",
+    info: "ℹ️ Info",
+    ok: "✓ Validato",
+  };
+  return labels[severity] || "—";
 }

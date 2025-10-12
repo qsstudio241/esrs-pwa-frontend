@@ -361,19 +361,69 @@ function StructuredMaterialityQuestionnaire({
                   reader.onload = (event) => {
                     try {
                       const importedData = JSON.parse(event.target.result);
+
+                      // Supporta sia formato export completo che formato salvataggio
                       if (importedData.responses) {
+                        // Formato salvataggio vecchio
                         setResponses(importedData.responses);
                         setCurrentSection(importedData.currentSection || 0);
                         setCompletedSections(
                           new Set(importedData.completedSections || [])
                         );
                         console.log(
-                          "📥 Dati questionario importati con successo"
+                          "📥 Dati questionario importati con successo (formato salvataggio)"
                         );
                         alert("✅ Questionario importato con successo!");
+                      } else if (importedData.scoring) {
+                        // Formato export completo - ricostruisci responses da aspectScores
+                        const reconstructedResponses = {};
+                        Object.entries(
+                          importedData.scoring.aspectScores
+                        ).forEach(([aspectId, aspectData]) => {
+                          // Cerca le domande che hanno risposto a questo aspect
+                          selectedThemes.forEach((theme) => {
+                            theme.aspects.forEach((aspect) => {
+                              if (aspect.code === aspectId) {
+                                aspect.questions.forEach((question) => {
+                                  // Ricostruisci la risposta dalla media score
+                                  reconstructedResponses[question.id] =
+                                    Math.round(aspectData.score);
+                                });
+                              }
+                            });
+                          });
+                        });
+
+                        setResponses(reconstructedResponses);
+                        setScoring(importedData.scoring);
+
+                        // Marca tutte le sezioni come completate se c'è scoring
+                        const allSections = new Set(
+                          selectedThemes.map((_, idx) => idx)
+                        );
+                        setCompletedSections(allSections);
+
+                        console.log(
+                          "📥 Dati questionario importati con successo (formato export)",
+                          {
+                            responses: reconstructedResponses,
+                            scoring: importedData.scoring,
+                          }
+                        );
+                        alert(
+                          `✅ Questionario importato con successo!\n\n${
+                            Object.keys(reconstructedResponses).length
+                          } risposte ricostruite da ${
+                            Object.keys(importedData.scoring.aspectScores)
+                              .length
+                          } aspects.`
+                        );
+                      } else {
+                        throw new Error("Formato file non riconosciuto");
                       }
                     } catch (error) {
-                      alert("❌ Errore nell'importazione: file non valido");
+                      console.error("Errore importazione:", error);
+                      alert("❌ Errore nell'importazione: " + error.message);
                     }
                   };
                   reader.readAsText(file);

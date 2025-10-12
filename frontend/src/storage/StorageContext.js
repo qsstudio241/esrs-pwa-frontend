@@ -23,14 +23,20 @@ export function useStorage() {
     initAuditTree: (arg, categories) => ctx.initAuditTree(arg, categories),
     initAuditTreeWithClient: (clientName) =>
       ctx.initAuditTreeWithClient(clientName),
-    initNewAuditTree: (clientName) => ctx.initNewAuditTree(clientName),
-    resumeExistingAudit: (clientName) => ctx.resumeExistingAudit(clientName),
+    initNewAuditTree: (clientName, options) =>
+      ctx.initNewAuditTree(clientName, options),
+    resumeExistingAudit: (clientName, options) =>
+      ctx.resumeExistingAudit(clientName, options),
     saveEvidence: (a1, f, c, opts) => ctx.saveEvidence(a1, f, c, opts),
     deleteEvidence: (cOrP, f) => ctx.deleteEvidence(cOrP, f),
     listEvidence: (cat) => ctx.listEvidence(cat),
     saveExport: (payload) => ctx.saveExport(payload),
     ensurePermission: (mode) => ctx.ensurePermission(mode),
     writeBlob: (dir, fileName, blob) => ctx.writeBlob(dir, fileName, blob),
+    reset: () => ctx.resetState(),
+    get provider() {
+      return ctx;
+    },
     // Espone le proprietà necessarie per wordExport
     get subDirs() {
       return ctx.subDirs;
@@ -49,6 +55,9 @@ export function useStorage() {
     },
     set subDirs(value) {
       ctx.subDirs = value;
+    },
+    get auditYear() {
+      return ctx.auditYear;
     },
   };
 }

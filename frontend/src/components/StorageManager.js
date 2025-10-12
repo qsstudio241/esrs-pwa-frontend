@@ -21,6 +21,14 @@ export default function StorageManager({ audit, compact = false }) {
     setStorageInfo(info);
   };
 
+  const deriveAuditYear = () => {
+    if (!audit?.dataAvvio) return new Date().getFullYear();
+    const parsed = new Date(audit.dataAvvio);
+    return Number.isNaN(parsed.getTime())
+      ? new Date().getFullYear()
+      : parsed.getFullYear();
+  };
+
   const handleInitNewAudit = async () => {
     if (!audit) {
       alert("Seleziona prima un audit");
@@ -31,7 +39,9 @@ export default function StorageManager({ audit, compact = false }) {
     setError(null);
 
     try {
-      const result = await storage.provider.initNewAuditTree(audit.azienda);
+      const result = await storage.initNewAuditTree(audit.azienda, {
+        year: deriveAuditYear(),
+      });
       updateStorageInfo();
       alert(
         `✅ Struttura audit creata!\n\n` +
@@ -56,7 +66,9 @@ export default function StorageManager({ audit, compact = false }) {
     setError(null);
 
     try {
-      const result = await storage.provider.resumeExistingAudit(audit.azienda);
+      const result = await storage.resumeExistingAudit(audit.azienda, {
+        year: deriveAuditYear(),
+      });
       updateStorageInfo();
       alert(
         `✅ Audit ripreso!\n\n` +
@@ -77,7 +89,9 @@ export default function StorageManager({ audit, compact = false }) {
         "⚠️ Disconnettere la cartella di salvataggio?\n\nI file non verranno eliminati, ma dovrai ricollegarla per salvare nuove evidenze."
       )
     ) {
-      storage.provider.resetState();
+      if (typeof storage.reset === "function") {
+        storage.reset();
+      }
       updateStorageInfo();
     }
   };
@@ -159,12 +173,9 @@ export default function StorageManager({ audit, compact = false }) {
             <div style={{ fontWeight: "bold", marginBottom: 4 }}>
               ✅ Cartella collegata
             </div>
-            {storage.provider.rootPath && (
-              <div>Percorso: {storage.provider.rootPath}</div>
-            )}
-            {storage.provider.clientName && (
-              <div>Azienda: {storage.provider.clientName}</div>
-            )}
+            {storage.rootPath && <div>Percorso: {storage.rootPath}</div>}
+            {storage.clientName && <div>Azienda: {storage.clientName}</div>}
+            {storage.auditYear && <div>Anno audit: {storage.auditYear}</div>}
             <div style={{ marginTop: 4, fontSize: "11px", color: "#666" }}>
               Le evidenze verranno salvate automaticamente nella struttura
               creata

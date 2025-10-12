@@ -30,6 +30,7 @@ function fromEsrsBaseJson(json) {
       const cat = categories[catKey];
       const items = Array.isArray(cat.items) ? cat.items : [];
       out[catKey] = items.map((it) => ({
+        itemId: it.id, // ← AGGIUNTO: Includi l'ID dal JSON
         item: it.text,
         applicability: it.applicability || [
           "Micro",
@@ -110,6 +111,11 @@ function buildDataset() {
   const out = {};
   Object.keys(rawEsrsDetails).forEach((category) => {
     out[category] = rawEsrsDetails[category].map((entry, idx) => {
+      // ✅ PRIORITÀ 1: Se entry.itemId esiste già (dal JSON), lo preserva
+      if (entry.itemId) {
+        return entry;
+      }
+      // ✅ PRIORITÀ 2: Altrimenti genera hash+slug per fallback hardcoded
       const slug = slugify(entry.item);
       const base = `${category}-${slug}-${idx}`; // idx garantisce unicità anche se label duplicate
       const itemId = `${hashShort(base)}_${slug}`; // es: a1b2c3d4-cultura-aziendale

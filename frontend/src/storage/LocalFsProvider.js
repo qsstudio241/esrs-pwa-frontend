@@ -7,6 +7,7 @@ export class LocalFsProvider {
     this.lastAuditId = null;
     this.rootPath = null;
     this.clientName = null; // Aggiungiamo il nome cliente
+    this.auditYear = null;
   }
 
   ready() {
@@ -31,7 +32,7 @@ export class LocalFsProvider {
   }
 
   // NUOVO METODO: Inizializza audit con nome cliente per NUOVO AUDIT
-  async initNewAuditTree(clientName) {
+  async initNewAuditTree(clientName, options = {}) {
     try {
       // Verifica supporto API
       if (!window.showDirectoryPicker) {
@@ -52,8 +53,8 @@ export class LocalFsProvider {
 
       console.log("Directory padre selezionata:", parentDir.name);
 
-      // Salva il percorso della root
-      this.rootPath = parentDir.name;
+      const targetYear =
+        parseInt(options?.year, 10) || new Date().getFullYear();
       this.clientName = clientName;
 
       // Crea sempre la cartella cliente nella directory selezionata
@@ -64,7 +65,14 @@ export class LocalFsProvider {
         create: true,
       });
 
-      return await this.createAuditStructure(clientDir, clientName, true);
+      const result = await this.createAuditStructure(clientDir, {
+        clientName,
+        mode: "new",
+        targetYear,
+        parentLabel: parentDir.name,
+      });
+
+      return result;
     } catch (error) {
       console.error("Errore durante la creazione nuovo audit:", error);
       this.resetState();
@@ -73,7 +81,7 @@ export class LocalFsProvider {
   }
 
   // NUOVO METODO: Riprende audit esistente - l'utente seleziona la cartella AZIENDA
-  async resumeExistingAudit(clientName) {
+  async resumeExistingAudit(clientName, options = {}) {
     try {
       // Verifica supporto API
       if (!window.showDirectoryPicker) {
@@ -104,11 +112,16 @@ export class LocalFsProvider {
         }
       }
 
-      // Salva il percorso (la cartella padre sarà dedotta)
-      this.rootPath = "Cartella selezionata";
+      const expectedYear = parseInt(options?.year, 10) || null;
       this.clientName = clientName;
 
-      return await this.createAuditStructure(clientDir, clientName, false);
+      const result = await this.createAuditStructure(clientDir, {
+        clientName,
+        mode: "resume",
+        expectedYear,
+      });
+
+      return result;
     } catch (error) {
       console.error("Errore durante la ripresa audit:", error);
       this.resetState();
@@ -117,24 +130,63 @@ export class LocalFsProvider {
   }
 
   // METODO UNIFICATO per creare/verificare struttura audit
-  async createAuditStructure(clientDir, clientName, isNewAudit) {
-    const year = new Date().getFullYear();
-    const auditDirName = `${year}_ESRS_Bilancio`;
+  async createAuditStructure(clientDir, config = {}) {
+    const {
+      clientName,
+      mode = "new",
+      targetYear,
+      expectedYear,
+      parentLabel,
+    } = config;
 
-    // Verifica se la struttura audit esiste già
     let auditDir;
-    try {
-      auditDir = await clientDir.getDirectoryHandle(auditDirName);
-      console.log(`📁 Struttura audit esistente trovata: ${auditDirName}`);
-    } catch {
-      if (isNewAudit) {
+    let resolvedYear = targetYear || expectedYear || new Date().getFullYear();
+
+    if (mode === "new") {
+      const auditDirName = `${resolvedYear}_ESRS_Bilancio`;
+      try {
+        auditDir = await clientDir.getDirectoryHandle(auditDirName);
+        console.log(`📁 Struttura audit esistente trovata: ${auditDirName}`);
+      } catch {
         console.log(`🆕 Creazione nuova struttura audit: ${auditDirName}`);
         auditDir = await clientDir.getDirectoryHandle(auditDirName, {
           create: true,
         });
-      } else {
+      }
+    } else {
+      const matches = [];
+      for await (const [name, handle] of clientDir.entries()) {
+        if (handle?.kind === "directory" && /_ESRS_Bilancio$/.test(name)) {
+          matches.push({ name, handle });
+        }
+      }
+
+      if (!matches.length) {
         throw new Error(
-          `❌ Struttura audit "${auditDirName}" non trovata nella cartella selezionata.\n\nPer riprendere un audit esistente, seleziona la cartella che contiene già la struttura "${auditDirName}".`
+          "❌ Nessuna cartella audit trovata. Seleziona la cartella aziendale che contiene almeno una cartella *YYYY_ESRS_Bilancio*."
+        );
+      }
+
+      let chosen = matches[0];
+      if (expectedYear) {
+        const preferred = matches.find((d) =>
+          d.name.startsWith(`${expectedYear}_`)
+        );
+        if (preferred) {
+          chosen = preferred;
+        }
+      } else {
+        matches.sort((a, b) => b.name.localeCompare(a.name));
+        chosen = matches[0];
+      }
+
+      auditDir = chosen.handle;
+      resolvedYear = parseInt(chosen.name.split("_")[0], 10) || resolvedYear;
+
+      if (matches.length > 1 && !expectedYear) {
+        console.log(
+          "ℹ️ Cartelle audit multiple trovate, collego automaticamente la più recente:",
+          matches.map((d) => d.name)
         );
       }
     }
@@ -194,7 +246,13 @@ export class LocalFsProvider {
 
     this.auditDir = auditDir;
     this.subDirs = { evidenze, export: exportDir, report };
-    this.lastAuditId = `${clientName}_${year}`;
+    this.auditYear = resolvedYear;
+    this.lastAuditId = `${clientName}_${resolvedYear}`;
+
+    const rootSegments = [];
+    if (mode === "new" && parentLabel) rootSegments.push(parentLabel);
+    rootSegments.push(clientDir.name, auditDir.name);
+    this.rootPath = rootSegments.filter(Boolean).join("/");
 
     // Notifica il context del cambiamento stato
     if (this._triggerUpdate) {
@@ -203,21 +261,22 @@ export class LocalFsProvider {
 
     console.log(
       `✅ Struttura audit ${
-        isNewAudit ? "creata" : "collegata"
+        mode === "new" ? "creata" : "collegata"
       } per ${clientName}:`,
       {
         client: clientName,
-        audit: `${year}_ESRS_Bilancio`,
+        audit: `${resolvedYear}_ESRS_Bilancio`,
         structure: "Evidenze (Generale,E1..E5,S1..S4,G1..G5) | Export | Report",
-        mode: isNewAudit ? "NUOVO" : "RIPRESA",
+        mode: mode === "new" ? "NUOVO" : "RIPRESA",
       }
     );
 
     return {
       success: true,
-      structure: `${clientName}/${year}_ESRS_Bilancio/[Evidenze|Export|Report]`,
-      categories: categories,
-      isNewAudit: isNewAudit,
+      structure: `${clientName}/${resolvedYear}_ESRS_Bilancio/[Evidenze|Export|Report]`,
+      categories,
+      isNewAudit: mode === "new",
+      year: resolvedYear,
     };
   }
 
@@ -227,6 +286,7 @@ export class LocalFsProvider {
     this.subDirs = null;
     this.rootPath = null;
     this.clientName = null;
+    this.auditYear = null;
 
     // Notifica il context del cambiamento stato
     if (this._triggerUpdate) {
@@ -380,11 +440,11 @@ export class LocalFsProvider {
       );
 
       // Costruisci il percorso completo con struttura semplificata
-      const year = new Date().getFullYear();
-      const fullPath =
-        this.rootPath && this.clientName
-          ? `${this.rootPath}/${this.clientName}/${year}_ESRS_Bilancio/Evidenze/${categoryName}/${finalName}` // ← CAMBIATO DA ESRS A ESG
-          : `Evidenze/${categoryName}/${finalName}`;
+      const year = this.auditYear || new Date().getFullYear();
+      const basePath = this.rootPath
+        ? this.rootPath
+        : [this.clientName, `${year}_ESRS_Bilancio`].filter(Boolean).join("/");
+      const fullPath = `${basePath}/Evidenze/${categoryName}/${finalName}`;
 
       return {
         path: fullPath,

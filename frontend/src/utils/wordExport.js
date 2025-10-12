@@ -194,11 +194,13 @@ async function saveReportToFileSystem(
       blob
     );
 
-    const year = new Date().getFullYear();
-    const fullPath =
-      storageProvider.rootPath && storageProvider.clientName
-        ? `${storageProvider.rootPath}/${storageProvider.clientName}/${year}_ESRS_Bilancio/Report/${fileName}`
-        : `Report/${fileName}`;
+    const year = storageProvider.auditYear || new Date().getFullYear();
+    const basePath = storageProvider.rootPath
+      ? storageProvider.rootPath
+      : [storageProvider.clientName, `${year}_ESRS_Bilancio`]
+          .filter(Boolean)
+          .join("/");
+    const fullPath = `${basePath}/Report/${fileName}`;
 
     alert(`✅ Report salvato con successo!\n📁 Percorso: ${fullPath}`);
     console.log(`✅ Report Word salvato: ${fullPath}`);

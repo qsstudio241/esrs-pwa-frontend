@@ -3,7 +3,9 @@ import useEsrsData from "./hooks/useEsrsData";
 import useEvidenceManager from "./hooks/useEvidenceManager";
 import useKpiState from "./hooks/useKpiState";
 import useKpiInputs from "./hooks/useKpiInputs";
-import { getKpiSchemasGenerale } from "./utils/kpiSchemas";
+import useKpiMetadata from "./hooks/useKpiMetadata";
+import useEvidenceMetadata from "./hooks/useEvidenceMetadata";
+import { getAllKpiSchemasByCategory } from "./utils/kpiSchemas";
 import { validateKpiInputs } from "./utils/kpiValidation";
 import { computeProgress } from "./utils/progressUtils";
 import {
@@ -66,6 +68,26 @@ function getStateTooltip(state, mandatory) {
   return tooltips[state] || `${base} - Clicca per cambiare stato`;
 }
 
+// Descrizioni delle categorie ESRS
+const categoryDescriptions = {
+  Generale: "Informazioni generali e requisiti trasversali di governance",
+  "ESRS-2": "Informazioni generali di carattere trasversale",
+  E1: "Cambiamenti Climatici - Emissioni GHG, obiettivi climatici, transizione energetica",
+  E2: "Inquinamento - Aria, acqua, suolo e sostanze pericolose",
+  E3: "Risorse Idriche e Marine - Prelievi, scarichi, impatti sugli ecosistemi acquatici",
+  E4: "Biodiversità ed Ecosistemi - Impatti su habitat, specie e servizi ecosistemici",
+  E5: "Uso delle Risorse ed Economia Circolare - Materiali, rifiuti, circolarità",
+  S1: "Forza Lavoro - Condizioni di lavoro, salute, sicurezza, diversità e inclusione",
+  S2: "Lavoratori nella Catena del Valore - Condizioni di lavoro nella supply chain",
+  S3: "Comunità Interessate - Impatti su comunità locali e indigene",
+  S4: "Consumatori e Utilizzatori Finali - Sicurezza prodotti, privacy, accessibilità",
+  G1: "Condotta Aziendale - Etica, corruzione, protezione degli informatori, lobbying",
+  G2: "Pratiche di Gestione - Struttura, composizione e diversità degli organi di governo",
+  G3: "Gestione dei Rischi - Sistema di controllo interno e gestione dei rischi",
+  G4: "Remunerazione - Politiche retributive e allineamento con strategia di sostenibilità",
+  G5: "Relazioni con Parti Interessate - Engagement degli stakeholder e materialità",
+};
+
 // Component base refactor: solo visualizzazione + stati locali (no evidenze, no export)
 export default function ChecklistRefactored({ audit, onUpdate }) {
   const { dimensione } = audit || {};
@@ -81,7 +103,17 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
   const [query, setQuery] = useState("");
   const kpi = useKpiState(audit, onUpdate);
   const kpiInputs = useKpiInputs(audit, onUpdate);
-  const kpiSchemasGenerale = useMemo(() => getKpiSchemasGenerale(), []);
+  const kpiMetadata = useKpiMetadata(audit, onUpdate);
+  const evidenceMetadata = useEvidenceMetadata(audit, onUpdate);
+  const allKpiSchemas = useMemo(() => {
+    // Unisce tutti gli schema da tutte le categorie ESRS
+    const generale = getAllKpiSchemasByCategory("Generale");
+    const e1 = getAllKpiSchemasByCategory("E1");
+    const e2 = getAllKpiSchemasByCategory("E2");
+    const s1 = getAllKpiSchemasByCategory("S1");
+    const g1 = getAllKpiSchemasByCategory("G1");
+    return { ...generale, ...e1, ...e2, ...s1, ...g1 };
+  }, []);
   const storage = useStorage();
 
   // Aggiungo stile per animazione details
@@ -253,7 +285,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                 onClick={() => toggle(cat)}
                 style={{
                   cursor: "pointer",
-                  padding: "0.5rem 0.75rem",
+                  padding: "0.75rem",
                   background: "#f7f7f7",
                   display: "flex",
                   justifyContent: "space-between",
@@ -270,8 +302,31 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                   }
                 }}
               >
-                <span>{cat}</span>
-                <span style={{ fontSize: "0.75rem", color: "#666" }}>
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      fontSize: ".9rem",
+                      marginBottom: 4,
+                    }}
+                  >
+                    {cat}
+                  </div>
+                  {categoryDescriptions[cat] && (
+                    <div
+                      style={{
+                        fontSize: ".75rem",
+                        color: "#666",
+                        fontWeight: 400,
+                      }}
+                    >
+                      {categoryDescriptions[cat]}
+                    </div>
+                  )}
+                </div>
+                <span
+                  style={{ fontSize: "1.2rem", color: "#666", marginLeft: 16 }}
+                >
                   {openSections.has(cat) ? "−" : "+"}
                 </span>
               </header>
@@ -289,8 +344,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                     const state = kpi.getState(it.itemId);
                     const itemLabel = it.item;
                     const evidList = evidence.list(cat, itemLabel);
-                    const schema =
-                      cat === "Generale" ? kpiSchemasGenerale[it.itemId] : null;
+                    // Cerca schema per questo KPI in tutte le categorie
+                    const schema = allKpiSchemas[it.itemId] || null;
                     const inputs = schema ? kpiInputs.getFor(it.itemId) : {};
                     const validation = schema
                       ? validateKpiInputs(schema, inputs, { dimensione })
@@ -328,25 +383,39 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                           {getStateIcon(state)} {getStateLabel(state)}
                         </button>
 
-                        {/* Indicatore Validazione KPI (solo per Generale con schema) */}
-                        {schema && validation.status && (
-                          <span
-                            style={{
-                              fontSize: ".65rem",
-                              padding: "2px 6px",
-                              borderRadius: 3,
-                              background: "#e3f2fd",
-                              color: "#1976d2",
-                              fontWeight: "600",
-                            }}
-                            title="Stato validazione KPI parametrici"
-                          >
-                            {validation.status}
-                          </span>
-                        )}
-
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: ".85rem" }}>{it.item}</div>
+                          <div style={{ fontSize: ".85rem" }}>
+                            {schema && schema.kpiCode && (
+                              <span
+                                style={{
+                                  fontWeight: "600",
+                                  color: "#1976d2",
+                                  fontFamily: "monospace",
+                                }}
+                              >
+                                {schema.kpiCode} -{" "}
+                              </span>
+                            )}
+                            {it.item}
+                            {schema && validation.status && (
+                              <span
+                                style={{
+                                  marginLeft: "8px",
+                                  fontSize: ".7rem",
+                                  color:
+                                    validation.status === "OK"
+                                      ? "#2e7d32"
+                                      : validation.status.includes("Errori")
+                                      ? "#c62828"
+                                      : "#f57f17",
+                                  fontWeight: "600",
+                                }}
+                                title="Stato validazione KPI parametrici"
+                              >
+                                - {validation.status}
+                              </span>
+                            )}
+                          </div>
                           <div style={{ fontSize: ".65rem", color: "#777" }}>
                             {it.mandatory ? "Obbligatorio" : "Opzionale"} ·{" "}
                             {it.applicability?.join(", ")}
@@ -495,13 +564,74 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                   <ul
                                     style={{
                                       marginTop: 8,
-                                      color: "#c62828",
                                       fontSize: ".65rem",
                                     }}
                                   >
-                                    {validation.errors.map((err, i) => (
-                                      <li key={i}>⚠️ {err}</li>
-                                    ))}
+                                    {validation.errors.map((err, i) => {
+                                      // Gestisce sia stringhe che oggetti {code, message, severity, actionPlan}
+                                      const isObject =
+                                        typeof err === "object" && err !== null;
+                                      const message = isObject
+                                        ? err.message
+                                        : err;
+                                      const severity = isObject
+                                        ? err.severity
+                                        : "error";
+                                      const actionPlan = isObject
+                                        ? err.actionPlan
+                                        : null;
+
+                                      // Colore e icona per severity
+                                      const severityConfig = {
+                                        error: {
+                                          color: "#c62828",
+                                          icon: "⚠️",
+                                          label: "Errore",
+                                        },
+                                        warning: {
+                                          color: "#f57f17",
+                                          icon: "⚡",
+                                          label: "Avviso",
+                                        },
+                                        info: {
+                                          color: "#0288d1",
+                                          icon: "ℹ️",
+                                          label: "Suggerimento",
+                                        },
+                                      };
+                                      const config =
+                                        severityConfig[severity] ||
+                                        severityConfig.error;
+
+                                      return (
+                                        <li
+                                          key={i}
+                                          style={{
+                                            color: config.color,
+                                            marginBottom: 8,
+                                          }}
+                                        >
+                                          <div>
+                                            <strong>
+                                              {config.icon} {config.label}:
+                                            </strong>{" "}
+                                            {message}
+                                          </div>
+                                          {actionPlan && (
+                                            <div
+                                              style={{
+                                                marginTop: 4,
+                                                paddingLeft: 16,
+                                                fontStyle: "italic",
+                                                color: "#666",
+                                              }}
+                                            >
+                                              💡 {actionPlan}
+                                            </div>
+                                          )}
+                                        </li>
+                                      );
+                                    })}
                                   </ul>
                                 )}
                               </details>

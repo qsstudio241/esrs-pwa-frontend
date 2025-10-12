@@ -16,56 +16,29 @@ import {
 } from "./utils/exporters";
 import { useStorage } from "./storage/StorageContext";
 
-// Helper functions per pulsanti stato unificati
+// Helper functions per pulsanti stato semplificati (2 stati: Da Fare / Completato)
 function getStateIcon(state) {
-  const icons = {
-    "✓": "✓",
-    "N/A": "—",
-    "?": "?",
-    "⚠": "⚠",
-  };
-  return icons[state] || "◯";
+  return state === "✓" ? "✓" : "◯";
 }
 
 function getStateLabel(state) {
-  const labels = {
-    "✓": "Completato",
-    "N/A": "Non applicabile",
-    "?": "Da verificare",
-    "⚠": "Attenzione",
-  };
-  return labels[state] || "Da fare";
+  return state === "✓" ? "Completato" : "Da fare";
 }
 
 function getStateBackground(state) {
-  const backgrounds = {
-    "✓": "#e8f5e9",
-    "N/A": "#f5f5f5",
-    "?": "#fff3e0",
-    "⚠": "#ffebee",
-  };
-  return backgrounds[state] || "#fafafa";
+  return state === "✓" ? "#e8f5e9" : "#fafafa";
 }
 
 function getStateColor(state) {
-  const colors = {
-    "✓": "#2e7d32",
-    "N/A": "#757575",
-    "?": "#f57c00",
-    "⚠": "#c62828",
-  };
-  return colors[state] || "#666";
+  return state === "✓" ? "#2e7d32" : "#666";
 }
 
 function getStateTooltip(state, mandatory) {
   const base = mandatory ? "KPI Obbligatorio" : "KPI Opzionale";
-  const tooltips = {
-    "✓": `${base} - Completato e verificato`,
-    "N/A": `${base} - Non applicabile alla tua azienda`,
-    "?": `${base} - Da verificare/completare`,
-    "⚠": `${base} - Richiede attenzione`,
-  };
-  return tooltips[state] || `${base} - Clicca per cambiare stato`;
+  if (state === "✓") {
+    return `${base} - Completato. Clicca per riportare a 'Da fare'`;
+  }
+  return `${base} - Da fare. Clicca per segnare come 'Completato'`;
 }
 
 // Descrizioni delle categorie ESRS
@@ -97,7 +70,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
     try {
       const raw = localStorage.getItem("refactored_openSections");
       if (raw) return new Set(JSON.parse(raw));
-    } catch {}
+    } catch { }
     return new Set();
   });
   const [query, setQuery] = useState("");
@@ -158,7 +131,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
         "refactored_openSections",
         JSON.stringify(Array.from(openSections))
       );
-    } catch {}
+    } catch { }
   }, [openSections]);
 
   function cycleState(itemId, mandatory) {
@@ -166,7 +139,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
     kpi.setStateFor(itemId, mandatory);
   }
 
-  const progress = computeProgress(audit);
+  const progress = computeProgress(audit, categories);
 
   return (
     <div style={{ padding: "1rem" }} aria-label="Raccolta KPI">
@@ -542,34 +515,13 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                           key={key}
                           style={{
                             display: "flex",
-                            alignItems: "center",
+                            flexDirection: "column",
                             gap: ".5rem",
-                            padding: ".25rem 0",
+                            padding: ".5rem 0",
                             borderBottom: "1px solid #eee",
                           }}
                           aria-label={`Item ${itemLabel}`}
                         >
-                          {/* Pulsante Stato Unificato */}
-                          <button
-                            onClick={() => cycleState(it.itemId, it.mandatory)}
-                            style={{
-                              minWidth: 80,
-                              fontSize: ".7rem",
-                              padding: ".3rem .5rem",
-                              cursor: "pointer",
-                              borderRadius: 4,
-                              border: "1px solid #ccc",
-                              background: getStateBackground(state),
-                              color: getStateColor(state),
-                              fontWeight: state ? "600" : "normal",
-                              transition: "all 0.2s",
-                            }}
-                            aria-pressed={!!state}
-                            title={getStateTooltip(state, it.mandatory)}
-                          >
-                            {getStateIcon(state)} {getStateLabel(state)}
-                          </button>
-
                           <div style={{ flex: 1 }}>
                             <div style={{ fontSize: ".85rem" }}>
                               {schema && schema.kpiCode && (
@@ -593,8 +545,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                       validation.status === "OK"
                                         ? "#2e7d32"
                                         : validation.status.includes("Errori")
-                                        ? "#c62828"
-                                        : "#f57f17",
+                                          ? "#c62828"
+                                          : "#f57f17",
                                     fontWeight: "600",
                                   }}
                                   title="Stato validazione KPI parametrici"
@@ -662,8 +614,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                               inputs[f.key] === true
                                                 ? "true"
                                                 : inputs[f.key] === false
-                                                ? "false"
-                                                : ""
+                                                  ? "false"
+                                                  : ""
                                             }
                                             onChange={(e) => {
                                               const v = e.target.value;
@@ -673,8 +625,8 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                                 v === "true"
                                                   ? true
                                                   : v === "false"
-                                                  ? false
-                                                  : ""
+                                                    ? false
+                                                    : ""
                                               );
                                             }}
                                           >
@@ -956,7 +908,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                                     await navigator.clipboard.writeText(
                                                       f.path
                                                     );
-                                                  } catch {}
+                                                  } catch { }
                                                 }}
                                                 style={{
                                                   fontSize: ".5rem",
@@ -1052,6 +1004,32 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                                   }}
                                 />
                               </label>
+                            </div>
+
+                            {/* Pulsante Stato - Spostato sotto Note Auditor */}
+                            <div style={{ marginTop: 12 }}>
+                              <button
+                                onClick={() =>
+                                  cycleState(it.itemId, it.mandatory)
+                                }
+                                style={{
+                                  width: "100%",
+                                  fontSize: ".75rem",
+                                  padding: ".5rem",
+                                  cursor: "pointer",
+                                  borderRadius: 6,
+                                  border: "2px solid #ccc",
+                                  background: getStateBackground(state),
+                                  color: getStateColor(state),
+                                  fontWeight: state ? "600" : "normal",
+                                  transition: "all 0.2s",
+                                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                }}
+                                aria-pressed={!!state}
+                                title={getStateTooltip(state, it.mandatory)}
+                              >
+                                {getStateIcon(state)} {getStateLabel(state)}
+                              </button>
                             </div>
                           </div>
                         </li>

@@ -331,497 +331,734 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
                 </span>
               </header>
               {openSections.has(cat) && (
-                <ul
-                  style={{
-                    listStyle: "none",
-                    margin: 0,
-                    padding: "0.5rem 0.75rem",
-                  }}
-                  aria-label={`Lista items ${cat}`}
-                >
-                  {items.map((it, idx) => {
-                    const key = `${cat}-${idx}`; // UI key stabile
-                    const state = kpi.getState(it.itemId);
-                    const itemLabel = it.item;
-                    const evidList = evidence.list(cat, itemLabel);
-                    // Cerca schema per questo KPI in tutte le categorie
-                    const schema = allKpiSchemas[it.itemId] || null;
-                    const inputs = schema ? kpiInputs.getFor(it.itemId) : {};
-                    const validation = schema
-                      ? validateKpiInputs(schema, inputs, { dimensione })
-                      : { status: null, errors: [] };
-                    return (
-                      <li
-                        key={key}
+                <>
+                  {/* Sezione Referente Categoria */}
+                  <div
+                    style={{
+                      padding: "12px",
+                      margin: "12px",
+                      background: "#e3f2fd",
+                      border: "1px solid #90caf9",
+                      borderRadius: 6,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: ".75rem",
+                        fontWeight: 600,
+                        color: "#1976d2",
+                        marginBottom: 8,
+                      }}
+                    >
+                      👤 Referente di Categoria
+                    </div>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns:
+                          "repeat(auto-fit, minmax(200px, 1fr))",
+                        gap: 10,
+                      }}
+                    >
+                      <label
                         style={{
+                          fontSize: ".7rem",
                           display: "flex",
-                          alignItems: "center",
-                          gap: ".5rem",
-                          padding: ".25rem 0",
-                          borderBottom: "1px solid #eee",
+                          flexDirection: "column",
+                          gap: 4,
                         }}
-                        aria-label={`Item ${itemLabel}`}
                       >
-                        {/* Pulsante Stato Unificato */}
-                        <button
-                          onClick={() => cycleState(it.itemId, it.mandatory)}
-                          style={{
-                            minWidth: 80,
-                            fontSize: ".7rem",
-                            padding: ".3rem .5rem",
-                            cursor: "pointer",
-                            borderRadius: 4,
-                            border: "1px solid #ccc",
-                            background: getStateBackground(state),
-                            color: getStateColor(state),
-                            fontWeight: state ? "600" : "normal",
-                            transition: "all 0.2s",
+                        <span style={{ fontWeight: 500 }}>Nome Referente</span>
+                        <input
+                          type="text"
+                          placeholder="es. Mario Rossi"
+                          value={
+                            kpiMetadata.getMetadata(`_category_${cat}`)
+                              ?.nomeReferente || ""
+                          }
+                          onChange={(e) => {
+                            const current =
+                              kpiMetadata.getMetadata(`_category_${cat}`) || {};
+                            kpiMetadata.setMetadata(`_category_${cat}`, {
+                              ...current,
+                              nomeReferente: e.target.value,
+                            });
                           }}
-                          aria-pressed={!!state}
-                          title={getStateTooltip(state, it.mandatory)}
-                        >
-                          {getStateIcon(state)} {getStateLabel(state)}
-                        </button>
+                          style={{
+                            padding: "6px 8px",
+                            fontSize: ".7rem",
+                            border: "1px solid #ccc",
+                            borderRadius: 4,
+                          }}
+                        />
+                      </label>
 
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: ".85rem" }}>
-                            {schema && schema.kpiCode && (
-                              <span
-                                style={{
-                                  fontWeight: "600",
-                                  color: "#1976d2",
-                                  fontFamily: "monospace",
-                                }}
-                              >
-                                {schema.kpiCode} -{" "}
-                              </span>
-                            )}
-                            {it.item}
-                            {schema && validation.status && (
-                              <span
-                                style={{
-                                  marginLeft: "8px",
-                                  fontSize: ".7rem",
-                                  color:
-                                    validation.status === "OK"
-                                      ? "#2e7d32"
-                                      : validation.status.includes("Errori")
-                                      ? "#c62828"
-                                      : "#f57f17",
-                                  fontWeight: "600",
-                                }}
-                                title="Stato validazione KPI parametrici"
-                              >
-                                - {validation.status}
-                              </span>
-                            )}
-                          </div>
-                          <div style={{ fontSize: ".65rem", color: "#777" }}>
-                            {it.mandatory ? "Obbligatorio" : "Opzionale"} ·{" "}
-                            {it.applicability?.join(", ")}
-                          </div>
-                          <div style={{ marginTop: 4 }}>
-                            {schema && (
-                              <details
-                                style={{
-                                  marginBottom: 8,
-                                  padding: 8,
-                                  background: "#fafafa",
-                                  border: "1px solid #eee",
-                                  borderRadius: 4,
-                                }}
-                              >
+                      <label
+                        style={{
+                          fontSize: ".7rem",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 4,
+                        }}
+                      >
+                        <span style={{ fontWeight: 500 }}>Ruolo</span>
+                        <input
+                          type="text"
+                          placeholder="es. Responsabile Sostenibilità"
+                          value={
+                            kpiMetadata.getMetadata(`_category_${cat}`)
+                              ?.ruolo || ""
+                          }
+                          onChange={(e) => {
+                            const current =
+                              kpiMetadata.getMetadata(`_category_${cat}`) || {};
+                            kpiMetadata.setMetadata(`_category_${cat}`, {
+                              ...current,
+                              ruolo: e.target.value,
+                            });
+                          }}
+                          style={{
+                            padding: "6px 8px",
+                            fontSize: ".7rem",
+                            border: "1px solid #ccc",
+                            borderRadius: 4,
+                          }}
+                        />
+                      </label>
+
+                      <label
+                        style={{
+                          fontSize: ".7rem",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 4,
+                        }}
+                      >
+                        <span style={{ fontWeight: 500 }}>
+                          Metodo di Raccolta
+                        </span>
+                        <select
+                          value={
+                            kpiMetadata.getMetadata(`_category_${cat}`)
+                              ?.metodoDiRaccolta || ""
+                          }
+                          onChange={(e) => {
+                            const current =
+                              kpiMetadata.getMetadata(`_category_${cat}`) || {};
+                            kpiMetadata.setMetadata(`_category_${cat}`, {
+                              ...current,
+                              metodoDiRaccolta: e.target.value,
+                            });
+                          }}
+                          style={{
+                            padding: "6px 8px",
+                            fontSize: ".7rem",
+                            border: "1px solid #ccc",
+                            borderRadius: 4,
+                          }}
+                        >
+                          <option value="">Seleziona...</option>
+                          <option value="Intervista">Intervista</option>
+                          <option value="Questionario">Questionario</option>
+                          <option value="Analisi documentale">
+                            Analisi documentale
+                          </option>
+                          <option value="Sistema gestionale">
+                            Sistema gestionale
+                          </option>
+                          <option value="Calcolo/Stima">Calcolo/Stima</option>
+                          <option value="Altro">Altro</option>
+                        </select>
+                      </label>
+
+                      <label
+                        style={{
+                          fontSize: ".7rem",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 4,
+                        }}
+                      >
+                        <span style={{ fontWeight: 500 }}>
+                          Data di Raccolta
+                        </span>
+                        <input
+                          type="date"
+                          value={
+                            kpiMetadata.getMetadata(`_category_${cat}`)
+                              ?.dataDiRaccolta || ""
+                          }
+                          onChange={(e) => {
+                            const current =
+                              kpiMetadata.getMetadata(`_category_${cat}`) || {};
+                            kpiMetadata.setMetadata(`_category_${cat}`, {
+                              ...current,
+                              dataDiRaccolta: e.target.value,
+                            });
+                          }}
+                          style={{
+                            padding: "6px 8px",
+                            fontSize: ".7rem",
+                            border: "1px solid #ccc",
+                            borderRadius: 4,
+                          }}
+                        />
+                      </label>
+                    </div>
+                    <div
+                      style={{
+                        marginTop: 8,
+                        fontSize: ".65rem",
+                        color: "#555",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      ℹ️ Questi dati verranno applicati a tutti i KPI di questa
+                      categoria
+                    </div>
+                  </div>
+
+                  <ul
+                    style={{
+                      listStyle: "none",
+                      margin: 0,
+                      padding: "0.5rem 0.75rem",
+                    }}
+                    aria-label={`Lista items ${cat}`}
+                  >
+                    {items.map((it, idx) => {
+                      const key = `${cat}-${idx}`; // UI key stabile
+                      const state = kpi.getState(it.itemId);
+                      const itemLabel = it.item;
+                      const evidList = evidence.list(cat, itemLabel);
+                      // Cerca schema per questo KPI in tutte le categorie
+                      const schema = allKpiSchemas[it.itemId] || null;
+                      const inputs = schema ? kpiInputs.getFor(it.itemId) : {};
+                      const validation = schema
+                        ? validateKpiInputs(schema, inputs, { dimensione })
+                        : { status: null, errors: [] };
+                      return (
+                        <li
+                          key={key}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: ".5rem",
+                            padding: ".25rem 0",
+                            borderBottom: "1px solid #eee",
+                          }}
+                          aria-label={`Item ${itemLabel}`}
+                        >
+                          {/* Pulsante Stato Unificato */}
+                          <button
+                            onClick={() => cycleState(it.itemId, it.mandatory)}
+                            style={{
+                              minWidth: 80,
+                              fontSize: ".7rem",
+                              padding: ".3rem .5rem",
+                              cursor: "pointer",
+                              borderRadius: 4,
+                              border: "1px solid #ccc",
+                              background: getStateBackground(state),
+                              color: getStateColor(state),
+                              fontWeight: state ? "600" : "normal",
+                              transition: "all 0.2s",
+                            }}
+                            aria-pressed={!!state}
+                            title={getStateTooltip(state, it.mandatory)}
+                          >
+                            {getStateIcon(state)} {getStateLabel(state)}
+                          </button>
+
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: ".85rem" }}>
+                              {schema && schema.kpiCode && (
+                                <span
+                                  style={{
+                                    fontWeight: "600",
+                                    color: "#1976d2",
+                                    fontFamily: "monospace",
+                                  }}
+                                >
+                                  {schema.kpiCode} -{" "}
+                                </span>
+                              )}
+                              {it.item}
+                              {schema && validation.status && (
+                                <span
+                                  style={{
+                                    marginLeft: "8px",
+                                    fontSize: ".7rem",
+                                    color:
+                                      validation.status === "OK"
+                                        ? "#2e7d32"
+                                        : validation.status.includes("Errori")
+                                        ? "#c62828"
+                                        : "#f57f17",
+                                    fontWeight: "600",
+                                  }}
+                                  title="Stato validazione KPI parametrici"
+                                >
+                                  - {validation.status}
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ fontSize: ".65rem", color: "#777" }}>
+                              {it.mandatory ? "Obbligatorio" : "Opzionale"} ·{" "}
+                              {it.applicability?.join(", ")}
+                            </div>
+                            <div style={{ marginTop: 4 }}>
+                              {schema && (
+                                <details
+                                  style={{
+                                    marginBottom: 8,
+                                    padding: 8,
+                                    background: "#fafafa",
+                                    border: "1px solid #eee",
+                                    borderRadius: 4,
+                                  }}
+                                >
+                                  <summary
+                                    style={{
+                                      fontSize: ".7rem",
+                                      fontWeight: 600,
+                                      marginBottom: 6,
+                                      cursor: "pointer",
+                                      listStyle: "none",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: 4,
+                                    }}
+                                  >
+                                    <span>▶</span> Parametri KPI —{" "}
+                                    {schema.title}
+                                  </summary>
+                                  <div
+                                    style={{
+                                      display: "grid",
+                                      gridTemplateColumns:
+                                        "repeat(auto-fit, minmax(160px,1fr))",
+                                      gap: 8,
+                                    }}
+                                  >
+                                    {schema.fields.map((f) => (
+                                      <label
+                                        key={f.key}
+                                        style={{
+                                          fontSize: ".65rem",
+                                          display: "flex",
+                                          flexDirection: "column",
+                                          gap: 4,
+                                        }}
+                                      >
+                                        <span>
+                                          {f.label}
+                                          {f.unit ? ` (${f.unit})` : ""}
+                                          {f.required ? " *" : ""}
+                                        </span>
+                                        {f.type === "bool" && (
+                                          <select
+                                            value={
+                                              inputs[f.key] === true
+                                                ? "true"
+                                                : inputs[f.key] === false
+                                                ? "false"
+                                                : ""
+                                            }
+                                            onChange={(e) => {
+                                              const v = e.target.value;
+                                              kpiInputs.setField(
+                                                it.itemId,
+                                                f.key,
+                                                v === "true"
+                                                  ? true
+                                                  : v === "false"
+                                                  ? false
+                                                  : ""
+                                              );
+                                            }}
+                                          >
+                                            <option value="">—</option>
+                                            <option value="true">Sì</option>
+                                            <option value="false">No</option>
+                                          </select>
+                                        )}
+                                        {f.type === "number" && (
+                                          <input
+                                            type="number"
+                                            value={inputs[f.key] ?? ""}
+                                            onChange={(e) =>
+                                              kpiInputs.setField(
+                                                it.itemId,
+                                                f.key,
+                                                e.target.value === ""
+                                                  ? ""
+                                                  : Number(e.target.value)
+                                              )
+                                            }
+                                            min={f.min}
+                                            max={f.max}
+                                          />
+                                        )}
+                                        {f.type === "enum" && (
+                                          <select
+                                            value={inputs[f.key] ?? ""}
+                                            onChange={(e) =>
+                                              kpiInputs.setField(
+                                                it.itemId,
+                                                f.key,
+                                                e.target.value
+                                              )
+                                            }
+                                          >
+                                            <option value="">—</option>
+                                            {f.enum.map((opt) => (
+                                              <option key={opt} value={opt}>
+                                                {opt}
+                                              </option>
+                                            ))}
+                                          </select>
+                                        )}
+                                        {f.type === "date" && (
+                                          <input
+                                            type="date"
+                                            value={inputs[f.key] ?? ""}
+                                            onChange={(e) =>
+                                              kpiInputs.setField(
+                                                it.itemId,
+                                                f.key,
+                                                e.target.value
+                                              )
+                                            }
+                                          />
+                                        )}
+                                        {f.type === "text" && (
+                                          <input
+                                            type="text"
+                                            value={inputs[f.key] ?? ""}
+                                            onChange={(e) =>
+                                              kpiInputs.setField(
+                                                it.itemId,
+                                                f.key,
+                                                e.target.value
+                                              )
+                                            }
+                                          />
+                                        )}
+                                      </label>
+                                    ))}
+                                  </div>
+                                  {validation.errors.length > 0 && (
+                                    <ul
+                                      style={{
+                                        marginTop: 8,
+                                        fontSize: ".65rem",
+                                      }}
+                                    >
+                                      {validation.errors.map((err, i) => {
+                                        // Gestisce sia stringhe che oggetti {code, message, severity, actionPlan}
+                                        const isObject =
+                                          typeof err === "object" &&
+                                          err !== null;
+                                        const message = isObject
+                                          ? err.message
+                                          : err;
+                                        const severity = isObject
+                                          ? err.severity
+                                          : "error";
+                                        const actionPlan = isObject
+                                          ? err.actionPlan
+                                          : null;
+
+                                        // Colore e icona per severity
+                                        const severityConfig = {
+                                          error: {
+                                            color: "#c62828",
+                                            icon: "⚠️",
+                                            label: "Errore",
+                                          },
+                                          warning: {
+                                            color: "#f57f17",
+                                            icon: "⚡",
+                                            label: "Avviso",
+                                          },
+                                          info: {
+                                            color: "#0288d1",
+                                            icon: "ℹ️",
+                                            label: "Suggerimento",
+                                          },
+                                        };
+                                        const config =
+                                          severityConfig[severity] ||
+                                          severityConfig.error;
+
+                                        return (
+                                          <li
+                                            key={i}
+                                            style={{
+                                              color: config.color,
+                                              marginBottom: 8,
+                                            }}
+                                          >
+                                            <div>
+                                              <strong>
+                                                {config.icon} {config.label}:
+                                              </strong>{" "}
+                                              {message}
+                                            </div>
+                                            {actionPlan && (
+                                              <div
+                                                style={{
+                                                  marginTop: 4,
+                                                  paddingLeft: 16,
+                                                  fontStyle: "italic",
+                                                  color: "#666",
+                                                }}
+                                              >
+                                                💡 {actionPlan}
+                                              </div>
+                                            )}
+                                          </li>
+                                        );
+                                      })}
+                                    </ul>
+                                  )}
+                                </details>
+                              )}
+                              <details style={{ marginTop: 6 }}>
                                 <summary
                                   style={{
-                                    fontSize: ".7rem",
+                                    fontSize: ".65rem",
                                     fontWeight: 600,
-                                    marginBottom: 6,
                                     cursor: "pointer",
                                     listStyle: "none",
                                     display: "flex",
                                     alignItems: "center",
                                     gap: 4,
+                                    color:
+                                      evidList.length > 0 ? "#1976d2" : "#666",
                                   }}
                                 >
-                                  <span>▶</span> Parametri KPI — {schema.title}
-                                </summary>
-                                <div
-                                  style={{
-                                    display: "grid",
-                                    gridTemplateColumns:
-                                      "repeat(auto-fit, minmax(160px,1fr))",
-                                    gap: 8,
-                                  }}
-                                >
-                                  {schema.fields.map((f) => (
-                                    <label
-                                      key={f.key}
+                                  <span>▶</span> 📎 Evidenze{" "}
+                                  {evidList.length > 0 && (
+                                    <span
                                       style={{
-                                        fontSize: ".65rem",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        gap: 4,
+                                        background: "#1976d2",
+                                        color: "white",
+                                        padding: "1px 6px",
+                                        borderRadius: 10,
+                                        fontSize: ".55rem",
                                       }}
                                     >
-                                      <span>
-                                        {f.label}
-                                        {f.unit ? ` (${f.unit})` : ""}
-                                        {f.required ? " *" : ""}
-                                      </span>
-                                      {f.type === "bool" && (
-                                        <select
-                                          value={
-                                            inputs[f.key] === true
-                                              ? "true"
-                                              : inputs[f.key] === false
-                                              ? "false"
-                                              : ""
-                                          }
-                                          onChange={(e) => {
-                                            const v = e.target.value;
-                                            kpiInputs.setField(
-                                              it.itemId,
-                                              f.key,
-                                              v === "true"
-                                                ? true
-                                                : v === "false"
-                                                ? false
-                                                : ""
-                                            );
-                                          }}
-                                        >
-                                          <option value="">—</option>
-                                          <option value="true">Sì</option>
-                                          <option value="false">No</option>
-                                        </select>
-                                      )}
-                                      {f.type === "number" && (
-                                        <input
-                                          type="number"
-                                          value={inputs[f.key] ?? ""}
-                                          onChange={(e) =>
-                                            kpiInputs.setField(
-                                              it.itemId,
-                                              f.key,
-                                              e.target.value === ""
-                                                ? ""
-                                                : Number(e.target.value)
-                                            )
-                                          }
-                                          min={f.min}
-                                          max={f.max}
-                                        />
-                                      )}
-                                      {f.type === "enum" && (
-                                        <select
-                                          value={inputs[f.key] ?? ""}
-                                          onChange={(e) =>
-                                            kpiInputs.setField(
-                                              it.itemId,
-                                              f.key,
-                                              e.target.value
-                                            )
-                                          }
-                                        >
-                                          <option value="">—</option>
-                                          {f.enum.map((opt) => (
-                                            <option key={opt} value={opt}>
-                                              {opt}
-                                            </option>
-                                          ))}
-                                        </select>
-                                      )}
-                                      {f.type === "date" && (
-                                        <input
-                                          type="date"
-                                          value={inputs[f.key] ?? ""}
-                                          onChange={(e) =>
-                                            kpiInputs.setField(
-                                              it.itemId,
-                                              f.key,
-                                              e.target.value
-                                            )
-                                          }
-                                        />
-                                      )}
-                                      {f.type === "text" && (
-                                        <input
-                                          type="text"
-                                          value={inputs[f.key] ?? ""}
-                                          onChange={(e) =>
-                                            kpiInputs.setField(
-                                              it.itemId,
-                                              f.key,
-                                              e.target.value
-                                            )
-                                          }
-                                        />
-                                      )}
-                                    </label>
-                                  ))}
-                                </div>
-                                {validation.errors.length > 0 && (
-                                  <ul
+                                      {evidList.length}
+                                    </span>
+                                  )}
+                                </summary>
+                                <div style={{ marginTop: 6 }}>
+                                  <input
+                                    type="file"
+                                    style={{ display: "none" }}
+                                    id={`file-${cat}-${idx}`}
+                                    multiple
+                                    accept="*/*"
+                                    onChange={(e) => {
+                                      const fl = Array.from(
+                                        e.target.files || []
+                                      );
+                                      evidence.addFiles({
+                                        category: cat,
+                                        itemLabel,
+                                        fileList: fl,
+                                      });
+                                      e.target.value = "";
+                                    }}
+                                  />
+                                  <label
+                                    htmlFor={`file-${cat}-${idx}`}
                                     style={{
-                                      marginTop: 8,
-                                      fontSize: ".65rem",
+                                      cursor: "pointer",
+                                      fontSize: ".6rem",
+                                      color: "#1976d2",
+                                      textDecoration: "underline",
                                     }}
                                   >
-                                    {validation.errors.map((err, i) => {
-                                      // Gestisce sia stringhe che oggetti {code, message, severity, actionPlan}
-                                      const isObject =
-                                        typeof err === "object" && err !== null;
-                                      const message = isObject
-                                        ? err.message
-                                        : err;
-                                      const severity = isObject
-                                        ? err.severity
-                                        : "error";
-                                      const actionPlan = isObject
-                                        ? err.actionPlan
-                                        : null;
-
-                                      // Colore e icona per severity
-                                      const severityConfig = {
-                                        error: {
-                                          color: "#c62828",
-                                          icon: "⚠️",
-                                          label: "Errore",
-                                        },
-                                        warning: {
-                                          color: "#f57f17",
-                                          icon: "⚡",
-                                          label: "Avviso",
-                                        },
-                                        info: {
-                                          color: "#0288d1",
-                                          icon: "ℹ️",
-                                          label: "Suggerimento",
-                                        },
-                                      };
-                                      const config =
-                                        severityConfig[severity] ||
-                                        severityConfig.error;
-
-                                      return (
+                                    Aggiungi evidenza
+                                  </label>
+                                  {evidence.error && (
+                                    <div
+                                      style={{
+                                        color: "#c62828",
+                                        fontSize: ".6rem",
+                                        marginTop: 4,
+                                      }}
+                                    >
+                                      ⚠️ {evidence.error}
+                                    </div>
+                                  )}
+                                  {evidList.length > 0 && (
+                                    <ul
+                                      style={{
+                                        margin: "4px 0 0 0",
+                                        padding: 0,
+                                        listStyle: "none",
+                                      }}
+                                    >
+                                      {evidList.map((f, fi) => (
                                         <li
-                                          key={i}
+                                          key={fi}
                                           style={{
-                                            color: config.color,
-                                            marginBottom: 8,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 6,
                                           }}
                                         >
-                                          <div>
-                                            <strong>
-                                              {config.icon} {config.label}:
-                                            </strong>{" "}
-                                            {message}
-                                          </div>
-                                          {actionPlan && (
-                                            <div
+                                          {f.data ? (
+                                            <a
+                                              href={f.data}
+                                              download={f.name}
+                                              style={{ fontSize: ".55rem" }}
+                                            >
+                                              {f.name}
+                                            </a>
+                                          ) : f.path ? (
+                                            <span
                                               style={{
-                                                marginTop: 4,
-                                                paddingLeft: 16,
-                                                fontStyle: "italic",
-                                                color: "#666",
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                gap: 4,
                                               }}
                                             >
-                                              💡 {actionPlan}
-                                            </div>
-                                          )}
-                                        </li>
-                                      );
-                                    })}
-                                  </ul>
-                                )}
-                              </details>
-                            )}
-                            <details style={{ marginTop: 6 }}>
-                              <summary
-                                style={{
-                                  fontSize: ".65rem",
-                                  fontWeight: 600,
-                                  cursor: "pointer",
-                                  listStyle: "none",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: 4,
-                                  color:
-                                    evidList.length > 0 ? "#1976d2" : "#666",
-                                }}
-                              >
-                                <span>▶</span> 📎 Evidenze{" "}
-                                {evidList.length > 0 && (
-                                  <span
-                                    style={{
-                                      background: "#1976d2",
-                                      color: "white",
-                                      padding: "1px 6px",
-                                      borderRadius: 10,
-                                      fontSize: ".55rem",
-                                    }}
-                                  >
-                                    {evidList.length}
-                                  </span>
-                                )}
-                              </summary>
-                              <div style={{ marginTop: 6 }}>
-                                <input
-                                  type="file"
-                                  style={{ display: "none" }}
-                                  id={`file-${cat}-${idx}`}
-                                  multiple
-                                  accept="*/*"
-                                  onChange={(e) => {
-                                    const fl = Array.from(e.target.files || []);
-                                    evidence.addFiles({
-                                      category: cat,
-                                      itemLabel,
-                                      fileList: fl,
-                                    });
-                                    e.target.value = "";
-                                  }}
-                                />
-                                <label
-                                  htmlFor={`file-${cat}-${idx}`}
-                                  style={{
-                                    cursor: "pointer",
-                                    fontSize: ".6rem",
-                                    color: "#1976d2",
-                                    textDecoration: "underline",
-                                  }}
-                                >
-                                  Aggiungi evidenza
-                                </label>
-                                {evidence.error && (
-                                  <div
-                                    style={{
-                                      color: "#c62828",
-                                      fontSize: ".6rem",
-                                      marginTop: 4,
-                                    }}
-                                  >
-                                    ⚠️ {evidence.error}
-                                  </div>
-                                )}
-                                {evidList.length > 0 && (
-                                  <ul
-                                    style={{
-                                      margin: "4px 0 0 0",
-                                      padding: 0,
-                                      listStyle: "none",
-                                    }}
-                                  >
-                                    {evidList.map((f, fi) => (
-                                      <li
-                                        key={fi}
-                                        style={{
-                                          display: "flex",
-                                          alignItems: "center",
-                                          gap: 6,
-                                        }}
-                                      >
-                                        {f.data ? (
-                                          <a
-                                            href={f.data}
-                                            download={f.name}
-                                            style={{ fontSize: ".55rem" }}
-                                          >
-                                            {f.name}
-                                          </a>
-                                        ) : f.path ? (
-                                          <span
-                                            style={{
-                                              display: "inline-flex",
-                                              alignItems: "center",
-                                              gap: 4,
-                                            }}
-                                          >
-                                            <button
-                                              type="button"
-                                              title={f.path}
-                                              onClick={() =>
-                                                alert(
-                                                  `File salvato in ${f.path}. Apri la cartella audit per visualizzarlo.`
-                                                )
-                                              }
+                                              <button
+                                                type="button"
+                                                title={f.path}
+                                                onClick={() =>
+                                                  alert(
+                                                    `File salvato in ${f.path}. Apri la cartella audit per visualizzarlo.`
+                                                  )
+                                                }
+                                                style={{
+                                                  background: "none",
+                                                  border: "none",
+                                                  color: "#1976d2",
+                                                  textDecoration: "underline",
+                                                  cursor: "pointer",
+                                                  padding: 0,
+                                                  fontSize: ".55rem",
+                                                }}
+                                              >
+                                                {f.name}
+                                              </button>
+                                              <button
+                                                type="button"
+                                                title="Copia percorso"
+                                                onClick={async () => {
+                                                  try {
+                                                    await navigator.clipboard.writeText(
+                                                      f.path
+                                                    );
+                                                  } catch {}
+                                                }}
+                                                style={{
+                                                  fontSize: ".5rem",
+                                                  border: "1px solid #ccc",
+                                                  background: "#fafafa",
+                                                  cursor: "pointer",
+                                                  borderRadius: 3,
+                                                  padding: "0 4px",
+                                                }}
+                                              >
+                                                Copia
+                                              </button>
+                                            </span>
+                                          ) : (
+                                            <span
                                               style={{
-                                                background: "none",
-                                                border: "none",
-                                                color: "#1976d2",
-                                                textDecoration: "underline",
-                                                cursor: "pointer",
-                                                padding: 0,
                                                 fontSize: ".55rem",
+                                                maxWidth: 140,
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
                                               }}
                                             >
                                               {f.name}
-                                            </button>
-                                            <button
-                                              type="button"
-                                              title="Copia percorso"
-                                              onClick={async () => {
-                                                try {
-                                                  await navigator.clipboard.writeText(
-                                                    f.path
-                                                  );
-                                                } catch {}
-                                              }}
-                                              style={{
-                                                fontSize: ".5rem",
-                                                border: "1px solid #ccc",
-                                                background: "#fafafa",
-                                                cursor: "pointer",
-                                                borderRadius: 3,
-                                                padding: "0 4px",
-                                              }}
-                                            >
-                                              Copia
-                                            </button>
-                                          </span>
-                                        ) : (
-                                          <span
+                                            </span>
+                                          )}
+                                          <button
+                                            onClick={() =>
+                                              evidence.removeFile({
+                                                category: cat,
+                                                itemLabel,
+                                                index: fi,
+                                              })
+                                            }
                                             style={{
                                               fontSize: ".55rem",
-                                              maxWidth: 140,
-                                              overflow: "hidden",
-                                              textOverflow: "ellipsis",
-                                              whiteSpace: "nowrap",
+                                              border: "1px solid #ccc",
+                                              background: "#fafafa",
+                                              cursor: "pointer",
+                                              borderRadius: 3,
                                             }}
                                           >
-                                            {f.name}
-                                          </span>
-                                        )}
-                                        <button
-                                          onClick={() =>
-                                            evidence.removeFile({
-                                              category: cat,
-                                              itemLabel,
-                                              index: fi,
-                                            })
-                                          }
-                                          style={{
-                                            fontSize: ".55rem",
-                                            border: "1px solid #ccc",
-                                            background: "#fafafa",
-                                            cursor: "pointer",
-                                            borderRadius: 3,
-                                          }}
-                                        >
-                                          ✕
-                                        </button>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-                            </details>
+                                            ✕
+                                          </button>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              </details>
+                            </div>
+
+                            {/* Note Auditor - Sempre visibili */}
+                            <div style={{ marginTop: 8 }}>
+                              <label
+                                style={{
+                                  fontSize: ".7rem",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: 4,
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    fontWeight: 600,
+                                    color: "#f57f17",
+                                  }}
+                                >
+                                  📝 Note Auditor
+                                </span>
+                                <textarea
+                                  placeholder="Note interne sull'affidabilità del dato, eventuali riserve o osservazioni..."
+                                  value={
+                                    kpiMetadata.getMetadata(it.itemId)
+                                      ?.auditorNotes || ""
+                                  }
+                                  onChange={(e) => {
+                                    const current =
+                                      kpiMetadata.getMetadata(it.itemId) || {};
+                                    kpiMetadata.setMetadata(it.itemId, {
+                                      ...current,
+                                      auditorNotes: e.target.value,
+                                    });
+                                  }}
+                                  rows={2}
+                                  style={{
+                                    fontSize: ".65rem",
+                                    padding: "6px 8px",
+                                    border: "1px solid #ddd",
+                                    borderRadius: 4,
+                                    resize: "vertical",
+                                    fontFamily: "inherit",
+                                  }}
+                                />
+                              </label>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
               )}
             </section>
           );

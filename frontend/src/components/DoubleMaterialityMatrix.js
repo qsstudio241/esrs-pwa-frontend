@@ -168,8 +168,8 @@ export default function DoubleMaterialityMatrix({
                     impactScore: impact,
                     financialScore: financial,
                     quadrant: quadrant === 'highHigh' ? 'Doppiamente Materiale' :
-                             quadrant === 'highLow' ? 'Materiale d\'Impatto' :
-                             quadrant === 'lowHigh' ? 'Materiale Finanziario' : 'Non Materiale',
+                        quadrant === 'highLow' ? 'Materiale d\'Impatto' :
+                            quadrant === 'lowHigh' ? 'Materiale Finanziario' : 'Non Materiale',
                     esrsApplicable: quadrant === 'highHigh',
                     isBorderline,
                     exclusionJustification: quadrant === 'lowLow' || quadrant === 'highLow' || quadrant === 'lowHigh' ? (justifications[t.id] || '') : null,
@@ -217,7 +217,7 @@ export default function DoubleMaterialityMatrix({
                 ])
             ];
 
-            const csvContent = csvRows.map(row => 
+            const csvContent = csvRows.map(row =>
                 row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
             ).join('\n');
 

@@ -4,6 +4,7 @@ import ChecklistRefactored from "./ChecklistRefactored";
 import ErrorBoundary from "./components/ErrorBoundary";
 import MaterialityManagement from "./components/MaterialityManagement";
 import ExportProfessional from "./components/ExportProfessional";
+import SustainabilityReportBuilder from "./components/SustainabilityReportBuilder";
 import StorageManager from "./components/StorageManager";
 import { StorageProvider } from "./storage/StorageContext";
 import { calcolaDimensioneAzienda } from "./utils/auditBusinessLogic";
@@ -620,9 +621,26 @@ function App() {
                   borderRadius: "6px 6px 0 0",
                   cursor: "pointer",
                   fontWeight: "bold",
+                  marginRight: "0.25rem",
                 }}
               >
                 🎯 Analisi Materialità
+              </button>
+              <button
+                onClick={() => setActiveTab("report")}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: activeTab === "report" ? "#1976d2" : "white",
+                  color: activeTab === "report" ? "white" : "#1976d2",
+                  border: "2px solid #1976d2",
+                  borderBottom: "none",
+                  borderRadius: "6px 6px 0 0",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  marginRight: "0.25rem",
+                }}
+              >
+                📑 Bilancio
               </button>
               <button
                 onClick={() => setActiveTab("export")}
@@ -690,6 +708,11 @@ function App() {
                 />
               ) : activeTab === "materiality" ? (
                 <MaterialityManagement
+                  audit={currentAudit}
+                  onUpdate={updateCurrentAudit}
+                />
+              ) : activeTab === "report" ? (
+                <SustainabilityReportBuilder
                   audit={currentAudit}
                   onUpdate={updateCurrentAudit}
                 />

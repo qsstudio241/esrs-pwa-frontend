@@ -22,13 +22,13 @@ export async function exportReportToWord(audit, chapters, attachments) {
                     children: [
                         // Copertina
                         ...generateCoverPage(audit),
-                        
+
                         // Indice
                         ...generateTableOfContents(),
-                        
+
                         // Capitoli
                         ...await generateChapters(chapters, attachments),
-                        
+
                         // Footer
                         ...generateFooter(audit),
                     ],
@@ -38,10 +38,10 @@ export async function exportReportToWord(audit, chapters, attachments) {
 
         const blob = await Packer.toBlob(doc);
         const fileName = `Bilancio-Sostenibilita_${audit.azienda}_${new Date().toISOString().split('T')[0]}.docx`;
-        
+
         saveAs(blob, fileName);
         console.log('✅ Word Report esportato:', fileName);
-        
+
         return { success: true, fileName };
     } catch (error) {
         console.error('❌ Errore export Word:', error);
@@ -54,7 +54,7 @@ export async function exportReportToWord(audit, chapters, attachments) {
  */
 function generateCoverPage(audit) {
     const year = new Date().getFullYear();
-    
+
     return [
         new Paragraph({
             text: '',
@@ -169,7 +169,7 @@ function generateTableOfContents() {
  */
 async function generateChapters(chapters, attachments) {
     const paragraphs = [];
-    
+
     const chapterStructure = [
         { id: 1, title: 'Capitolo 1 - Profilo dell\'Organizzazione' },
         { id: 2, title: 'Capitolo 2 - Strategia e Modello di Business' },
@@ -186,7 +186,7 @@ async function generateChapters(chapters, attachments) {
     for (const chapter of chapterStructure) {
         const chapterData = chapters[chapter.id];
         const chapterAttachments = attachments[chapter.id] || [];
-        
+
         // Titolo capitolo
         paragraphs.push(
             new Paragraph({
@@ -199,12 +199,12 @@ async function generateChapters(chapters, attachments) {
         // Contenuto capitolo
         const content = chapterData?.content || 'Contenuto non disponibile';
         const contentParagraphs = content.split('\n').filter(line => line.trim());
-        
+
         contentParagraphs.forEach(line => {
             // Rileva se è un titolo (inizia con ===, ---, o tutto maiuscolo)
             const isHeading = line.match(/^[=]{3,}/) || line.match(/^[A-Z\s]{5,}$/) || line.startsWith('###');
             const isSubHeading = line.startsWith('##') || line.match(/^\d+\./);
-            
+
             if (isHeading && !line.match(/^[=]{3,}/)) {
                 paragraphs.push(
                     new Paragraph({
@@ -248,7 +248,7 @@ async function generateChapters(chapters, attachments) {
                     try {
                         const imageData = attachment.data.split(',')[1]; // Remove data:image/...;base64,
                         const imageBuffer = Buffer.from(imageData, 'base64');
-                        
+
                         paragraphs.push(
                             new Paragraph({
                                 children: [
@@ -263,7 +263,7 @@ async function generateChapters(chapters, attachments) {
                                 spacing: { before: 200, after: 200 },
                             })
                         );
-                        
+
                         paragraphs.push(
                             new Paragraph({
                                 text: `Figura: ${attachment.name}`,
@@ -365,19 +365,19 @@ function generateFooter(audit) {
  */
 export async function exportReportToPDF(audit, chapters, attachments) {
     console.log('📄 Generazione PDF Report - Bilancio di Sostenibilità');
-    
+
     // Per ora generiamo HTML professionale che può essere stampato in PDF
     const htmlContent = generateProfessionalHTML(audit, chapters, attachments);
-    
+
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const fileName = `Bilancio-Sostenibilita_${audit.azienda}_${new Date().toISOString().split('T')[0]}.html`;
-    
+
     saveAs(blob, fileName);
-    
+
     alert('📄 Report HTML generato!\n\nPer convertire in PDF:\n1. Apri il file HTML nel browser\n2. Stampa (Ctrl+P)\n3. Seleziona "Salva come PDF"\n4. Salva il documento');
-    
+
     console.log('✅ HTML Report esportato:', fileName);
-    
+
     return { success: true, fileName };
 }
 
@@ -386,7 +386,7 @@ export async function exportReportToPDF(audit, chapters, attachments) {
  */
 function generateProfessionalHTML(audit, chapters, attachments) {
     const year = new Date().getFullYear();
-    
+
     const chaptersHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(id => {
         const chapterTitles = {
             1: 'Capitolo 1 - Profilo dell\'Organizzazione',
@@ -400,11 +400,11 @@ function generateProfessionalHTML(audit, chapters, attachments) {
             9: 'Capitolo 9 - Obiettivi e Target',
             10: 'Capitolo 10 - Allegati e Note Metodologiche',
         };
-        
+
         const chapterData = chapters[id];
         const chapterAttachments = attachments[id] || [];
         const content = chapterData?.content || 'Contenuto non disponibile';
-        
+
         // Converti contenuto in HTML con formattazione
         const contentHTML = content.split('\n')
             .map(line => {
@@ -418,25 +418,25 @@ function generateProfessionalHTML(audit, chapters, attachments) {
                 return '<br>';
             })
             .join('\n');
-        
+
         const attachmentsHTML = chapterAttachments.length > 0 ? `
             <h3>Allegati</h3>
             <div class="attachments">
                 ${chapterAttachments.map(att => {
-                    if (att.type.startsWith('image/')) {
-                        return `
+            if (att.type.startsWith('image/')) {
+                return `
                             <div class="image-container">
                                 <img src="${att.data}" alt="${att.name}" />
                                 <p class="image-caption">Figura: ${att.name}</p>
                             </div>
                         `;
-                    } else {
-                        return `<p>📎 ${att.name} (${(att.size / 1024).toFixed(1)} KB)</p>`;
-                    }
-                }).join('\n')}
+            } else {
+                return `<p>📎 ${att.name} (${(att.size / 1024).toFixed(1)} KB)</p>`;
+            }
+        }).join('\n')}
             </div>
         ` : '';
-        
+
         return `
             <div class="chapter">
                 <h1>${chapterTitles[id]}</h1>
@@ -445,7 +445,7 @@ function generateProfessionalHTML(audit, chapters, attachments) {
             </div>
         `;
     }).join('\n');
-    
+
     return `<!DOCTYPE html>
 <html lang="it">
 <head>
@@ -658,18 +658,18 @@ function generateProfessionalHTML(audit, chapters, attachments) {
  */
 export function getReportStatistics(chapters) {
     const totalChapters = 10;
-    const completedChapters = Object.values(chapters).filter(ch => 
+    const completedChapters = Object.values(chapters).filter(ch =>
         ch?.content && ch.content.trim().length > 100
     ).length;
-    
-    const totalWords = Object.values(chapters).reduce((sum, ch) => 
+
+    const totalWords = Object.values(chapters).reduce((sum, ch) =>
         sum + (ch?.content ? ch.content.split(/\s+/).length : 0), 0
     );
-    
-    const totalCharacters = Object.values(chapters).reduce((sum, ch) => 
+
+    const totalCharacters = Object.values(chapters).reduce((sum, ch) =>
         sum + (ch?.content ? ch.content.length : 0), 0
     );
-    
+
     return {
         totalChapters,
         completedChapters,

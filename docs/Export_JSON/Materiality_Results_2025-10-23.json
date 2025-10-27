@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-11T12:38:31.700Z",
+  "timestamp": "2025-10-23T03:14:40.882Z",
   "questionnaire": "Questionario Materialità Strutturato ISO 26000",
   "scoring": {
     "themeScores": {
@@ -41,31 +41,31 @@
       },
       "E1 - Cambiamenti Climatici": {
         "code": "E1",
-        "score": 2.5,
+        "score": 3,
         "priority": "CRITICAL",
         "aspectCount": 3
       },
       "E2 - Inquinamento": {
         "code": "E2",
-        "score": 2.3333333333333335,
+        "score": 2.8333333333333335,
         "priority": "HIGH",
         "aspectCount": 3
       },
       "E3 - Risorse Idriche e Marine": {
         "code": "E3",
-        "score": 2.8333333333333335,
+        "score": 2.3333333333333335,
         "priority": "HIGH",
         "aspectCount": 3
       },
       "E4 - Biodiversità ed Ecosistemi": {
         "code": "E4",
-        "score": 2.8333333333333335,
+        "score": 1.8333333333333333,
         "priority": "HIGH",
         "aspectCount": 3
       },
       "E5 - Economia Circolare": {
         "code": "E5",
-        "score": 2.888888888888889,
+        "score": 1.5,
         "priority": "HIGH",
         "aspectCount": 3
       },
@@ -77,25 +77,25 @@
       },
       "S2 - Lavoratori nella Catena del Valore": {
         "code": "S2",
-        "score": 3.25,
+        "score": 2.75,
         "priority": "HIGH",
         "aspectCount": 2
       },
       "S3 - Comunità Interessate": {
         "code": "S3",
-        "score": 3.3333333333333335,
+        "score": 2.3333333333333335,
         "priority": "MEDIUM",
         "aspectCount": 3
       },
       "S4 - Consumatori e Utilizzatori Finali": {
         "code": "S4",
-        "score": 3.3333333333333335,
+        "score": 1.8333333333333333,
         "priority": "MEDIUM",
         "aspectCount": 3
       },
       "G1 - Condotta Aziendale": {
         "code": "G1",
-        "score": 3.25,
+        "score": 1.25,
         "priority": "CRITICAL",
         "aspectCount": 4
       }
@@ -253,93 +253,93 @@
       },
       "E1_1": {
         "name": "Piano di transizione climatica",
-        "score": 2.5,
+        "score": 3,
         "responseCount": 3,
-        "priority": "LOW"
+        "priority": "MEDIUM"
       },
       "E1_2": {
         "name": "Politiche di mitigazione e adattamento",
-        "score": 2.5,
+        "score": 3,
         "responseCount": 3,
-        "priority": "LOW"
+        "priority": "MEDIUM"
       },
       "E1_3": {
         "name": "Emissioni GHG",
-        "score": 2.5,
+        "score": 3,
         "responseCount": 3,
-        "priority": "LOW"
+        "priority": "MEDIUM"
       },
       "E2_1": {
         "name": "Emissioni inquinanti in aria",
-        "score": 2,
+        "score": 2.5,
         "responseCount": 3,
         "priority": "LOW"
       },
       "E2_2": {
         "name": "Inquinamento acque e suolo",
-        "score": 2.5,
+        "score": 3,
         "responseCount": 3,
-        "priority": "LOW"
+        "priority": "MEDIUM"
       },
       "E2_3": {
         "name": "Sostanze di grande preoccupazione",
+        "score": 3,
+        "responseCount": 3,
+        "priority": "MEDIUM"
+      },
+      "E3_1": {
+        "name": "Prelievi e consumi idrici",
         "score": 2.5,
         "responseCount": 3,
         "priority": "LOW"
       },
-      "E3_1": {
-        "name": "Prelievi e consumi idrici",
-        "score": 3,
-        "responseCount": 3,
-        "priority": "MEDIUM"
-      },
       "E3_2": {
         "name": "Scarichi idrici",
-        "score": 3,
+        "score": 2.5,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "E3_3": {
         "name": "Risorse marine",
-        "score": 2.5,
+        "score": 2,
         "responseCount": 3,
         "priority": "LOW"
       },
       "E4_1": {
         "name": "Driver di perdita di biodiversità",
-        "score": 3,
+        "score": 2,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "E4_2": {
         "name": "Stato delle specie ed ecosistemi",
-        "score": 3,
+        "score": 2,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "E4_3": {
         "name": "Impatti ed dipendenze",
-        "score": 2.5,
+        "score": 1.5,
         "responseCount": 3,
         "priority": "LOW"
       },
       "E5_1": {
         "name": "Uso delle risorse ed economia circolare",
-        "score": 2.833333333333333,
+        "score": 1.5,
         "responseCount": 3,
         "priority": "LOW"
       },
       "E5_2": {
         "name": "Gestione rifiuti",
-        "score": 2.833333333333333,
+        "score": 1.5,
         "responseCount": 3,
         "priority": "LOW"
       },
       "E5_3": {
         "name": "Ecodesign e circolarità prodotti",
-        "score": 3,
+        "score": 1.5,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "S1_1": {
         "name": "Condizioni di lavoro",
@@ -367,83 +367,83 @@
       },
       "S2_1": {
         "name": "Condizioni di lavoro nella supply chain",
-        "score": 3.5,
+        "score": 3,
         "responseCount": 3,
         "priority": "MEDIUM"
       },
       "S2_2": {
         "name": "Diritti umani nella catena del valore",
-        "score": 3,
+        "score": 2.5,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "S3_1": {
         "name": "Impatti economici sulle comunità",
-        "score": 3.5,
+        "score": 2.5,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "S3_2": {
         "name": "Impatti sociali sulle comunità",
-        "score": 3.5,
+        "score": 2.5,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "S3_3": {
         "name": "Diritti umani delle comunità",
-        "score": 3,
+        "score": 2,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "S4_1": {
         "name": "Informazione sui prodotti/servizi",
-        "score": 3.5,
+        "score": 2,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "S4_2": {
         "name": "Sicurezza consumatori",
-        "score": 3,
+        "score": 1.5,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "S4_3": {
         "name": "Inclusione consumatori",
-        "score": 3.5,
+        "score": 2,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "G1_1": {
         "name": "Cultura aziendale e comportamento etico",
-        "score": 3,
+        "score": 1,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "G1_2": {
         "name": "Gestione relazioni con autorità pubbliche",
-        "score": 3.5,
+        "score": 1.5,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "G1_3": {
         "name": "Anticorruzione e anti-concussione",
-        "score": 3,
+        "score": 1,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       },
       "G1_4": {
         "name": "Influenza tramite associazioni di categoria",
-        "score": 3.5,
+        "score": 1.5,
         "responseCount": 3,
-        "priority": "MEDIUM"
+        "priority": "LOW"
       }
     },
     "overallPriority": [
       "S1 - Forza Lavoro Propria",
-      "S3 - Comunità Interessate",
-      "S4 - Consumatori e Utilizzatori Finali",
+      "E1 - Cambiamenti Climatici",
+      "E2 - Inquinamento",
       "S2 - Lavoratori nella Catena del Valore",
-      "G1 - Condotta Aziendale"
+      "E3 - Risorse Idriche e Marine"
     ],
     "recommendations": []
   },
@@ -451,10 +451,10 @@
     "totalThemes": 16,
     "topThemes": [
       "S1 - Forza Lavoro Propria",
-      "S3 - Comunità Interessate",
-      "S4 - Consumatori e Utilizzatori Finali",
+      "E1 - Cambiamenti Climatici",
+      "E2 - Inquinamento",
       "S2 - Lavoratori nella Catena del Valore",
-      "G1 - Condotta Aziendale"
+      "E3 - Risorse Idriche e Marine"
     ],
     "recommendations": []
   }

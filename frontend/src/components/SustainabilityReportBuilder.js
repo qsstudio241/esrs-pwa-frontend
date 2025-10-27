@@ -219,7 +219,7 @@ function SustainabilityReportBuilder({ audit, onUpdate }) {
     const handleExportWord = async () => {
         try {
             const stats = getReportStatistics(chapters);
-            
+
             if (stats.completedChapters < 3) {
                 const confirm = window.confirm(
                     `⚠️ Solo ${stats.completedChapters}/10 capitoli completati.\n\nVuoi procedere comunque con l'export Word?`
@@ -228,9 +228,9 @@ function SustainabilityReportBuilder({ audit, onUpdate }) {
             }
 
             alert('📝 Generazione documento Word in corso...\nQuesto potrebbe richiedere alcuni secondi.');
-            
+
             await exportReportToWord(audit, chapters, attachments);
-            
+
             alert('✅ Documento Word generato con successo!');
         } catch (error) {
             console.error('Errore export Word:', error);
@@ -241,7 +241,7 @@ function SustainabilityReportBuilder({ audit, onUpdate }) {
     const handleExportPDF = async () => {
         try {
             const stats = getReportStatistics(chapters);
-            
+
             if (stats.completedChapters < 3) {
                 const confirm = window.confirm(
                     `⚠️ Solo ${stats.completedChapters}/10 capitoli completati.\n\nVuoi procedere comunque con l'export PDF?`

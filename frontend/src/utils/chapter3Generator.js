@@ -180,10 +180,10 @@ LEGENDA:
             theme.impactScore >= threshold && theme.financialScore >= threshold
                 ? 'DM - Doppiamente Materiale'
                 : theme.impactScore >= threshold
-                ? 'IM - Materiale d\'Impatto'
-                : theme.financialScore >= threshold
-                ? 'FM - Materiale Finanziario'
-                : 'NM - Non Materiale';
+                    ? 'IM - Materiale d\'Impatto'
+                    : theme.financialScore >= threshold
+                        ? 'FM - Materiale Finanziario'
+                        : 'NM - Non Materiale';
 
         content += `${theme.code || 'N/A'} | ${theme.name} | ${theme.impactScore.toFixed(2)} | ${theme.financialScore.toFixed(2)} | ${classification}\n`;
     });
@@ -245,7 +245,7 @@ In base all'analisi di doppia materialità, ${azienda} è tenuta a rendicontare 
 `;
 
     const esrsThemes = quadrants.doubleMaterial.filter(t => t.code && /^[ESG]\d/.test(t.code));
-    
+
     if (esrsThemes.length > 0) {
         const esrsGroups = {
             E: esrsThemes.filter(t => t.code.startsWith('E')),
@@ -295,7 +295,7 @@ ${azienda} contribuisce ai seguenti Sustainable Development Goals delle Nazioni 
 `;
 
     const sdgContributions = new Map();
-    
+
     quadrants.doubleMaterial.forEach(theme => {
         const sdgs = getSDGsForESRS(theme.code);
         sdgs.forEach(sdg => {

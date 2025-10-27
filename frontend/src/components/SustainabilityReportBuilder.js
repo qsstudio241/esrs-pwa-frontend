@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { generateChapter3Content } from '../utils/chapter3Generator';
+import { exportReportToWord, exportReportToPDF, getReportStatistics } from '../utils/reportExport';
 
 /**
  * MEDIUM-1: SustainabilityReportBuilder
@@ -124,7 +125,7 @@ function SustainabilityReportBuilder({ audit, onUpdate }) {
         }
 
         const chapter3Content = generateChapter3Content(audit);
-        
+
         setChapters(prev => ({
             ...prev,
             3: {
@@ -212,7 +213,47 @@ function SustainabilityReportBuilder({ audit, onUpdate }) {
         a.click();
         URL.revokeObjectURL(url);
 
-        alert('✅ Report esportato come JSON. Usa la funzione "Export Word/PDF" per il documento finale.');
+        alert('✅ Report JSON esportato.');
+    };
+
+    const handleExportWord = async () => {
+        try {
+            const stats = getReportStatistics(chapters);
+            
+            if (stats.completedChapters < 3) {
+                const confirm = window.confirm(
+                    `⚠️ Solo ${stats.completedChapters}/10 capitoli completati.\n\nVuoi procedere comunque con l'export Word?`
+                );
+                if (!confirm) return;
+            }
+
+            alert('📝 Generazione documento Word in corso...\nQuesto potrebbe richiedere alcuni secondi.');
+            
+            await exportReportToWord(audit, chapters, attachments);
+            
+            alert('✅ Documento Word generato con successo!');
+        } catch (error) {
+            console.error('Errore export Word:', error);
+            alert(`❌ Errore durante l'export Word:\n${error.message}`);
+        }
+    };
+
+    const handleExportPDF = async () => {
+        try {
+            const stats = getReportStatistics(chapters);
+            
+            if (stats.completedChapters < 3) {
+                const confirm = window.confirm(
+                    `⚠️ Solo ${stats.completedChapters}/10 capitoli completati.\n\nVuoi procedere comunque con l'export PDF?`
+                );
+                if (!confirm) return;
+            }
+
+            await exportReportToPDF(audit, chapters, attachments);
+        } catch (error) {
+            console.error('Errore export PDF:', error);
+            alert(`❌ Errore durante l'export PDF:\n${error.message}`);
+        }
     };
 
     const getChapterProgress = () => {
@@ -352,6 +393,42 @@ function SustainabilityReportBuilder({ audit, onUpdate }) {
                         })}
 
                         <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
+                        <button
+                            onClick={handleExportWord}
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                backgroundColor: '#2196f3',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                                fontSize: '14px',
+                                marginBottom: '8px',
+                            }}
+                        >
+                            📄 Export Word (.docx)
+                        </button>
+
+                        <button
+                            onClick={handleExportPDF}
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                backgroundColor: '#f44336',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                                fontSize: '14px',
+                                marginBottom: '8px',
+                            }}
+                        >
+                            📑 Export PDF (HTML)
+                        </button>
 
                         <button
                             onClick={exportReport}

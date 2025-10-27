@@ -1,0 +1,223 @@
+{
+  "responses": {
+    "E1_1_1": { "value": 5, "type": "rating" },
+    "E1_1_2": { "value": 5, "type": "rating" },
+    "E1_1_3": { "value": 5, "type": "rating" },
+    "E1_1_open": {
+      "value": "Piano transizione climatica allineato SBTi 1.5°C",
+      "type": "text"
+    },
+    "E1_2_1": { "value": 4, "type": "rating" },
+    "E1_2_2": { "value": 5, "type": "rating" },
+    "E1_2_3": { "value": 4, "type": "rating" },
+    "E1_2_open": {
+      "value": "Politiche mitigazione con obiettivi Net Zero 2050",
+      "type": "text"
+    },
+    "E1_3_1": { "value": 5, "type": "rating" },
+    "E1_3_2": { "value": 5, "type": "rating" },
+    "E1_3_3": { "value": 4, "type": "rating" },
+    "E1_3_open": {
+      "value": "Inventario GHG completo Scope 1-2-3 verificato",
+      "type": "text"
+    },
+    "E2_1_1": { "value": 5, "type": "rating" },
+    "E2_1_2": { "value": 4, "type": "rating" },
+    "E2_1_3": { "value": 5, "type": "rating" },
+    "E2_1_open": {
+      "value": "Monitoraggio continuo emissioni NOx/SOx con sensori",
+      "type": "text"
+    },
+    "E2_2_1": { "value": 4, "type": "rating" },
+    "E2_2_2": { "value": 4, "type": "rating" },
+    "E2_2_3": { "value": 4, "type": "rating" },
+    "E2_2_open": {
+      "value": "Impianti depurazione acque reflue certificati ISO 14001",
+      "type": "text"
+    },
+    "E2_3_1": { "value": 4, "type": "rating" },
+    "E2_3_2": { "value": 4, "type": "rating" },
+    "E2_3_3": { "value": 4, "type": "rating" },
+    "E2_3_open": {
+      "value": "Programma sostituzione SVHC entro 2026",
+      "type": "text"
+    },
+    "E3_1_1": { "value": 4, "type": "rating" },
+    "E3_1_2": { "value": 4, "type": "rating" },
+    "E3_1_3": { "value": 3, "type": "rating" },
+    "E3_1_open": {
+      "value": "Prelievi idrici da rete pubblica, stress idrico medio",
+      "type": "text"
+    },
+    "E3_2_1": { "value": 3, "type": "rating" },
+    "E3_2_2": { "value": 3, "type": "rating" },
+    "E3_2_3": { "value": 3, "type": "rating" },
+    "E3_2_open": {
+      "value": "Scarichi idrici conformi limiti tabellari",
+      "type": "text"
+    },
+    "E3_3_1": { "value": 3, "type": "rating" },
+    "E3_3_2": { "value": 3, "type": "rating" },
+    "E3_3_3": { "value": 3, "type": "rating" },
+    "E3_3_open": {
+      "value": "Operazioni non impattano direttamente ecosistemi marini",
+      "type": "text"
+    },
+    "E4_1_1": { "value": 3, "type": "rating" },
+    "E4_1_2": { "value": 3, "type": "rating" },
+    "E4_1_3": { "value": 3, "type": "rating" },
+    "E4_1_open": {
+      "value": "Valutazione impatti biodiversità in corso",
+      "type": "text"
+    },
+    "E4_2_1": { "value": 3, "type": "rating" },
+    "E4_2_2": { "value": 3, "type": "rating" },
+    "E4_2_3": { "value": 3, "type": "rating" },
+    "E4_2_open": {
+      "value": "Nessuna operazione in aree protette",
+      "type": "text"
+    },
+    "E4_3_1": { "value": 3, "type": "rating" },
+    "E4_3_2": { "value": 2, "type": "rating" },
+    "E4_3_3": { "value": 3, "type": "rating" },
+    "E4_3_open": {
+      "value": "Valutazione dipendenze dai servizi ecosistemici in fase preliminare",
+      "type": "text"
+    },
+    "E5_1_1": { "value": 4, "type": "rating" },
+    "E5_1_2": { "value": 4, "type": "rating" },
+    "E5_1_3": { "value": 4, "type": "rating" },
+    "E5_1_open": {
+      "value": "Economia circolare integrata nella strategia aziendale",
+      "type": "text"
+    },
+    "E5_2_1": { "value": 4, "type": "rating" },
+    "E5_2_2": { "value": 3, "type": "rating" },
+    "E5_2_3": { "value": 4, "type": "rating" },
+    "E5_2_open": {
+      "value": "70% rifiuti recuperati/riciclati, obiettivo 85% al 2026",
+      "type": "text"
+    },
+    "E5_3_1": { "value": 4, "type": "rating" },
+    "E5_3_2": { "value": 4, "type": "rating" },
+    "E5_3_3": { "value": 3, "type": "rating" },
+    "E5_3_open": {
+      "value": "Ecodesign applicato a 60% portfolio prodotti",
+      "type": "text"
+    },
+    "S1_1_1": { "value": 5, "type": "rating" },
+    "S1_1_2": { "value": 5, "type": "rating" },
+    "S1_1_3": { "value": 4, "type": "rating" },
+    "S1_1_open": {
+      "value": "Certificazione ISO 45001, LTIFR sotto media settore",
+      "type": "text"
+    },
+    "S1_2_1": { "value": 5, "type": "rating" },
+    "S1_2_2": { "value": 4, "type": "rating" },
+    "S1_2_3": { "value": 5, "type": "rating" },
+    "S1_2_open": {
+      "value": "Diversity 42% donne, GPG 8% in riduzione",
+      "type": "text"
+    },
+    "S1_3_1": { "value": 4, "type": "rating" },
+    "S1_3_2": { "value": 4, "type": "rating" },
+    "S1_3_3": { "value": 4, "type": "rating" },
+    "S1_3_open": {
+      "value": "Media 32 ore formazione/anno per dipendente",
+      "type": "text"
+    },
+    "S1_4_1": { "value": 5, "type": "rating" },
+    "S1_4_2": { "value": 5, "type": "rating" },
+    "S1_4_3": { "value": 5, "type": "rating" },
+    "S1_4_open": {
+      "value": "Libertà sindacale garantita, 85% copertura contrattazione",
+      "type": "text"
+    },
+    "S2_1_1": { "value": 4, "type": "rating" },
+    "S2_1_2": { "value": 4, "type": "rating" },
+    "S2_1_3": { "value": 4, "type": "rating" },
+    "S2_1_open": {
+      "value": "Audit sociali su 60% fornitori strategici",
+      "type": "text"
+    },
+    "S2_2_1": { "value": 4, "type": "rating" },
+    "S2_2_2": { "value": 3, "type": "rating" },
+    "S2_2_3": { "value": 3, "type": "rating" },
+    "S2_2_open": {
+      "value": "Due diligence diritti umani estesa a supply chain tier 1",
+      "type": "text"
+    },
+    "S3_1_1": { "value": 3, "type": "rating" },
+    "S3_1_2": { "value": 3, "type": "rating" },
+    "S3_1_3": { "value": 3, "type": "rating" },
+    "S3_1_open": {
+      "value": "Impiego preferenziale lavoratori locali (75%)",
+      "type": "text"
+    },
+    "S3_2_1": { "value": 3, "type": "rating" },
+    "S3_2_2": { "value": 2, "type": "rating" },
+    "S3_2_3": { "value": 3, "type": "rating" },
+    "S3_2_open": {
+      "value": "Stakeholder engagement annuale con comunità locali",
+      "type": "text"
+    },
+    "S3_3_1": { "value": 3, "type": "rating" },
+    "S3_3_2": { "value": 2, "type": "rating" },
+    "S3_3_3": { "value": 3, "type": "rating" },
+    "S3_3_open": {
+      "value": "Nessun impatto su comunità indigene",
+      "type": "text"
+    },
+    "S4_1_1": { "value": 3, "type": "rating" },
+    "S4_1_2": { "value": 3, "type": "rating" },
+    "S4_1_3": { "value": 3, "type": "rating" },
+    "S4_1_open": {
+      "value": "Certificazioni sicurezza prodotto conformi normative EU",
+      "type": "text"
+    },
+    "S4_2_1": { "value": 3, "type": "rating" },
+    "S4_2_2": { "value": 2, "type": "rating" },
+    "S4_2_3": { "value": 3, "type": "rating" },
+    "S4_2_open": {
+      "value": "Gestione dati GDPR compliant, privacy by design",
+      "type": "text"
+    },
+    "S4_3_1": { "value": 3, "type": "rating" },
+    "S4_3_2": { "value": 3, "type": "rating" },
+    "S4_3_3": { "value": 2, "type": "rating" },
+    "S4_3_open": {
+      "value": "Accessibilità siti web WCAG 2.1 AA, iniziative inclusione gruppi vulnerabili",
+      "type": "text"
+    },
+    "G1_1_1": { "value": 5, "type": "rating" },
+    "G1_1_2": { "value": 5, "type": "rating" },
+    "G1_1_3": { "value": 5, "type": "rating" },
+    "G1_1_open": {
+      "value": "Modello 231, Codice Etico, policies anticorruzione",
+      "type": "text"
+    },
+    "G1_2_1": { "value": 4, "type": "rating" },
+    "G1_2_2": { "value": 4, "type": "rating" },
+    "G1_2_3": { "value": 5, "type": "rating" },
+    "G1_2_open": {
+      "value": "Consiglio con 30% membri indipendenti, diversità genere",
+      "type": "text"
+    },
+    "G1_3_1": { "value": 5, "type": "rating" },
+    "G1_3_2": { "value": 5, "type": "rating" },
+    "G1_3_3": { "value": 4, "type": "rating" },
+    "G1_3_open": {
+      "value": "Whistleblowing attivo, gestione rischi integrata ERM",
+      "type": "text"
+    },
+    "G1_4_1": { "value": 4, "type": "rating" },
+    "G1_4_2": { "value": 4, "type": "rating" },
+    "G1_4_3": { "value": 4, "type": "rating" },
+    "G1_4_open": {
+      "value": "Engagement investitori ESG trimestrale, roadshow annuale",
+      "type": "text"
+    }
+  },
+  "currentSection": 0,
+  "completedSections": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+}

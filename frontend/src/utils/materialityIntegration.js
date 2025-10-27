@@ -83,31 +83,52 @@ export function integrateISO26000Results(questionnaireResults, existingTopics) {
   const { themeScores } = questionnaireResults.scoring;
   const updatedTopics = [...existingTopics];
 
-  console.log("🔍 DEBUG - Theme scores ricevuti:", Object.keys(themeScores));
+  console.log("🔍 DEBUG - Theme scores ricevuti:", themeScores);
+  console.log("🔍 DEBUG - Chiavi theme scores:", Object.keys(themeScores));
   console.log(
     "🔍 DEBUG - Mappature disponibili:",
     Object.keys(ISO_TO_ESRS_MAPPING)
   );
+  console.log("🔍 DEBUG - Topic esistenti:", existingTopics.map(t => ({ id: t.id, name: t.name })));
 
   // Per ogni tema ISO 26000 con punteggio
   Object.entries(themeScores).forEach(([themeName, themeData]) => {
     console.log(
-      `🔍 Processando tema: "${themeName}" con score ${themeData.score}`
+      `🔍 Processando tema: "${themeName}" (type: ${typeof themeName}) con score ${themeData.score}`
     );
 
     let esrsTopicId = ISO_TO_ESRS_MAPPING[themeName];
 
-    // Se non trova mappatura esatta, prova mapping flessibile
+    // Se non trova mappatura esatta, prova varianti
     if (!esrsTopicId) {
+      // Prova solo il codice (es. "DU" da "DU - Diritti Umani")
+      const themeCode = themeName.split(" - ")[0];
+      const themeSuffix = themeName.split(" - ").slice(1).join(" - ");
+
+      console.log(`🔍 Tentativo mappatura - Code: "${themeCode}", Suffix: "${themeSuffix}"`);
+
+      // Prova con codice + nome
+      esrsTopicId = ISO_TO_ESRS_MAPPING[`${themeCode} - ${themeSuffix}`] ||
+        ISO_TO_ESRS_MAPPING[themeSuffix] ||
+        ISO_TO_ESRS_MAPPING[themeCode];
+    }
+
+    // Se non trova mappatura esatta, prova mapping flessibile per keywords
+    if (!esrsTopicId) {
+      console.log(`🔍 Tentativo mappatura flessibile per "${themeName}"`);
+
       // Cerca per parole chiave
       if (
         themeName.includes("Diritti Umani") ||
-        themeName.includes("Pratiche del Lavoro")
+        themeName.includes("Pratiche del Lavoro") ||
+        themeName.includes("LA -") ||
+        themeName.includes("DU -")
       ) {
         esrsTopicId = "s1_workforce";
       } else if (
         themeName.includes("Ambiente") ||
-        themeName.includes("Clima")
+        themeName.includes("Clima") ||
+        themeName.includes("AM -")
       ) {
         if (themeName.includes("inquinamento")) esrsTopicId = "e2_pollution";
         else if (themeName.includes("acqua") || themeName.includes("risorse"))
@@ -117,17 +138,18 @@ export function integrateISO26000Results(questionnaireResults, existingTopics) {
         else esrsTopicId = "e1_climate"; // Default ambiente
       } else if (
         themeName.includes("Corrette Prassi") ||
-        themeName.includes("Governance")
+        themeName.includes("Governance") ||
+        themeName.includes("CP -")
       ) {
         esrsTopicId = "g1_governance";
-      } else if (themeName.includes("Consumatori")) {
+      } else if (themeName.includes("Consumatori") || themeName.includes("CO -")) {
         esrsTopicId = "s4_consumers";
-      } else if (themeName.includes("Comunità")) {
+      } else if (themeName.includes("Comunità") || themeName.includes("SC -")) {
         esrsTopicId = "s3_communities";
       }
 
       console.log(
-        `🔍 Mappatura flessibile per "${themeName}" → ${esrsTopicId}`
+        `🔍 Mappatura flessibile per "${themeName}" → ${esrsTopicId || 'NON TROVATO'}`
       );
     }
 

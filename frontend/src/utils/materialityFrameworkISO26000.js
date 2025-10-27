@@ -848,34 +848,34 @@ export function generateStructuredQuestionnaire(selectedThemes = []) {
   const themeNames =
     selectedThemes.length > 0
       ? selectedThemes
-          .map((theme) => {
-            const extractedName =
-              typeof theme === "string"
-                ? theme
-                : theme.name || theme.id || theme.title || theme;
+        .map((theme) => {
+          const extractedName =
+            typeof theme === "string"
+              ? theme
+              : theme.name || theme.id || theme.title || theme;
 
-            // Applica mappatura se esiste
-            const mappedName =
-              THEME_NAME_MAPPING[extractedName] || extractedName;
+          // Applica mappatura se esiste
+          const mappedName =
+            THEME_NAME_MAPPING[extractedName] || extractedName;
 
-            console.log("📝 Mapping theme:", {
-              theme,
-              extractedName,
-              mappedName,
-              exists: !!materialityFrameworkISO26000[mappedName],
-            });
+          console.log("📝 Mapping theme:", {
+            theme,
+            extractedName,
+            mappedName,
+            exists: !!materialityFrameworkISO26000[mappedName],
+          });
 
-            return mappedName;
-          })
-          .filter((name) => {
-            const exists = materialityFrameworkISO26000[name];
-            if (!exists) {
-              console.warn(
-                `⚠️ Tema "${name}" non trovato nel framework ISO26000`
-              );
-            }
-            return exists;
-          })
+          return mappedName;
+        })
+        .filter((name) => {
+          const exists = materialityFrameworkISO26000[name];
+          if (!exists) {
+            console.warn(
+              `⚠️ Tema "${name}" non trovato nel framework ISO26000`
+            );
+          }
+          return exists;
+        })
       : Object.keys(materialityFrameworkISO26000);
 
   console.log("✅ Final themeNames for questionnaire:", themeNames);
@@ -962,7 +962,7 @@ export function calculateMaterialityScoring(
       const avgScore =
         aspectResponses.length > 0
           ? aspectResponses.reduce((sum, r) => sum + r.value, 0) /
-            aspectResponses.length
+          aspectResponses.length
           : aspect.baseScore;
 
       // Pesa con base score
@@ -993,8 +993,12 @@ export function calculateMaterialityScoring(
     .sort((a, b) => results.themeScores[b].score - results.themeScores[a].score)
     .slice(0, 5); // Top 5 temi
 
-  // Genera raccomandazioni
-  results.recommendations = generateRecommendations(results);
+  // Genera raccomandazioni con soglie configurabili (usa quelle passate o default)
+  const thresholds = responses.materialityConfig?.thresholdRecommendations || {
+    themes: 3.0,
+    aspects: 3.5
+  };
+  results.recommendations = generateRecommendations(results, thresholds);
 
   return results;
 }
@@ -1034,12 +1038,18 @@ export function getAllFrameworkThemes() {
   }));
 }
 
-function generateRecommendations(scoringResults) {
+/**
+ * Genera raccomandazioni basate sui punteggi, con soglie configurabili
+ * @param {Object} scoringResults - Risultati scoring con themeScores e aspectScores
+ * @param {Object} thresholds - Soglie configurabili { themes: 3.0, aspects: 3.5 }
+ * @returns {Array} Array di raccomandazioni
+ */
+function generateRecommendations(scoringResults, thresholds = { themes: 3.0, aspects: 3.5 }) {
   const recs = [];
 
-  // Temi ad alta priorità
+  // Temi ad alta priorità (soglia configurabile)
   const highPriorityThemes = Object.keys(scoringResults.themeScores).filter(
-    (theme) => scoringResults.themeScores[theme].score >= 4
+    (theme) => scoringResults.themeScores[theme].score >= thresholds.themes
   );
 
   if (highPriorityThemes.length > 0) {
@@ -1050,12 +1060,13 @@ function generateRecommendations(scoringResults) {
         ", "
       )}`,
       themes: highPriorityThemes,
+      threshold: thresholds.themes,
     });
   }
 
-  // Aspetti critici
+  // Aspetti critici (soglia configurabile)
   const criticalAspects = Object.keys(scoringResults.aspectScores).filter(
-    (aspect) => scoringResults.aspectScores[aspect].score >= 4.5
+    (aspect) => scoringResults.aspectScores[aspect].score >= thresholds.aspects
   );
 
   if (criticalAspects.length > 0) {
@@ -1066,6 +1077,7 @@ function generateRecommendations(scoringResults) {
         .map((a) => scoringResults.aspectScores[a].name)
         .join(", ")}`,
       aspects: criticalAspects,
+      threshold: thresholds.aspects,
     });
   }
 

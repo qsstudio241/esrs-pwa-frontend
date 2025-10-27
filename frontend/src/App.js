@@ -235,8 +235,8 @@ function AuditSelector({
                       >
                         {dimObj.criteri.totale_attivo_max !== null
                           ? dimObj.criteri.totale_attivo_max.toLocaleString(
-                              "it-IT"
-                            )
+                            "it-IT"
+                          )
                           : "—"}
                       </td>
                     </tr>
@@ -495,7 +495,7 @@ function App() {
         Object.keys(localStorage).forEach((k) => {
           if (k.startsWith("auditDir_")) localStorage.removeItem(k);
         });
-      } catch {}
+      } catch { }
       setAudits([]);
       setCurrentAuditId("");
     }
@@ -522,6 +522,64 @@ function App() {
         />
         {currentAudit ? (
           <div>
+            {/* Audit Header - Indicatore audit corrente */}
+            <div
+              style={{
+                padding: "12px 16px",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                borderRadius: "8px",
+                marginBottom: "12px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: "18px", fontWeight: "bold" }}>
+                    🏢 {currentAudit.azienda}
+                  </div>
+                  <div style={{ fontSize: "12px", opacity: 0.9 }}>
+                    {currentAudit.dimensione} • Avviato:{" "}
+                    {new Date(currentAudit.dataAvvio).toLocaleDateString(
+                      "it-IT"
+                    )}{" "}
+                    • Stato: {currentAudit.stato}
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Vuoi chiudere questo audit e tornare alla selezione?"
+                      )
+                    ) {
+                      setCurrentAuditId("");
+                    }
+                  }}
+                  style={{
+                    padding: "6px 12px",
+                    background: "rgba(255,255,255,0.2)",
+                    border: "1px solid rgba(255,255,255,0.3)",
+                    borderRadius: "4px",
+                    color: "white",
+                    cursor: "pointer",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  ✕ Chiudi Audit
+                </button>
+              </div>
+            </div>
+
             {/* Storage Status Indicator - Compact */}
             <StorageManager audit={currentAudit} compact={true} />
 

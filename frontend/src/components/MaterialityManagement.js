@@ -1,58 +1,22 @@
 ﻿/* eslint-disable unicode-bom */
-import React, { useState, useMemo } from "react";
-import MaterialityMatrix from "./MaterialityMatrix";
+import React, { useState } from "react";
 import StructuredMaterialityQuestionnaire from "./StructuredMaterialityQuestionnaire";
+import FinancialMaterialityAssessment from "./FinancialMaterialityAssessment";
+import DoubleMaterialityMatrix from "./DoubleMaterialityMatrix";
+import ESRSSDGMapping from "./ESRSSDGMapping";
 import { integrateISO26000Results } from "../utils/materialityIntegration";
 import { useMaterialityData } from "../hooks/useMaterialityData";
-import { analyzeMaterialityPriority } from "../utils/materialityAnalysis";
 import { getAllESRSMandatoryThemes } from "../utils/materialityFrameworkISO26000";
 
 function MaterialityManagement({ audit, onUpdate }) {
-  const [activeTab, setActiveTab] = useState("matrix");
+  const [activeTab, setActiveTab] = useState("structured");
   const [structuredResults, setStructuredResults] = useState(null);
+  const [financialResults, setFinancialResults] = useState(null);
+  const [showThresholdConfig, setShowThresholdConfig] = useState(false);
   const materialityData = useMaterialityData(audit?.id || "default");
-
-  const analysis = useMemo(() => {
-    const topics = materialityData.topics || [];
-    const threshold = materialityData.threshold || 3;
-
-    return analyzeMaterialityPriority(topics, threshold);
-  }, [materialityData.topics, materialityData.threshold]);
 
   const renderContent = () => {
     switch (activeTab) {
-      case "matrix":
-        return (
-          <div>
-            <MaterialityMatrix
-              audit={audit}
-              onUpdate={onUpdate}
-              topics={materialityData.topics}
-              onTopicUpdate={materialityData.updateTopic}
-              threshold={materialityData.threshold}
-              onThresholdChange={materialityData.setThreshold}
-            />
-          </div>
-        );
-
-      case "survey":
-        return (
-          <div style={{ padding: "20px", textAlign: "center" }}>
-            <h3>🔧 Stakeholder Engagement</h3>
-            <div
-              style={{
-                background: "#f8f9fa",
-                padding: "20px",
-                borderRadius: "8px",
-                margin: "20px 0",
-              }}
-            >
-              <p>Modulo stakeholder temporaneamente semplificato</p>
-              <p>La matrice di materialità è completamente funzionale</p>
-            </div>
-          </div>
-        );
-
       case "structured":
         return (
           <StructuredMaterialityQuestionnaire
@@ -101,13 +65,22 @@ function MaterialityManagement({ audit, onUpdate }) {
                   const existingTopic = materialityData.topics.find(
                     (t) => t.id === updatedTopic.id
                   );
-                  if (
-                    existingTopic &&
-                    (updatedTopic.insideOutScore !==
-                      existingTopic.insideOutScore ||
-                      updatedTopic.outsideInScore !==
-                        existingTopic.outsideInScore)
-                  ) {
+
+                  console.log(`🔍 Verificando topic ${updatedTopic.id}:`, {
+                    exists: !!existingTopic,
+                    hasISOMapping: !!updatedTopic.isoThemeMapping,
+                    newScores: {
+                      inside: updatedTopic.insideOutScore,
+                      outside: updatedTopic.outsideInScore,
+                    },
+                    oldScores: existingTopic ? {
+                      inside: existingTopic.insideOutScore,
+                      outside: existingTopic.outsideInScore,
+                    } : null
+                  });
+
+                  // Aggiorna se ha mappatura ISO (indipendentemente dai valori precedenti)
+                  if (existingTopic && updatedTopic.isoThemeMapping) {
                     console.log(`📝 Aggiornando topic ${updatedTopic.id}:`, {
                       old: {
                         inside: existingTopic.insideOutScore,
@@ -117,6 +90,7 @@ function MaterialityManagement({ audit, onUpdate }) {
                         inside: updatedTopic.insideOutScore,
                         outside: updatedTopic.outsideInScore,
                       },
+                      isoMapping: updatedTopic.isoThemeMapping,
                     });
 
                     materialityData.updateTopic(updatedTopic.id, {
@@ -155,97 +129,244 @@ function MaterialityManagement({ audit, onUpdate }) {
           />
         );
 
-      case "analysis":
+      case "financial":
+        // Estrai i temi valutati dall'ISO 26000 per l'analisi finanziaria
+        const themesForFinancial = structuredResults?.scoring?.themeScores
+          ? Object.keys(structuredResults.scoring.themeScores).map(
+            (themeName) => ({
+              id: themeName,
+              name: themeName,
+              impactScore:
+                structuredResults.scoring.themeScores[themeName].score,
+            })
+          )
+          : [];
+
+        console.log("💰 Temi estratti per analisi finanziaria:", themesForFinancial);
+
+        // Se non ci sono temi, mostra messaggio informativo
+        if (themesForFinancial.length === 0) {
+          return (
+            <div style={{ padding: "40px", textAlign: "center" }}>
+              <h3>⚠️ Nessun tema da analizzare</h3>
+              <p style={{ color: "#666", marginBottom: "20px", maxWidth: "500px", margin: "0 auto" }}>
+                Per procedere con l'analisi finanziaria devi prima completare il
+                questionario ISO 26000 nel tab "📋 Temi ISO 26000".
+              </p>
+              <div style={{ marginTop: "30px" }}>
+                <button
+                  onClick={() => setActiveTab("structured")}
+                  style={{
+                    padding: "12px 24px",
+                    backgroundColor: "#1976d2",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                  }}
+                >
+                  ▶️ Vai al Questionario ISO 26000
+                </button>
+              </div>
+            </div>
+          );
+        }
+
         return (
-          <div style={{ padding: "20px" }}>
-            <h3>📊 Analisi Materialità</h3>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "15px",
-                margin: "20px 0",
-              }}
-            >
-              <div
-                style={{
-                  background: "#e3f2fd",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  textAlign: "center",
-                }}
-              >
-                <div
+          <FinancialMaterialityAssessment
+            selectedThemes={themesForFinancial}
+            existingAssessment={audit?.financialAssessment}
+            onComplete={(results) => {
+              console.log("💰 Analisi finanziaria completata:", results);
+              setFinancialResults(results);
+
+              // Salva nell'audit
+              if (onUpdate) {
+                onUpdate({
+                  ...audit,
+                  financialAssessment: results,
+                });
+              }
+
+              // Passa automaticamente alla matrice doppia
+              setActiveTab("double");
+            }}
+            onUpdate={(partialResults) => {
+              // Salvataggio automatico progressivo
+              if (onUpdate && audit) {
+                onUpdate({
+                  ...audit,
+                  financialAssessment: partialResults,
+                });
+              }
+            }}
+          />
+        );
+
+      case "double":
+        // Estrai scores da risultati precedenti
+        const impactScores = {};
+        const financialScores = {};
+        const themesForMatrix = [];
+
+        if (structuredResults?.scoring?.themeScores) {
+          Object.entries(structuredResults.scoring.themeScores).forEach(
+            ([themeId, data]) => {
+              impactScores[themeId] = data.score;
+              // Aggiungi tema all'array per la matrice
+              themesForMatrix.push({
+                id: themeId,
+                name: themeId,
+                impactScore: data.score,
+              });
+            }
+          );
+        }
+
+        if (financialResults?.financialScores || audit?.financialAssessment?.financialScores) {
+          Object.assign(
+            financialScores,
+            financialResults?.financialScores || audit?.financialAssessment?.financialScores
+          );
+        }
+
+        console.log("📊 Matrice doppia - Impact scores:", impactScores);
+        console.log("📊 Matrice doppia - Financial scores:", financialScores);
+        console.log("📊 Matrice doppia - Temi:", themesForMatrix);
+
+        return (
+          <div>
+            {themesForMatrix.length === 0 ? (
+              <div style={{ padding: "40px", textAlign: "center" }}>
+                <h3>⚠️ Completa prima le analisi precedenti</h3>
+                <p style={{ color: "#666", marginBottom: "20px" }}>
+                  Per visualizzare la matrice doppia materialità devi prima:
+                </p>
+                <ol
                   style={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    color: "#1976d2",
+                    textAlign: "left",
+                    maxWidth: "400px",
+                    margin: "0 auto",
                   }}
                 >
-                  {analysis.materialTopics || 0}
+                  <li>Completare il questionario ISO 26000 (tab "Temi ISO 26000")</li>
+                  <li>Completare l'analisi rischi/opportunità finanziaria (tab "💰 Analisi Finanziaria")</li>
+                </ol>
+                <div style={{ marginTop: "20px" }}>
+                  <button
+                    onClick={() => setActiveTab("structured")}
+                    style={{
+                      padding: "12px 24px",
+                      backgroundColor: "#1976d2",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      marginRight: "10px",
+                    }}
+                  >
+                    Vai a ISO 26000
+                  </button>
+                  {structuredResults && (
+                    <button
+                      onClick={() => setActiveTab("financial")}
+                      style={{
+                        padding: "12px 24px",
+                        backgroundColor: "#4caf50",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Vai ad Analisi Finanziaria
+                    </button>
+                  )}
                 </div>
-                <div>Temi Materiali</div>
               </div>
-
-              <div
-                style={{
-                  background: "#f3e5f5",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  textAlign: "center",
+            ) : (
+              <DoubleMaterialityMatrix
+                impactScores={impactScores}
+                financialScores={financialScores}
+                themes={themesForMatrix}
+                threshold={materialityData.threshold || 3.0}
+                onThemeClick={(theme) => {
+                  console.log("Tema selezionato:", theme);
                 }}
-              >
-                <div
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    color: "#7b1fa2",
-                  }}
-                >
-                  {analysis.totalTopics || 0}
-                </div>
-                <div>Totale Temi</div>
-              </div>
-
-              <div
-                style={{
-                  background: "#e8f5e8",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  textAlign: "center",
+                exclusionJustifications={audit?.materialityExclusions || {}}
+                onJustificationUpdate={(justifications) => {
+                  console.log("💾 Salvando giustificazioni:", justifications);
+                  if (onUpdate && audit) {
+                    const updatedAudit = {
+                      ...audit,
+                      materialityExclusions: justifications,
+                    };
+                    onUpdate(updatedAudit);
+                    alert(
+                      `✅ Giustificazioni salvate con successo!\n\nTemi giustificati: ${Object.keys(justifications).filter(k => justifications[k]?.trim()).length}`
+                    );
+                  }
                 }}
-              >
-                <div
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    color: "#388e3c",
-                  }}
-                >
-                  {analysis.completionRate || 0}%
-                </div>
-                <div>Completion Rate</div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: "30px" }}>
-              <h4>Raccomandazioni</h4>
-              <ul
-                style={{
-                  textAlign: "left",
-                  maxWidth: "600px",
-                  margin: "0 auto",
-                }}
-              >
-                <li>Completa la matrice di materialità nel tab principale</li>
-                <li>
-                  Identifica i temi con impact score e financial score ≥ 3
-                </li>
-                <li>Documenta la metodologia di valutazione utilizzata</li>
-                <li>Coinvolgi stakeholder chiave nella validazione</li>
-              </ul>
-            </div>
+              />
+            )}
           </div>
+        );
+
+      case "esrs":
+        // Estrai temi materiali dal quadrante verde (doppiamente materiali)
+        const materialThemesForESRS = [];
+        const themeToESRSMapping = {};
+
+        if (structuredResults?.scoring?.themeScores && (financialResults?.financialScores || audit?.financialAssessment?.financialScores)) {
+          const threshold = materialityData.threshold || 3.0;
+          const finScores = financialResults?.financialScores || audit?.financialAssessment?.financialScores || {};
+
+          Object.entries(structuredResults.scoring.themeScores).forEach(
+            ([themeId, data]) => {
+              const impactScore = data.score;
+              const financialScore = finScores[themeId] || 0;
+
+              // Solo temi doppiamente materiali (quadrante verde)
+              if (impactScore >= threshold && financialScore >= threshold) {
+                materialThemesForESRS.push({
+                  id: themeId,
+                  name: themeId,
+                  impactScore,
+                  financialScore,
+                });
+
+                // Mapping tema → ESRS (usa integrazione esistente)
+                // In questa versione semplificata, usa il mapping ISO → ESRS
+                themeToESRSMapping[themeId] = themeId; // Sarà mappato in ESRSSDGMapping
+              }
+            }
+          );
+        }
+
+        const handleESRSExport = (exportData) => {
+          console.log("📄 Export ESRS + Goal ONU:", exportData);
+
+          // Crea file JSON
+          const jsonStr = JSON.stringify(exportData, null, 2);
+          const blob = new Blob([jsonStr], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `ESRS_SDG_Mapping_${audit?.azienda || "export"}_${new Date().toISOString().split('T')[0]}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          alert("✅ Tabella ESRS + Goal ONU esportata con successo!");
+        };
+
+        return (
+          <ESRSSDGMapping
+            materialThemes={materialThemesForESRS}
+            themeToESRSMapping={themeToESRSMapping}
+            onExport={handleESRSExport}
+          />
         );
 
       default:
@@ -263,6 +384,223 @@ function MaterialityManagement({ audit, onUpdate }) {
         </p>
       </div>
 
+      {/* Pannello Configurazione Soglie - Collassabile */}
+      <div
+        style={{
+          margin: "0 0 1.5rem 0",
+          border: "2px solid #1976d2",
+          borderRadius: "8px",
+          backgroundColor: "#fafafa",
+        }}
+      >
+        {/* Header collapsabile */}
+        <div
+          onClick={() => setShowThresholdConfig(!showThresholdConfig)}
+          style={{
+            padding: "1rem 1.5rem",
+            cursor: "pointer",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "#f5f5f5",
+            borderRadius: showThresholdConfig ? "6px 6px 0 0" : "6px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span style={{ fontSize: "1.2rem" }}>⚙️</span>
+            <div>
+              <strong style={{ fontSize: "16px" }}>Configurazione Soglia di Materialità</strong>
+              <span
+                style={{
+                  marginLeft: "0.75rem",
+                  fontSize: "0.8rem",
+                  color: "#666",
+                  backgroundColor: "#e3f2fd",
+                  padding: "2px 8px",
+                  borderRadius: "12px",
+                }}
+              >
+                PDR 134:2022 Compliant
+              </span>
+              <div style={{ fontSize: "14px", color: "#666", marginTop: "0.25rem" }}>
+                Soglia attuale: <strong style={{ color: "#1976d2", fontSize: "16px" }}>{materialityData.threshold}</strong> (Default: 3.0)
+              </div>
+            </div>
+          </div>
+          <span style={{ fontSize: "1.2rem", color: "#1976d2" }}>
+            {showThresholdConfig ? "▼" : "▶"}
+          </span>
+        </div>
+
+        {/* Pannello espanso */}
+        {showThresholdConfig && (
+          <div style={{ padding: "1.5rem" }}>
+            {/* Riferimenti normativi */}
+            <div
+              style={{
+                marginBottom: "1.5rem",
+                padding: "1rem",
+                backgroundColor: "#e3f2fd",
+                borderLeft: "4px solid #1976d2",
+                borderRadius: "4px",
+              }}
+            >
+              <h4 style={{ margin: "0 0 0.5rem 0", color: "#1976d2" }}>
+                📖 Riferimenti Normativi
+              </h4>
+              <p style={{ margin: "0.5rem 0", fontSize: "0.9rem", lineHeight: "1.5" }}>
+                <strong>PDR 134:2022</strong> e <strong>ESRS 1</strong> richiedono
+                che la soglia di materialità sia:
+              </p>
+              <ul style={{ margin: "0.5rem 0 0.5rem 1.5rem", fontSize: "0.9rem" }}>
+                <li>Definita dal contesto aziendale specifico</li>
+                <li>Giustificata e documentata in modo trasparente</li>
+                <li>Applicata consistentemente nell'analisi</li>
+              </ul>
+              <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.85rem", fontStyle: "italic", color: "#555" }}>
+                ℹ️ Le soglie numeriche <strong>non sono prescritte</strong> dalla
+                normativa e devono essere determinate dall'organizzazione in base
+                al proprio contesto operativo e strategia ESG.
+              </p>
+            </div>
+
+            {/* Spiegazione impatto soglia */}
+            <div
+              style={{
+                marginBottom: "1.5rem",
+                padding: "1rem",
+                backgroundColor: "#f1f8e9",
+                borderLeft: "4px solid #689f38",
+                borderRadius: "4px",
+              }}
+            >
+              <h4 style={{ margin: "0 0 0.5rem 0", color: "#689f38" }}>
+                🎯 Come Funziona la Soglia
+              </h4>
+              <p style={{ margin: "0.5rem 0", fontSize: "0.9rem", lineHeight: "1.5" }}>
+                I temi con punteggio <strong>≥ {materialityData.threshold}</strong> su <strong>ENTRAMBI</strong> gli assi
+                (Impatto ESG + Rischi/Opportunità Finanziarie) sono considerati <strong>doppiamente materiali</strong> e
+                <strong> devono essere rendicontati</strong> nel bilancio di sostenibilità.
+              </p>
+            </div>
+
+            {/* Presets rapidi */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <h4 style={{ margin: "0 0 0.75rem 0" }}>🎯 Presets Consigliati</h4>
+              <div style={{ display: "flex", gap: "1rem" }}>
+                <button
+                  onClick={() => materialityData.setThreshold(2.5)}
+                  style={{
+                    flex: 1,
+                    padding: "0.75rem",
+                    backgroundColor: materialityData.threshold === 2.5 ? "#fff3e0" : "white",
+                    border: materialityData.threshold === 2.5 ? "3px solid #f57c00" : "2px solid #e0e0e0",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  <div><strong>🛡️ Conservativo</strong></div>
+                  <div style={{ fontSize: "0.8rem", color: "#666" }}>Soglia: 2.5</div>
+                  <div style={{ fontSize: "0.75rem", color: "#888", marginTop: "0.25rem" }}>Copertura completa</div>
+                </button>
+                <button
+                  onClick={() => materialityData.setThreshold(3.0)}
+                  style={{
+                    flex: 1,
+                    padding: "0.75rem",
+                    backgroundColor: materialityData.threshold === 3.0 ? "#e8f5e9" : "white",
+                    border: materialityData.threshold === 3.0 ? "3px solid #4caf50" : "2px solid #e0e0e0",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  <div><strong>✅ Standard (Default)</strong></div>
+                  <div style={{ fontSize: "0.8rem", color: "#666" }}>Soglia: 3.0</div>
+                  <div style={{ fontSize: "0.75rem", color: "#888", marginTop: "0.25rem" }}>Bilanciata e raccomandata</div>
+                </button>
+                <button
+                  onClick={() => materialityData.setThreshold(3.5)}
+                  style={{
+                    flex: 1,
+                    padding: "0.75rem",
+                    backgroundColor: materialityData.threshold === 3.5 ? "#e1f5fe" : "white",
+                    border: materialityData.threshold === 3.5 ? "3px solid #03a9f4" : "2px solid #e0e0e0",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  <div><strong>🎯 Focalizzato</strong></div>
+                  <div style={{ fontSize: "0.8rem", color: "#666" }}>Soglia: 3.5</div>
+                  <div style={{ fontSize: "0.75rem", color: "#888", marginTop: "0.25rem" }}>Alta priorità</div>
+                </button>
+              </div>
+            </div>
+
+            {/* Slider soglia personalizzata */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <h4 style={{ margin: "0 0 1rem 0" }}>🎚️ Soglia Personalizzata</h4>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                <input
+                  type="range"
+                  min="2"
+                  max="4"
+                  step="0.5"
+                  value={materialityData.threshold}
+                  onChange={(e) =>
+                    materialityData.setThreshold(parseFloat(e.target.value))
+                  }
+                  style={{ flex: 1, height: "8px" }}
+                />
+                <input
+                  type="number"
+                  min="2"
+                  max="4"
+                  step="0.5"
+                  value={materialityData.threshold}
+                  onChange={(e) =>
+                    materialityData.setThreshold(parseFloat(e.target.value))
+                  }
+                  style={{
+                    width: "70px",
+                    padding: "0.5rem",
+                    textAlign: "center",
+                    border: "2px solid #1976d2",
+                    borderRadius: "4px",
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                  }}
+                />
+              </div>
+              <div style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.5rem" }}>
+                Scala: 2.0 (molto permissivo) → 4.0 (molto restrittivo)
+              </div>
+            </div>
+
+            {/* Info suggerimenti */}
+            <div
+              style={{
+                padding: "1rem",
+                backgroundColor: "#fff8e1",
+                borderLeft: "4px solid #ffc107",
+                borderRadius: "4px",
+              }}
+            >
+              <h4 style={{ margin: "0 0 0.5rem 0", color: "#f57c00" }}>
+                💡 Suggerimenti per la Scelta
+              </h4>
+              <ul style={{ margin: "0.5rem 0 0 1.5rem", fontSize: "0.85rem", lineHeight: "1.6" }}>
+                <li><strong>2.0-2.5:</strong> Analisi molto completa, identifica tutti i temi potenzialmente rilevanti (raccomandata per prime analisi)</li>
+                <li><strong>3.0:</strong> ✅ Bilanciata e raccomandata, allineata alle best practice ESRS per la maggior parte delle aziende</li>
+                <li><strong>3.5-4.0:</strong> Focalizzata su alta priorità, per aziende con sistema ESG maturo e consolidato</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div
         style={{
           display: "flex",
@@ -274,24 +612,29 @@ function MaterialityManagement({ audit, onUpdate }) {
       >
         {[
           {
-            key: "matrix",
-            label: "🎯 Matrice Materialità",
-            count: `${analysis.materialTopics || 0} materiali`,
-          },
-          {
             key: "structured",
-            label: "📋 Temi ESRS Obbligatori",
-            count: structuredResults ? "✅ Completato" : "📝 Configura ora",
+            label: "📋 Temi ISO 26000",
+            count: structuredResults ? "✅ Completato" : "📝 Inizia qui",
           },
           {
-            key: "survey",
-            label: "� Stakeholder",
-            count: "Semplificato",
+            key: "financial",
+            label: "💰 Analisi Finanziaria",
+            count:
+              financialResults || audit?.financialAssessment
+                ? "✅ Completato"
+                : structuredResults?.scoring?.themeScores
+                  ? `⚡ ${Object.keys(structuredResults.scoring.themeScores).length} temi`
+                  : "⏳ Pending",
           },
           {
-            key: "analysis",
-            label: "📈 Analisi",
-            count: `${analysis.completionRate || 0}% completo`,
+            key: "double",
+            label: "📊 Doppia Materialità",
+            count: financialResults || audit?.financialAssessment ? "✅ Pronto" : "🔒 Bloccato",
+          },
+          {
+            key: "esrs",
+            label: "🌍 ESRS + Goal ONU",
+            count: financialResults || audit?.financialAssessment ? "✅ Disponibile" : "🔒 Bloccato",
           },
         ].map((tab) => (
           <button

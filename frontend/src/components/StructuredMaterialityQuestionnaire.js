@@ -201,8 +201,8 @@ function StructuredMaterialityQuestionnaire({
             {!questionnaire
               ? "Generazione questionario in corso..."
               : questionnaire.sections?.length === 0
-              ? "Nessun tema valido selezionato per il questionario ISO 26000. Aggiungi temi alla matrice di materialità prima di procedere."
-              : "Caricamento dati questionario..."}
+                ? "Nessun tema valido selezionato per il questionario ISO 26000. Aggiungi temi alla matrice di materialità prima di procedere."
+                : "Caricamento dati questionario..."}
           </p>
           {questionnaire?.sections?.length === 0 && (
             <button
@@ -329,14 +329,14 @@ function StructuredMaterialityQuestionnaire({
                     backgroundColor: isCurrent
                       ? "#1976d2"
                       : isCompleted
-                      ? "#4caf50"
-                      : "#fff",
+                        ? "#4caf50"
+                        : "#fff",
                     color: isCurrent || isCompleted ? "white" : "#333",
                     borderColor: isCurrent
                       ? "#1976d2"
                       : isCompleted
-                      ? "#4caf50"
-                      : "#ddd",
+                        ? "#4caf50"
+                        : "#ddd",
                     transition: "all 0.2s ease",
                   }}
                   title={section.title}
@@ -411,11 +411,9 @@ function StructuredMaterialityQuestionnaire({
                           }
                         );
                         alert(
-                          `✅ Questionario importato con successo!\n\n${
-                            Object.keys(reconstructedResponses).length
-                          } risposte ricostruite da ${
-                            Object.keys(importedData.scoring.aspectScores)
-                              .length
+                          `✅ Questionario importato con successo!\n\n${Object.keys(reconstructedResponses).length
+                          } risposte ricostruite da ${Object.keys(importedData.scoring.aspectScores)
+                            .length
                           } aspects.`
                         );
                       } else {
@@ -446,6 +444,43 @@ function StructuredMaterialityQuestionnaire({
             >
               📥 Importa JSON
             </label>
+
+            <button
+              onClick={() => {
+                const exportData = {
+                  responses,
+                  currentSection,
+                  completedSections: Array.from(completedSections),
+                  timestamp: new Date().toISOString(),
+                  questionnaire: {
+                    title: questionnaire.title,
+                    totalSections: questionnaire.sections.length,
+                  },
+                };
+
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `questionario-iso26000_${new Date().toISOString().split("T")[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                console.log("📤 Questionario esportato:", exportData);
+              }}
+              style={{
+                padding: "6px 12px",
+                backgroundColor: "#2196f3",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+              }}
+            >
+              📤 Esporta JSON
+            </button>
 
             <button
               onClick={() => {
@@ -506,8 +541,8 @@ function StructuredMaterialityQuestionnaire({
                 section.priority === "CRITICAL"
                   ? "#ff5722"
                   : section.priority === "HIGH"
-                  ? "#ff9800"
-                  : "#4caf50",
+                    ? "#ff9800"
+                    : "#4caf50",
               color: "white",
             }}
           >
@@ -823,8 +858,8 @@ function StructuredMaterialityQuestionnaire({
                 backgroundColor: completedSections.has(idx)
                   ? "#4caf50"
                   : idx === currentSection
-                  ? "#1976d2"
-                  : "#e0e0e0",
+                    ? "#1976d2"
+                    : "#e0e0e0",
                 color:
                   completedSections.has(idx) || idx === currentSection
                     ? "white"
@@ -959,8 +994,8 @@ function MaterialityResults({ scoring, questionnaire, onComplete }) {
                         theme.priority === "CRITICAL"
                           ? "#ff5722"
                           : theme.priority === "HIGH"
-                          ? "#ff9800"
-                          : "#4caf50",
+                            ? "#ff9800"
+                            : "#4caf50",
                       color: "white",
                     }}
                   >
@@ -987,8 +1022,8 @@ function MaterialityResults({ scoring, questionnaire, onComplete }) {
                           percentage >= 80
                             ? "#4caf50"
                             : percentage >= 60
-                            ? "#ff9800"
-                            : "#ff5722",
+                              ? "#ff9800"
+                              : "#ff5722",
                         borderRadius: "4px",
                       }}
                     />
@@ -1031,9 +1066,8 @@ function MaterialityResults({ scoring, questionnaire, onComplete }) {
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Materiality_Results_${
-              new Date().toISOString().split("T")[0]
-            }.json`;
+            a.download = `Materiality_Results_${new Date().toISOString().split("T")[0]
+              }.json`;
             a.click();
             URL.revokeObjectURL(url);
           }}

@@ -16,6 +16,16 @@ export default function StorageManager({ audit, compact = false }) {
     setStorageInfo(info);
   }, [storage]);
 
+  // Aggiungi polling per aggiornare lo stato quando cambia
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const info = storage.ready();
+      setStorageInfo(info);
+    }, 1000); // Controlla ogni secondo
+
+    return () => clearInterval(interval);
+  }, [storage]);
+
   const updateStorageInfo = () => {
     const info = storage.ready();
     setStorageInfo(info);
@@ -45,8 +55,8 @@ export default function StorageManager({ audit, compact = false }) {
       updateStorageInfo();
       alert(
         `✅ Struttura audit creata!\n\n` +
-          `Cartella: ${result.structure}\n` +
-          `Categorie: ${result.categories.length} cartelle create`
+        `Cartella: ${result.structure}\n` +
+        `Categorie: ${result.categories.length} cartelle create`
       );
     } catch (err) {
       setError(err.message);
@@ -72,8 +82,8 @@ export default function StorageManager({ audit, compact = false }) {
       updateStorageInfo();
       alert(
         `✅ Audit ripreso!\n\n` +
-          `Cartella collegata: ${result.structure}\n` +
-          `Modalità: ${result.isNewAudit ? "NUOVO" : "RIPRESA"}`
+        `Cartella collegata: ${result.structure}\n` +
+        `Modalità: ${result.isNewAudit ? "NUOVO" : "RIPRESA"}`
       );
     } catch (err) {
       setError(err.message);

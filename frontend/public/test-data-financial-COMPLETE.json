@@ -1,0 +1,365 @@
+{
+  "assessments": {
+    "Diritti Umani": {
+      "risks": {
+        "probability": 4,
+        "financial_impact": 4,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi: violazioni diritti umani supply chain (textile, mining), compliance EU Due Diligence Directive, sanzioni e class action, reputazione (campagne ONG/boycott), interruzioni supply chain.",
+      "opportunities": {
+        "probability": 3,
+        "financial_benefit": 3,
+        "time_to_value": 3,
+        "exploitation_ease": 3
+      },
+      "opportunities_notes": "Opportunità: supply chain etica (premium brand positioning), certificazioni Fair Trade, resilienza supply, accesso mercati ESG-conscious, partnership strategiche."
+    },
+    "Pratiche del Lavoro": {
+      "risks": {
+        "probability": 5,
+        "financial_impact": 4,
+        "time_horizon": 4,
+        "mitigation_capacity": 4
+      },
+      "risks_notes": "Rischi: talent shortage (+40% difficoltà recruiting), turnover elevato (costi recruiting/training), conflitti sindacali, compliance salute/sicurezza (ISO 45001), infortuni gravi.",
+      "opportunities": {
+        "probability": 5,
+        "financial_benefit": 4,
+        "time_to_value": 4,
+        "exploitation_ease": 4
+      },
+      "opportunities_notes": "Opportunità: employer branding (riduzione turnover -25%), welfare aziendale (+10% retention), certificazioni Great Place to Work, produttività (+12% da wellbeing), attraction talenti."
+    },
+    "Ambiente": {
+      "risks": {
+        "probability": 5,
+        "financial_impact": 5,
+        "time_horizon": 4,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi: regolatori EU Green Deal (Carbon Tax, ETS, CBAM), rischi fisici climate change, obsolescenza asset carbon-intensive, costi compliance ambientale, sanzioni inquinamento.",
+      "opportunities": {
+        "probability": 5,
+        "financial_benefit": 5,
+        "time_to_value": 4,
+        "exploitation_ease": 4
+      },
+      "opportunities_notes": "Opportunità: efficienza energetica (-15% costi), rinnovabili (riduzione rischio prezzi), economia circolare (nuovi revenue stream), green products (mercati emergenti), accesso finanza verde."
+    },
+    "Corrette Prassi Gestionali": {
+      "risks": {
+        "probability": 4,
+        "financial_impact": 5,
+        "time_horizon": 5,
+        "mitigation_capacity": 4
+      },
+      "risks_notes": "Rischi: corruzione (sanzioni 10% fatturato), antitrust (multe miliardarie EU), frodi interne, conflitti interesse, riciclaggio denaro, debarment gare pubbliche.",
+      "opportunities": {
+        "probability": 5,
+        "financial_benefit": 4,
+        "time_to_value": 4,
+        "exploitation_ease": 4
+      },
+      "opportunities_notes": "Opportunità: governance ESG excellence (rating AAA), compliance proattiva (vantaggio competitivo), trasparenza (trust stakeholder), accesso capitali ESG, listing indici sostenibilità."
+    },
+    "Aspetti relativi ai Consumatori": {
+      "risks": {
+        "probability": 3,
+        "financial_impact": 4,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi: incidenti sicurezza prodotto (richiami, class action), GDPR privacy violations (+4% fatturato sanzioni), greenwashing claims, perdita fiducia consumatori, recensioni negative virali.",
+      "opportunities": {
+        "probability": 4,
+        "financial_benefit": 4,
+        "time_to_value": 3,
+        "exploitation_ease": 4
+      },
+      "opportunities_notes": "Opportunità: prodotti sostenibili certificati (premium +12%), trasparenza supply chain (blockchain), customer loyalty ESG-driven, first-mover green segments, co-creation sostenibilità."
+    },
+    "Coinvolgimento e Sviluppo della Comunità": {
+      "risks": {
+        "probability": 3,
+        "financial_impact": 3,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi: opposizioni comunità (NIMBY, blocchi progetti), social license to operate, conflitti comunità indigene, ritardi autorizzativi, boycott locali, costi litigation.",
+      "opportunities": {
+        "probability": 3,
+        "financial_benefit": 3,
+        "time_to_value": 2,
+        "exploitation_ease": 3
+      },
+      "opportunities_notes": "Opportunità: shared value (local procurement 75%), investimenti sociali (educazione/salute), facilitazione autorizzazioni, reputazione territoriale, partnership pubblico-private, attrazione investimenti regionali."
+    },
+    "E1 - Cambiamenti Climatici": {
+      "risks": {
+        "probability": 5,
+        "financial_impact": 5,
+        "time_horizon": 4,
+        "mitigation_capacity": 4
+      },
+      "risks_notes": "Rischi regolatori Carbon Tax EU ETS, rischi fisici (eventi meteo estremi), rischi transizione (obsolescenza asset ad alta intensità carbonica). Impatto stimato 8-12% fatturato entro 2030.",
+      "opportunities": {
+        "probability": 5,
+        "financial_benefit": 5,
+        "time_to_value": 4,
+        "exploitation_ease": 4
+      },
+      "opportunities_notes": "Opportunità: efficienza energetica (-15% costi), energie rinnovabili (riduzione rischio prezzi), prodotti low-carbon (accesso nuovi mercati green), reputazione ESG (accesso capitali a minor costo)."
+    },
+    "E2 - Inquinamento": {
+      "risks": {
+        "probability": 4,
+        "financial_impact": 4,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi conformità normative emissioni atmosferiche (IED, REACH), rischi sanzioni per non conformità (fino 5% fatturato), costi adeguamento impianti depurazione. Rischio reputazionale per incidenti ambientali.",
+      "opportunities": {
+        "probability": 4,
+        "financial_benefit": 4,
+        "time_to_value": 3,
+        "exploitation_ease": 3
+      },
+      "opportunities_notes": "Opportunità: tecnologie controllo emissioni (vendita know-how), certificazioni ambientali (accesso gare pubbliche), riduzione costi smaltimento con economia circolare, partnership con ONG ambientali."
+    },
+    "E3 - Risorse Idriche e Marine": {
+      "risks": {
+        "probability": 3,
+        "financial_impact": 3,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi stress idrico in alcune aree operative (Sud Europa), aumento costi idrici (+20-30% previsto entro 2030), rischi interruzione produzione per scarsità idrica, compliance Water Framework Directive EU.",
+      "opportunities": {
+        "probability": 3,
+        "financial_benefit": 3,
+        "time_to_value": 3,
+        "exploitation_ease": 3
+      },
+      "opportunities_notes": "Opportunità: tecnologie risparmio idrico (riciclo 40% acque), riduzione prelievi (-25% entro 2027), partnership con utility idriche, certificazioni Alliance for Water Stewardship."
+    },
+    "E4 - Biodiversità ed Ecosistemi": {
+      "risks": {
+        "probability": 3,
+        "financial_impact": 3,
+        "time_horizon": 2,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi regolatori Natura 2000, potenziali blocchi autorizzativi per impatti biodiversità, dipendenza da servizi ecosistemici (impollinazione, qualità aria/acqua), rischi reputazionali per ONG ambientaliste.",
+      "opportunities": {
+        "probability": 2,
+        "financial_benefit": 2,
+        "time_to_value": 2,
+        "exploitation_ease": 2
+      },
+      "opportunities_notes": "Opportunità limitate: progetti ripristino ecosistemi (offsetting carbon), partnership con enti conservazione, certificazioni biodiversity-friendly, accesso fondi EU biodiversità."
+    },
+    "E5 - Economia Circolare": {
+      "risks": {
+        "probability": 4,
+        "financial_impact": 4,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi regolatori EU Circular Economy Package, Extended Producer Responsibility (+15% costi gestione rifiuti), rischi disruption supply chain materie prime vergini, obsolescenza prodotti non-circular.",
+      "opportunities": {
+        "probability": 4,
+        "financial_benefit": 4,
+        "time_to_value": 3,
+        "exploitation_ease": 4
+      },
+      "opportunities_notes": "Opportunità: modelli business circolari (Product-as-Service +30% margini), valorizzazione rifiuti (riciclo 85%, recupero energetico), riduzione costi materie prime (-20%), innovazione ecodesign."
+    },
+    "S1 - Forza Lavoro Propria": {
+      "risks": {
+        "probability": 5,
+        "financial_impact": 5,
+        "time_horizon": 5,
+        "mitigation_capacity": 4
+      },
+      "risks_notes": "Rischi: talent shortage settore tech (+40% difficoltà recruiting), turnover elevato Gen Z (18% annuo), costi infortuni (2M€/anno), compliance salute/sicurezza ISO 45001, rischi sindacali scioperi.",
+      "opportunities": {
+        "probability": 5,
+        "financial_benefit": 5,
+        "time_to_value": 4,
+        "exploitation_ease": 4
+      },
+      "opportunities_notes": "Opportunità: employer branding ESG (riduzione turnover -25%), programmi welfare (+10% retention), certificazioni Great Place to Work, attraction talenti ESG-oriented, produttività da wellbeing (+12%)."
+    },
+    "S2 - Lavoratori nella Catena del Valore": {
+      "risks": {
+        "probability": 4,
+        "financial_impact": 4,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi: supply chain con violazioni diritti umani (textile, electronics), compliance EU Due Diligence Directive, rischi reputazionali da campagne ONG, interruzioni supply da conflitti sociali fornitori.",
+      "opportunities": {
+        "probability": 3,
+        "financial_benefit": 3,
+        "time_to_value": 3,
+        "exploitation_ease": 3
+      },
+      "opportunities_notes": "Opportunità: supply chain responsabile (premium price +8%), certificazioni Fair Trade/SA8000, resilienza supply chain da buone relazioni, accesso mercati ESG-conscious, partnership fornitori strategici."
+    },
+    "S3 - Comunità Interessate": {
+      "risks": {
+        "probability": 3,
+        "financial_impact": 3,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi: opposizioni comunità locali a nuovi progetti (NIMBY), ritardi autorizzativi, conflitti con comunità indigene (se operazioni extra-EU), social license to operate, boycott consumatori.",
+      "opportunities": {
+        "probability": 3,
+        "financial_benefit": 2,
+        "time_to_value": 2,
+        "exploitation_ease": 3
+      },
+      "opportunities_notes": "Opportunità: shared value con comunità (local procurement 75%), investimenti sociali (educazione, salute), facilitazione autorizzazioni, reputazione territoriale, attrazione investimenti regionali."
+    },
+    "S4 - Consumatori e Utilizzatori Finali": {
+      "risks": {
+        "probability": 3,
+        "financial_impact": 3,
+        "time_horizon": 3,
+        "mitigation_capacity": 3
+      },
+      "risks_notes": "Rischi: incidenti sicurezza prodotto (richiami, class action), compliance GDPR privacy (+4% fatturato sanzioni), greenwashing claims (nuove direttive EU), perdita fiducia consumatori, recensioni negative online.",
+      "opportunities": {
+        "probability": 3,
+        "financial_benefit": 3,
+        "time_to_value": 3,
+        "exploitation_ease": 3
+      },
+      "opportunities_notes": "Opportunità: prodotti sostenibili (premium price +12%), trasparenza supply chain (blockchain traceability), certificazioni B2C (EU Ecolabel), fidelizzazione consumatori ESG-conscious, market share green segments."
+    },
+    "G1 - Condotta Aziendale": {
+      "risks": {
+        "probability": 5,
+        "financial_impact": 5,
+        "time_horizon": 5,
+        "mitigation_capacity": 4
+      },
+      "risks_notes": "Rischi: corruzione (sanzioni fino 10% fatturato, debarment gare pubbliche), violazioni antitrust (multe EU miliardarie), conflitti interesse board, rischi cyber-security governance, non-compliance CSRD/ESRS (sanzioni, delisting).",
+      "opportunities": {
+        "probability": 5,
+        "financial_benefit": 5,
+        "time_to_value": 4,
+        "exploitation_ease": 4
+      },
+      "opportunities_notes": "Opportunità: governance ESG best-in-class (rating MSCI/Sustainalytics AAA), accesso capitali ESG (+400B€ AUM ESG EU), riduzione costo debito (-50bps spread), attrazione investitori istituzionali, listing indici sostenibilità."
+    }
+  },
+  "completedThemes": [
+    "Diritti Umani",
+    "Pratiche del Lavoro",
+    "Ambiente",
+    "Corrette Prassi Gestionali",
+    "Aspetti relativi ai Consumatori",
+    "Coinvolgimento e Sviluppo della Comunità",
+    "E1 - Cambiamenti Climatici",
+    "E2 - Inquinamento",
+    "E3 - Risorse Idriche e Marine",
+    "E4 - Biodiversità ed Ecosistemi",
+    "E5 - Economia Circolare",
+    "S1 - Forza Lavoro Propria",
+    "S2 - Lavoratori nella Catena del Valore",
+    "S3 - Comunità Interessate",
+    "S4 - Consumatori e Utilizzatori Finali",
+    "G1 - Condotta Aziendale"
+  ],
+  "timestamp": "2025-10-27T10:00:00.000Z",
+  "themes": [
+    { "id": "Diritti Umani", "name": "Diritti Umani" },
+    { "id": "Pratiche del Lavoro", "name": "Pratiche del Lavoro" },
+    { "id": "Ambiente", "name": "Ambiente" },
+    {
+      "id": "Corrette Prassi Gestionali",
+      "name": "Corrette Prassi Gestionali"
+    },
+    {
+      "id": "Aspetti relativi ai Consumatori",
+      "name": "Aspetti relativi ai Consumatori"
+    },
+    {
+      "id": "Coinvolgimento e Sviluppo della Comunità",
+      "name": "Coinvolgimento e Sviluppo della Comunità"
+    },
+    {
+      "id": "E1 - Cambiamenti Climatici",
+      "name": "E1 - Cambiamenti Climatici"
+    },
+    { "id": "E2 - Inquinamento", "name": "E2 - Inquinamento" },
+    {
+      "id": "E3 - Risorse Idriche e Marine",
+      "name": "E3 - Risorse Idriche e Marine"
+    },
+    {
+      "id": "E4 - Biodiversità ed Ecosistemi",
+      "name": "E4 - Biodiversità ed Ecosistemi"
+    },
+    { "id": "E5 - Economia Circolare", "name": "E5 - Economia Circolare" },
+    { "id": "S1 - Forza Lavoro Propria", "name": "S1 - Forza Lavoro Propria" },
+    {
+      "id": "S2 - Lavoratori nella Catena del Valore",
+      "name": "S2 - Lavoratori nella Catena del Valore"
+    },
+    { "id": "S3 - Comunità Interessate", "name": "S3 - Comunità Interessate" },
+    {
+      "id": "S4 - Consumatori e Utilizzatori Finali",
+      "name": "S4 - Consumatori e Utilizzatori Finali"
+    },
+    { "id": "G1 - Condotta Aziendale", "name": "G1 - Condotta Aziendale" }
+  ],
+  "_metadata": {
+    "description": "Test data per Analisi Materialità Finanziaria - Rischi e Opportunità ESG COMPLETO",
+    "total_themes": 16,
+    "iso26000_legacy_themes": 6,
+    "esrs_themes": 10,
+    "themes_breakdown": {
+      "iso_legacy": [
+        "Diritti Umani",
+        "Pratiche del Lavoro",
+        "Ambiente",
+        "Corrette Prassi Gestionali",
+        "Aspetti relativi ai Consumatori",
+        "Coinvolgimento e Sviluppo della Comunità"
+      ],
+      "esrs": ["E1", "E2", "E3", "E4", "E5", "S1", "S2", "S3", "S4", "G1"]
+    },
+    "format": "Ogni tema ha valutazioni 1-5 per 4 criteri rischi + 4 criteri opportunità + note testuali",
+    "usage": "Vai in 'Analisi Materialità' → '💰 Analisi Finanziaria' → Click '📥 Importa JSON' → Seleziona questo file",
+    "expected_results": {
+      "high_financial_materiality": [
+        "Ambiente",
+        "Pratiche del Lavoro",
+        "Corrette Prassi Gestionali",
+        "E1",
+        "E2",
+        "E5",
+        "S1",
+        "G1"
+      ],
+      "medium_financial_materiality": [
+        "Diritti Umani",
+        "Aspetti relativi ai Consumatori",
+        "E3",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "low_financial_materiality": [
+        "Coinvolgimento e Sviluppo della Comunità",
+        "E4"
+      ],
+      "double_materiality_matrix": "6-8 temi nel quadrante verde (alto impatto + alta finanza)"
+    }
+  }
+}

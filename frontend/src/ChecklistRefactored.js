@@ -77,6 +77,7 @@ export default function ChecklistRefactored({ audit, onUpdate }) {
   const kpi = useKpiState(audit, onUpdate);
   const kpiInputs = useKpiInputs(audit, onUpdate);
   const kpiMetadata = useKpiMetadata(audit, onUpdate);
+  // eslint-disable-next-line no-unused-vars
   const evidenceMetadata = useEvidenceMetadata(audit, onUpdate);
   const allKpiSchemas = useMemo(() => {
     // Unisce tutti gli schema da tutte le categorie ESRS

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { generateChapter3Content } from '../utils/chapter3Generator';
 import { exportReportToWord, exportReportToPDF, getReportStatistics } from '../utils/reportExport';
+import { useStorage } from '../storage/StorageContext';
 
 /**
  * MEDIUM-1: SustainabilityReportBuilder
@@ -78,6 +79,7 @@ const CHAPTER_STRUCTURE = [
 ];
 
 function SustainabilityReportBuilder({ audit, onUpdate }) {
+    const storage = useStorage();
     const [currentChapterId, setCurrentChapterId] = useState(1);
     const [chapters, setChapters] = useState(audit.reportChapters || {});
     const [attachments, setAttachments] = useState(audit.reportAttachments || {});
@@ -148,39 +150,198 @@ function SustainabilityReportBuilder({ audit, onUpdate }) {
                 continue;
             }
 
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const newAttachment = {
-                    name: file.name,
-                    type: file.type,
-                    size: file.size,
-                    data: reader.result,
-                    uploadedAt: new Date().toISOString(),
-                };
+            try {
+                // STRATEGIA IBRIDA: Salva nel filesystem SE disponibile, altrimenti Base64
+                let attachmentMetadata;
 
+                if (storage.ready()) {
+                    // Salva nella directory Report/Allegati
+                    console.log(`💾 Salvataggio allegato in directory: ${file.name}`);
+                    attachmentMetadata = await storage.saveReportAttachment(file, chapterId);
+                    
+                    // Per immagini, aggiungi anche data URL per preview
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        await new Promise((resolve) => {
+                            reader.onloadend = () => {
+                                attachmentMetadata.data = reader.result;
+                                resolve();
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    }
+                    
+                    console.log(`✅ Allegato salvato in directory con link: ${attachmentMetadata.absolutePath}`);
+                } else {
+                    // Fallback: Base64 in localStorage (per compatibilità/test)
+                    console.log(`⚠️ Directory non disponibile, salvataggio Base64: ${file.name}`);
+                    const reader = new FileReader();
+                    await new Promise((resolve) => {
+                        reader.onloadend = () => {
+                            attachmentMetadata = {
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                data: reader.result,
+                                uploadedAt: new Date().toISOString(),
+                            };
+                            resolve();
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                // Aggiungi alla lista allegati
                 setAttachments(prev => ({
                     ...prev,
-                    [chapterId]: [...(prev[chapterId] || []), newAttachment]
+                    [chapterId]: [...(prev[chapterId] || []), attachmentMetadata]
                 }));
-            };
 
-            if (file.type.startsWith('image/')) {
-                reader.readAsDataURL(file);
-            } else {
-                reader.readAsDataURL(file); // PDF/altri file come data URL
+                alert(`✅ Allegato "${file.name}" caricato con successo!`);
+            } catch (error) {
+                console.error('Errore upload allegato:', error);
+                alert(`❌ Errore caricamento "${file.name}":\n${error.message}`);
             }
         }
 
         event.target.value = ''; // Reset input
     };
 
-    const removeAttachment = (chapterId, index) => {
-        if (!window.confirm('Rimuovere questo allegato?')) return;
+    const removeAttachment = async (chapterId, index) => {
+        const attachment = attachments[chapterId]?.[index];
+        if (!attachment) return;
 
-        setAttachments(prev => ({
-            ...prev,
-            [chapterId]: prev[chapterId].filter((_, i) => i !== index)
-        }));
+        if (!window.confirm(`Rimuovere l'allegato "${attachment.name}"?`)) return;
+
+        try {
+            // Se allegato ha storedName, è salvato in directory → elimina file
+            if (attachment.storedName && storage.ready()) {
+                console.log(`🗑️ Eliminazione allegato da directory: ${attachment.storedName}`);
+                await storage.deleteReportAttachment(attachment.storedName);
+            }
+
+            // Rimuovi dalla lista
+            setAttachments(prev => ({
+                ...prev,
+                [chapterId]: prev[chapterId].filter((_, i) => i !== index)
+            }));
+
+            console.log(`✅ Allegato rimosso: ${attachment.name}`);
+        } catch (error) {
+            console.error('Errore rimozione allegato:', error);
+            alert(`❌ Errore durante la rimozione:\n${error.message}`);
+        }
+    };
+
+    const importMaterialityData = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'application/json,.json';
+
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const materialityData = JSON.parse(text);
+
+                // Verifica che il file contenga i dati necessari
+                if (!materialityData.impactScores || !materialityData.financialAssessment) {
+                    throw new Error('Il file non contiene i dati di materialità necessari (impactScores, financialAssessment)');
+                }
+
+                // Aggiorna l'audit con i dati di materialità
+                onUpdate({
+                    ...audit,
+                    impactScores: materialityData.impactScores,
+                    financialAssessment: materialityData.financialAssessment,
+                    selectedThemes: materialityData.selectedThemes || [],
+                    materialityExclusions: materialityData.materialityExclusions || {},
+                    threshold: materialityData.threshold || 3.5,
+                    responses: materialityData.responses || {}, // Salva anche le risposte grezze per riferimento
+                });
+
+                const themesCount = materialityData.selectedThemes?.length || 0;
+                const impactCount = Object.keys(materialityData.impactScores || {}).length;
+                const financialCount = Object.keys(materialityData.financialAssessment?.assessments || {}).length;
+
+                alert(`✅ Dati di materialità importati con successo!\n\n` +
+                    `📊 ${themesCount} temi selezionati\n` +
+                    `📈 ${impactCount} valutazioni di impatto\n` +
+                    `💰 ${financialCount} valutazioni finanziarie\n\n` +
+                    `Ora puoi generare il Capitolo 3!`);
+            } catch (error) {
+                console.error('Errore import dati materialità:', error);
+                alert(`❌ Errore durante l'import dei dati:\n\n${error.message}\n\nVerifica che il file sia test-data-materiality-COMPLETE.json`);
+            }
+        };
+
+        input.click();
+    };
+
+    const importReport = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'application/json,.json';
+
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const reportData = JSON.parse(text);
+
+                // Valida la struttura del file
+                if (!reportData.chapters || !Array.isArray(reportData.chapters)) {
+                    throw new Error('Formato file non valido: manca l\'array "chapters"');
+                }
+
+                // Ricostruisci l'oggetto chapters dal formato array
+                const importedChapters = {};
+                const importedAttachments = {};
+
+                reportData.chapters.forEach(ch => {
+                    importedChapters[ch.id] = {
+                        content: ch.content || '',
+                        generatedAt: ch.generatedAt,
+                        lastModified: ch.lastModified || new Date().toISOString(),
+                    };
+
+                    if (ch.attachments && ch.attachments.length > 0) {
+                        importedAttachments[ch.id] = ch.attachments;
+                    }
+                });
+
+                // Aggiorna lo stato
+                setChapters(importedChapters);
+                setAttachments(importedAttachments);
+
+                // Salva immediatamente
+                onUpdate({
+                    ...audit,
+                    reportChapters: importedChapters,
+                    reportAttachments: importedAttachments,
+                });
+
+                // Estrai nome azienda gestendo sia formato vecchio che nuovo
+                const companyName = reportData.metadata?.azienda ||
+                    reportData.metadata?.companyName ||
+                    audit.azienda ||
+                    'N/D';
+
+                alert(`✅ Bilancio importato con successo!\n\n` +
+                    `📊 ${reportData.chapters.filter(ch => ch.content).length}/10 capitoli con contenuto\n` +
+                    `📎 ${Object.values(importedAttachments).flat().length} allegati caricati\n` +
+                    `🏢 Azienda: ${companyName}`);
+            } catch (error) {
+                console.error('Errore import:', error);
+                alert(`❌ Errore durante l'import del file:\n\n${error.message}\n\nVerifica che il file sia un JSON valido esportato da questa applicazione.`);
+            }
+        };
+
+        input.click();
     };
 
     const exportReport = () => {
@@ -391,6 +552,50 @@ function SustainabilityReportBuilder({ audit, onUpdate }) {
                                 </button>
                             );
                         })}
+
+                        <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
+                        {/* PULSANTE IMPORT DATI MATERIALITÀ */}
+                        <button
+                            onClick={importMaterialityData}
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                backgroundColor: '#ff9800',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                                fontSize: '14px',
+                                marginBottom: '12px',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            }}
+                            title="Carica i dati di materialità per abilitare la generazione del Capitolo 3"
+                        >
+                            📊 Carica Dati Materialità
+                        </button>
+
+                        {/* PULSANTE IMPORT JSON */}
+                        <button
+                            onClick={importReport}
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                backgroundColor: '#9c27b0',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                                fontSize: '14px',
+                                marginBottom: '16px',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            }}
+                            title="Carica un bilancio precedentemente esportato in formato JSON"
+                        >
+                            📥 Carica Bilancio da JSON
+                        </button>
 
                         <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 

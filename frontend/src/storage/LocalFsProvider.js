@@ -201,6 +201,11 @@ export class LocalFsProvider {
     const report = await auditDir.getDirectoryHandle("Report", {
       create: true,
     });
+    
+    // Cartella Allegati dentro Report per allegati bilancio
+    const allegati = await report.getDirectoryHandle("Allegati", {
+      create: true,
+    });
 
     // Crea sottocartelle evidenze per categorie ESRS
     // Tenta di leggere le categorie dalla checklist dinamica, con fallback a lista base
@@ -245,7 +250,7 @@ export class LocalFsProvider {
     }
 
     this.auditDir = auditDir;
-    this.subDirs = { evidenze, export: exportDir, report };
+    this.subDirs = { evidenze, export: exportDir, report, allegati };
     this.auditYear = resolvedYear;
     this.lastAuditId = `${clientName}_${resolvedYear}`;
 
@@ -478,6 +483,109 @@ export class LocalFsProvider {
     } catch (error) {
       console.error("Errore salvataggio export:", error);
       throw error;
+    }
+  }
+
+  /**
+   * Salva allegato nella cartella Report/Allegati
+   * @param {File} file - File da salvare
+   * @param {number} chapterId - ID capitolo (opzionale, per naming)
+   * @returns {Object} - Metadata allegato con path assoluto
+   */
+  async saveReportAttachment(file, chapterId = null) {
+    if (!this.subDirs?.allegati) {
+      throw new Error('Cartella allegati non inizializzata. Seleziona prima una cartella audit.');
+    }
+
+    try {
+      // Verifica permessi
+      await this.ensurePermission('readwrite');
+
+      // Sanitizza nome file
+      const safeFileName = file.name
+        .replace(/[<>:"/\\|?*]/g, '_')
+        .replace(/[^\w\s.-]/g, '_')
+        .replace(/\s+/g, '_')
+        .slice(0, 100);
+
+      // Aggiungi prefisso capitolo se specificato
+      const prefix = chapterId ? `Cap${chapterId}_` : '';
+      const finalName = `${prefix}${safeFileName}`;
+
+      console.log(`💾 Salvataggio allegato: ${finalName} in Report/Allegati/`);
+
+      // Salva file nella cartella Allegati
+      await this.writeBlob(this.subDirs.allegati, finalName, file);
+
+      // Costruisci path relativo e assoluto
+      const relativePath = `./Allegati/${finalName}`;
+      const absolutePath = this.getAbsolutePath(relativePath);
+
+      console.log(`✅ Allegato salvato: ${relativePath}`);
+      console.log(`📎 Path assoluto: ${absolutePath}`);
+
+      return {
+        name: file.name,           // Nome originale
+        storedName: finalName,     // Nome salvato (con prefisso)
+        path: relativePath,        // Path relativo (per JSON)
+        absolutePath: absolutePath, // file:// URL per link Word
+        type: file.type,
+        size: file.size,
+        uploadDate: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error('Errore salvataggio allegato:', error);
+      throw new Error(`Impossibile salvare allegato ${file.name}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Costruisce path assoluto file:// URL dall'audit directory
+   * @param {string} relativePath - Path relativo (es: ./Allegati/file.pdf)
+   * @returns {string} - file:// URL assoluto
+   */
+  getAbsolutePath(relativePath) {
+    const year = this.auditYear || new Date().getFullYear();
+    
+    // Rimuovi ./ dal path relativo
+    const cleanRelative = relativePath.replace(/^\.\//, '');
+    
+    // Costruisci path base dalla struttura
+    const basePath = this.rootPath || 
+      [this.clientName, `${year}_ESRS_Bilancio`].filter(Boolean).join('/');
+    
+    // Path completo: base + report + relative
+    const fullPath = `${basePath}/Report/${cleanRelative}`;
+    
+    // Converti in file:// URL
+    // Windows: backslash → forward slash, aggiungi file:///
+    // Mac/Linux: aggiungi file:///
+    const normalizedPath = fullPath.replace(/\\/g, '/');
+    const fileUrl = `file:///${normalizedPath}`;
+    
+    return fileUrl;
+  }
+
+  /**
+   * Elimina allegato dalla cartella Report/Allegati
+   * @param {string} storedName - Nome file salvato
+   */
+  async deleteReportAttachment(storedName) {
+    if (!this.subDirs?.allegati) {
+      throw new Error('Cartella allegati non inizializzata.');
+    }
+
+    try {
+      await this.ensurePermission('readwrite');
+      
+      // Elimina file handle
+      await this.subDirs.allegati.removeEntry(storedName);
+      
+      console.log(`🗑️ Allegato eliminato: ${storedName}`);
+      return { success: true };
+    } catch (error) {
+      console.error('Errore eliminazione allegato:', error);
+      throw new Error(`Impossibile eliminare allegato: ${error.message}`);
     }
   }
 }

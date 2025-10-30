@@ -1,0 +1,172 @@
+{
+  "metadata": {
+    "companyName": "Gruppo HERA S.p.A.",
+    "year": 2023,
+    "sector": "Multiutility - Energia, Ambiente, Acqua",
+    "employees": 9700,
+    "revenue": "10.500 milioni di euro",
+    "operatingMargin": "1.492 milioni di euro",
+    "csvMargin": "776 milioni di euro (52% del totale)",
+    "territory": "Emilia-Romagna, Veneto, Friuli-Venezia Giulia, Marche",
+    "municipalities": 190,
+    "citizens": "5 milioni",
+    "certifications": [
+      "ISO 14001",
+      "ISO 50001",
+      "ISO 45001",
+      "UNI/PdR 125:2022"
+    ],
+    "ratings": {
+      "djsi": "Dow Jones Sustainability Index World & Europe (4° anno consecutivo)",
+      "cdp": "Climate Change A-",
+      "msci": "A"
+    },
+    "createdAt": "2025-10-28T10:30:00Z",
+    "lastModified": "2025-10-28T10:30:00Z",
+    "reportType": "Bilancio di Sostenibilità 2023",
+    "framework": ["GRI Standards", "ESRS", "TCFD", "SDGs"],
+    "assurance": "Revisione esterna su MOL CSV e KPI ambientali"
+  },
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Lettera agli Stakeholder",
+      "description": "Messaggio del Presidente e dell'Amministratore Delegato sulla strategia e i risultati 2023",
+      "content": "Cari Stakeholder,\n\nI numeri e gli approfondimenti contenuti in questo bilancio raccontano e fotografano in modo trasparente il nostro impegno verso gli stakeholder e rendono tangibile il ruolo che la nostra Azienda ricopre per i territori serviti e non solo.\n\nFare impresa e contribuire alla sostenibilità, infatti, sono obiettivi che procedono insieme nel nostro Gruppo, si alimentano a vicenda, creando un circuito virtuoso che trova piena evidenza nella creazione di valore condiviso quantificato attraverso la quota di margine operativo lordo che deriva dalle attività di business che rispondono anche agli obiettivi dell'Agenda ONU al 2030. Nel 2023 il MOL a valore condiviso è salito a 776 milioni di euro, il 16% in più rispetto al 2022, e corrisponde al 52% del margine operativo lordo complessivo.\n\nIn particolare, questo bilancio rendiconta puntualmente i risultati raggiunti sui tre driver del valore condiviso: perseguire la neutralità di carbonio (-14% emissioni gas serra rispetto al 2019), rigenerare le risorse e chiudere il cerchio (61% tasso di riciclo rifiuti urbani, -21,5% consumi interni acqua), abilitare la resilienza e innovare (148 milioni di euro investiti in innovazione e digitalizzazione).\n\nUn percorso verso una crescita continua e riconosciuta da S&P Global che ci ha incluso, per il quarto anno consecutivo, nel Dow Jones Sustainability Index World e Europe.\n\nNel piano industriale abbiamo pianificato 4,4 miliardi di investimenti nel quinquennio 2023-2027 e di questi oltre il 70% è destinato a progetti di sostenibilità a beneficio delle comunità servite.\n\nCRISTIAN FABBRI - Presidente Esecutivo\nORAZIO IACONO - Amministratore Delegato",
+      "wordCount": 245,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": [
+        {
+          "id": "att-cap1-1",
+          "name": "Lettera_Stakeholder_Firmata.pdf",
+          "type": "application/pdf",
+          "size": 456700,
+          "description": "Versione firmata della lettera agli stakeholder"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Il Gruppo HERA: Profilo e Governance",
+      "description": "Presentazione del Gruppo, modello di business, governance e valori aziendali",
+      "content": "**CHI SIAMO**\n\nIl Gruppo Hera è una delle maggiori multiutility italiane, operante nei settori dell'energia, dell'ambiente e delle risorse idriche. Serviamo oltre 5 milioni di cittadini in 190 comuni distribuiti principalmente tra Emilia-Romagna, Veneto, Friuli-Venezia Giulia e Marche.\n\n**IL NOSTRO MODELLO DI BUSINESS**\n\nLa nostra attività si articola in tre aree:\n- **Energia**: distribuzione gas ed energia elettrica, vendita energia, cogenerazione\n- **Ambiente**: raccolta e smaltimento rifiuti, termovalorizzazione, recupero materia, bonifiche\n- **Ciclo Idrico**: gestione acquedotto, fognature, depurazione\n\n**VALORE CONDIVISO: I TRE DRIVER**\n\n1. **Perseguire la neutralità di carbonio**: efficienza energetica, energie rinnovabili, riduzione emissioni\n2. **Rigenerare le risorse e chiudere il cerchio**: economia circolare, gestione acqua, tutela biodiversità\n3. **Abilitare la resilienza e innovare**: digitalizzazione, sviluppo economico, nuove competenze\n\n**GOVERNANCE**\n\nIl Gruppo adotta un modello di governance tradizionale con:\n- Consiglio di Amministrazione (11 membri, 36% donne)\n- Collegio Sindacale\n- Comitati consiliari specializzati (Controllo e Rischi, Remunerazione, Nomine e Governance)\n\n**CODICE ETICO E PURPOSE**\n\nDal 2021 abbiamo inserito nello Statuto il nostro Purpose aziendale, orientato alle tre \"P\": Pianeta, Persone, Prosperità. Il Codice Etico guida tutte le nostre azioni verso una transizione giusta (Just Transition) che integri azione climatica e inclusione sociale.",
+      "wordCount": 198,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": []
+    },
+    {
+      "id": 3,
+      "title": "Analisi di Materialità",
+      "description": "Processo di identificazione dei temi materiali secondo metodologia di doppia materialità",
+      "content": "[QUESTO CAPITOLO SARÀ AUTO-GENERATO DA chapter3Generator.js UTILIZZANDO I DATI DI test-data-materiality-COMPLETE.json]\n\nConterrà:\n- Executive Summary con statistiche temi materiali\n- Metodologia ISO 26000 e Double Materiality\n- Tabella temi materiali con punteggi\n- Analisi per quadranti (doppiamente materiali, solo impatto, solo finanziario, non materiali)\n- Requisiti Disclosure ESRS\n- Contributi Goal ONU SDG\n- Giustificazioni esclusioni\n- Conclusioni e prossimi passi",
+      "wordCount": 0,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": false,
+      "attachments": [],
+      "autoGenerated": true,
+      "sourceData": "test-data-materiality-COMPLETE.json"
+    },
+    {
+      "id": 4,
+      "title": "Perseguire la Neutralità di Carbonio",
+      "description": "Riduzione emissioni gas serra, efficienza energetica, energie rinnovabili",
+      "content": "**TRANSIZIONE ENERGETICA E RINNOVABILI**\n\nIl Gruppo HERA è impegnato in un percorso di decarbonizzazione allineato agli obiettivi dell'Accordo di Parigi e dell'Agenda 2030. Nel 2023 le emissioni di gas serra Scope 1 e 2 (market-based) sono diminuite del 14% rispetto al 2019, anno base del nostro impegno climatico.\n\n**PRODUZIONE DA FONTI RINNOVABILI**\n\nLa produzione totale di energia nel 2023 è stata di 2.308 GWh, di cui:\n- **Energia elettrica**: 1.354,8 GWh (di cui 511,5 GWh da rinnovabili, 37,8%)\n- **Energia termica**: 872,6 GWh (di cui 152,2 GWh da rinnovabili, 17,4%)\n- **Biometano**: 8,5 milioni di metri cubi prodotti (equivalenti a 80,6 GWh)\n\n**Totale energia da rinnovabili**: 744,3 GWh (32,3% della produzione)\n\n**EFFICIENZA ENERGETICA PER I CLIENTI**\n\nIl Gruppo ha sviluppato soluzioni innovative per aiutare i clienti a ridurre i consumi:\n- **Hera Thermo**: caldaia a condensazione ad alta efficienza\n- **Hera Clima**: climatizzatore inverter a pompa di calore\n- **Hera Led**: illuminazione LED a risparmio energetico\n- **Hera Caldaia**: manutenzione caldaia con garanzia efficienza\n- **Diary dei consumi**: 1 milione di clienti con monitoraggio online\n\n**Risultato 2023**: 35,7% delle famiglie clienti utilizza soluzioni di efficienza energetica (40% elettricità, 31,9% gas)\n\n**TELERISCALDAMENTO SOSTENIBILE**\n\nNel 2023 venduti 406 GWh di energia termica attraverso le reti di teleriscaldamento in 6 città (Bologna, Cesena, Ferrara, Forlì, Imola, Modena).\n- **Fonti sostenibili**: 66,2% dell'energia da rinnovabili, recupero o alta efficienza\n- **Benefici ambientali**: evitate 99 tonnellate di inquinanti NOx, 25.000 tonnellate equivalenti di petrolio, 36.000 tonnellate di CO₂\n- **Emissioni impianto Imola**: -98% rispetto ai limiti di legge per PM10\n\n**OBIETTIVI FUTURI**\n- Riduzione emissioni GHG: -37% al 2030 rispetto al 2019 (Science-Based Target)\n- Energia rinnovabile: 100% per consumi interni elettrici\n- Biometano: potenziare produzione da biogas delle discariche e impianti biodigestione",
+      "wordCount": 287,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": []
+    },
+    {
+      "id": 5,
+      "title": "Economia Circolare e Gestione Rifiuti",
+      "description": "Raccolta differenziata, riciclo, termovalorizzazione, recupero materia",
+      "content": "**RIGENERARE LE RISORSE E CHIUDERE IL CERCHIO**\n\nIl Gruppo HERA è leader nazionale nell'economia circolare, con risultati che anticipano di 10-20 anni gli obiettivi europei.\n\n**RACCOLTA DIFFERENZIATA E RICICLO**\n\nNel 2023 gestiti 3,2 milioni di cittadini nei territori serviti:\n- **Raccolta differenziata media**: 67,8% (Hera 65,3%)\n- **Tasso di riciclo rifiuti urbani**: 61% (target UE 2025: 55%) ✓ RAGGIUNTO\n- **Riciclo imballaggi**: 66% (target UE 2025: 65%) ✓ RAGGIUNTO\n- **Rifiuti a discarica**: 2,7% (target UE 2035: 10%) ✓ RAGGIUNTO 20 ANNI IN ANTICIPO\n- **Recupero materia ed energia**: 89% dei rifiuti raccolti\n\n**ECCELLENZE TERRITORIALI**\n\nCittà Hera ai vertici nazionali per raccolta pro capite differenziata:\n1. **Ferrara**: 1° posto nazionale (562 kg/abitante)\n2. **Bologna**: 2° posto tra città >300k abitanti (331 kg/abitante)\n3. **Ravenna**: 4° posto nazionale\n4. **Rimini**: 6° posto nazionale\n5. **Modena**: 8° posto nazionale\n\nNei territori Emilia-Romagna gestiti da Hera: solo 1,2% dei rifiuti a discarica\n\n**TERMOVALORIZZAZIONE SOSTENIBILE**\n\nIl Gruppo gestisce impianti termovalorizzatori con standard ambientali eccellenti:\n- **Emissioni in atmosfera**: -86,4% rispetto ai limiti di legge\n- **Parametri monitorati**: 96-99% sotto i limiti per sostanze non monitorate in continuo\n- **100% rifiuti trattati** in impianti con certificazione ISO 14001\n\n**PROGETTI DI PREVENZIONE E RIUSO**\n\n1. **FarmacoAmico**: 65.000 confezioni medicinali recuperate (valore €870.000)\n2. **Cambia il Finale**: 1.070 tonnellate oggetti recuperati, 73% riutilizzati\n3. **CiboAmico**: 12.000 pasti recuperati e redistribuiti\n\n**BONIFICHE AMBIENTALI**\n\nDopo acquisizione A.C.R. Spa (luglio 2023):\n- **148 siti** con bonifiche in corso o concluse\n- **3 Siti di Interesse Nazionale**: Bussi sul Tirino (PE), Mantova petrolchimico, Val del Rio Chioggia\n- **327.000 tonnellate** di rifiuti trattati in ambito bonifiche (+164% vs 2022)\n\n**OBIETTIVI FUTURI**\n- Discarica: mantenere <3% (già sotto target 2035)\n- Riciclo: incrementare al 65% al 2030\n- Economia circolare: sviluppare nuovi impianti trattamento rifiuti organici e biometano",
+      "wordCount": 298,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": []
+    },
+    {
+      "id": 6,
+      "title": "Gestione Sostenibile della Risorsa Idrica",
+      "description": "Acquedotto, depurazione, tutela qualità acqua, riduzione consumi",
+      "content": "**RESILIENZA DEL SERVIZIO IDRICO**\n\nIl Gruppo HERA gestisce il servizio idrico integrato per 1,5 milioni di clienti in Emilia-Romagna e Triveneto, garantendo acqua potabile di qualità e depurazione delle acque reflue.\n\n**INFRASTRUTTURE E GESTIONE**\n\n- **Rete acquedotto**: oltre 35.000 km\n- **Rete fognature**: circa 14.000 km\n- **Impianti di depurazione**: oltre 900\n- **Standard di qualità**: 98,9% rispetto standard ARERA nel 2023\n\n**RIDUZIONE PERDITE E MANUTENZIONE PREDITTIVA**\n\nIl Gruppo ha sviluppato un approccio innovativo alla gestione delle reti:\n\n**Distrettualizzazione**:\n- **16.000 km di rete** distrettualizzata (55% in Emilia-Romagna e Triveneto)\n- Sensori e misuratori per rilevazione precoce perdite\n- Monitoraggio portata e pressione in tempo reale\n\n**Manutenzione predittiva con algoritmi intelligenti**:\n- **100% rete Emilia-Romagna** gestita con algoritmi predittivi\n- **78% della rete** sottoposta a manutenzione predittiva a livello Gruppo (target 2027: 85%)\n- Utilizzo Intelligenza Artificiale per ottimizzare interventi\n\n**RESILIENZA ALLA SICCITÀ**\n\nFronte all'emergenza siccità 2022-2023, investimenti significativi:\n\n**Interventi 2023**: 7,4 milioni di euro\n- Potenziamento pozzi nel ferrarese e bolognese\n- Interconnessioni acquedottistiche Trieste-Slovenia\n- Collegamento sistema regionale Veneto\n- Nuovi serbatoi e adduttrici appennino bolognese\n- Sistema approvvigionamento Castel Bolognese e comprensorio imolese\n\n**Piano al 2026**: circa 30 milioni di euro per mitigazione rischio siccità\n\n**QUALITÀ DELL'ACQUA**\n\n- **Controlli analitici**: oltre 500.000 parametri/anno\n- **Conformità normativa**: 99,9%\n- **Acqua di rubinetto**: qualità pari o superiore alle acque minerali in commercio\n- **Risparmio cittadini**: 570 €/anno famiglia bevendo acqua rubinetto invece di acqua in bottiglia\n\n**INNOVAZIONE: CONTATORI SMART IDRICI**\n\n**Nel 2023**:\n- 6.700 contatori smart installati (0,4% totale, ma 8% dell'acqua venduta su utenze idroesigenti)\n- Dati consumi aggiornati in tempo quasi reale\n- Alert automatici per perdite domestiche\n- Supporto ai clienti per ridurre sprechi\n\n**Target 2027**: 310.000 contatori smart (21% del totale)\n\n**RIDUZIONE CONSUMI INTERNI**\n\n- **-21,5% consumi acqua** rispetto al 2017\n- Riutilizzo acque di processo negli impianti\n- Efficientamento impianti depurazione",
+      "wordCount": 315,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": []
+    },
+    {
+      "id": 7,
+      "title": "Persone e Lavoro: Welfare e Sicurezza",
+      "description": "Occupazione, formazione, salute e sicurezza, diversità e inclusione",
+      "content": "**LE PERSONE AL CENTRO DELLA STRATEGIA**\n\nIl Gruppo HERA conta su 9.700 dipendenti che rappresentano il capitale umano essenziale per raggiungere gli obiettivi di sostenibilità e innovazione.\n\n**OCCUPAZIONE STABILE E CRESCITA**\n\n- **9.700 dipendenti** (di cui 9.448 in Italia)\n- **95,4% contratti a tempo indeterminato**\n- **1.766 assunzioni** a tempo indeterminato nel triennio 2021-2023\n- **Età media**: 46,6 anni\n- **Anzianità media**: 18,1 anni\n- **Turnover**: 7,2%\n\n**DIVERSITÀ E INCLUSIONE**\n\n**Certificazione UNI/PdR 125:2022 Parità di Genere**: ottenuta da 11 società del Gruppo (81% dei dipendenti)\n\n**Presenza femminile**:\n- **27,5% donne** sul totale dipendenti\n- **36% donne** nel Consiglio di Amministrazione\n- **34,9% donne** tra dirigenti, quadri e impiegati direttivi (+0,9 p.p. vs 2022)\n- **43,2% donne** sul totale impiegati\n\n**FORMAZIONE E COMPETENZE PER LA TRANSIZIONE**\n\n**Nel 2023**:\n- **31,5 ore** di formazione pro capite\n- **305.000 ore** totali di formazione erogate\n- **56% dipendenti** con competenze per la transizione digitale (era 54% nel 2022)\n- **36% dipendenti** con competenze per la transizione energetica (era 28% nel 2022)\n- **32% dipendenti** con competenze per la transizione ambientale (era 21% nel 2022)\n\n**Target 2027**:\n- 75% dipendenti con competenze digitali\n- 53% dipendenti con competenze per transizione energetica e ambientale\n\n**SALUTE E SICUREZZA SUL LAVORO**\n\n- **88% dipendenti** in società con certificazione ISO 45001 (Salute e Sicurezza)\n- **Indice di frequenza infortuni**: 10,2 (per milione di ore lavorate)\n- **Zero infortuni mortali** nel 2023\n- Cultura della sicurezza integrata in tutti i processi aziendali\n\n**WELFARE AZIENDALE E BENESSERE**\n\nIl Gruppo offre un sistema articolato di welfare:\n- **Assistenza sanitaria integrativa**: copertura per dipendenti e familiari\n- **Previdenza complementare**: fondo pensione aziendale\n- **Flessibilità organizzativa**: smart working per ruoli compatibili\n- **Supporto genitorialità**: congedi parentali integrati, asili nido convenzionati\n- **Benessere psicofisico**: programmi di fitness, check-up sanitari periodici\n- **Mobility management**: incentivi mobilità sostenibile\n\n**RELAZIONI INDUSTRIALI**\n\n- **100% dipendenti** coperti da contrattazione collettiva\n- **Dialogo costruttivo** con organizzazioni sindacali\n- **22 gare con clausola sociale** nel 2023 a garanzia dell'occupazione in appalti pronto intervento e gestione cliente\n\n**INCLUSIONE SOCIALE**\n\n- **962 persone svantaggiate** inserite al lavoro tramite forniture e partnership con cooperative sociali\n- Impegno per una **Just Transition** che integri azione climatica e inclusione sociale",
+      "wordCount": 348,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": []
+    },
+    {
+      "id": 8,
+      "title": "Clienti e Qualità del Servizio",
+      "description": "Soddisfazione clienti, continuità servizio, tariffe, relazioni",
+      "content": "**SERVIRE I CLIENTI CON QUALITÀ ED ECCELLENZA**\n\nIl Gruppo HERA serve oltre 5 milioni di cittadini con un approccio customer-centric che pone la soddisfazione del cliente al centro della strategia.\n\n**BASE CLIENTI IN CRESCITA (2023)**\n\n- **2,1 milioni** clienti gas (+0,9% vs 2022)\n- **1,7 milioni** clienti energia elettrica (+19% vs 2022)\n- **1,5 milioni** clienti servizio idrico integrato (+0,7% vs 2022)\n- **13.000** clienti teleriscaldamento\n- **3,2 milioni** cittadini servizio igiene urbana\n\n**QUALITÀ DEL SERVIZIO**\n\n**Standard ARERA rispettati**: 99,6% delle prestazioni nei tempi previsti\n\n**Dettaglio per servizio**:\n- Distribuzione gas: 99,7%\n- Distribuzione energia elettrica: 97,0%\n- Servizio idrico integrato: 98,9%\n- Vendita gas: 92,8%\n- Vendita energia elettrica: 93,6%\n- Teleriscaldamento: 92,9%\n\n**PRONTO INTERVENTO ECCELLENTE**\n\n**Servizio gas**:\n- **96,5%** chiamate con arrivo entro 60 minuti (obbligo ARERA: 90%)\n- **Tempo medio di arrivo**: 37 minuti\n- **96,7%** chiamate call center risposte entro 120 secondi\n\n**Servizio idrico**:\n- **95,2%** chiamate call center risposte entro 120 secondi\n\n**CONTATORI INTELLIGENTI**\n\n**Gas**: 88% contatori elettronici e teleletti (1,5 milioni), di cui:\n- **250.000 NexMeter** (15%) con funzioni avanzate sicurezza e rilevazione perdite/sismi\n\n**Energia elettrica**: 98% contatori elettronici (482.000), di cui:\n- **204.000 contatori 2G** (42%) con analisi consumi approfondite\n- **30,5%** in plastica riciclata\n\n**Idrico**: 6.700 contatori smart (0,4% totale, 8% acqua venduta su utenze idroesigenti)\n- Target 2027: 310.000 (21%)\n\n**TARIFFE COMPETITIVE E TRASPARENZA**\n\n**Spesa media annua famiglia 2023**: 2.626 € (-27% vs 2022, -954 €)\n- Gas: 1.208 € (-507 € vs 2022)\n- Energia elettrica: 861 € (-448 € vs 2022)\n- Acqua: 306 € (stabile)\n- Rifiuti: 252 € (+1 € vs 2022)\n\n**Vantaggi vs media italiana**:\n- **Famiglie**: -21% rispetto media Italia (servizi ambientali)\n- **Imprese**: -25% rispetto media Italia (servizi ambientali)\n- **Bologna**: tra le città più economiche d'Italia (-23% vs media capoluoghi)\n\n**SOSTEGNO AI CLIENTI IN DIFFICOLTÀ**\n\n- **340 milioni €** bollette rateizzate nel 2023 (+10% vs 2022)\n- **Fondo Fughe** (dal 2014): 119.000 clienti rimborsati, oltre 154 milioni € erogati\n- **Alluvione Emilia-Romagna maggio 2023**:\n  * 200.000 piani rateizzazione concessi\n  * 5.000 piani personalizzati\n  * Sospensione temporanea pagamenti fatture\n\n**DIGITALIZZAZIONE E SERVIZI ONLINE**\n\n- **40,2%** clienti con bolletta elettronica (+5,7 p.p. vs 2022)\n- **36,2%** clienti iscritti ai servizi online (+6,8 p.p. vs 2022)\n- **App MyHera, Rifiutologo, Acquologo, Hera 2G**: oltre 500.000 download\n- **Call center 100% Italia**: tutte le chiamate gestite da operatori in Italia\n\n**SERVIZI A VALORE AGGIUNTO**\n\n**17,9%** clienti mercato libero utilizza servizi aggiuntivi:\n- No Problem Gas/Luce/Acqua (assistenza guasti)\n- Caldaia Sicura (manutenzione)\n- Hera Led, Thermo, Clima, Fotovoltaico\n- Servizi assicurativi\n\n**SODDISFAZIONE CLIENTI**\n\n**Customer satisfaction**: 73/100 (rilevazione 2023)\n\nIl Gruppo monitora costantemente la soddisfazione attraverso survey, focus group, social listening e NPS (Net Promoter Score).",
+      "wordCount": 405,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": []
+    },
+    {
+      "id": 9,
+      "title": "Innovazione e Trasformazione Digitale",
+      "description": "Investimenti in R&D, digitalizzazione processi, smart city, telecontrollo",
+      "content": "**ABILITARE LA RESILIENZA E INNOVARE**\n\nL'innovazione è una leva strategica per il Gruppo HERA, che nel 2023 ha investito **148,2 milioni di euro** in innovazione e digitalizzazione, focalizzandosi su due ambiti principali:\n\n**1. TRANSIZIONE ECOLOGICA**: passaggio a fonti energetiche efficienti e rinnovabili, valorizzazione materie, massimizzazione recupero rifiuti\n\n**2. TRASFORMAZIONE DIGITALE**: implementazione nuove tecnologie per digitalizzazione, automazione, flessibilità processi, valorizzazione dati\n\n**MODELLO DI OPEN INNOVATION**\n\nIl Gruppo ha consolidato un approccio di **innovazione aperta** che:\n- Valorizza contributi ecosistema esterno (startup, università, centri ricerca)\n- Accelera sviluppo soluzioni innovative\n- Favorisce nuovi modelli collaborazione\n- Genera impatto positivo globale\n\n**Innovation Promoter**: figure interne dedicate alla stimolazione dell'innovazione con percorsi formativi specifici sull'innovazione strategica\n\n**CORPORATE DIGITAL RESPONSIBILITY**\n\nHERA ha sviluppato un framework innovativo per utilizzare dati e tecnologie digitali in modo responsabile, generando benefici in 4 dimensioni:\n\n1. **Sociale**: privacy dati, inclusione digitale, salute e sicurezza\n2. **Ambientale**: massimizzare vita prodotti, soluzioni per transizione ecologica, energia carbon neutral\n3. **Economica**: gestire impatti digitalizzazione su occupazione, condividere benefici con stakeholder\n4. **Tecnologica**: sicurezza informatica, uso responsabile strumenti, ciclo vita tecnologico lungo\n\n**INTELLIGENZA ARTIFICIALE GENERATIVA**\n\n**Nel 2023** avviata sperimentazione IA generativa:\n- **Primo prototipo** per ricerca informazioni in processi front-end\n- **~150 casi d'uso** identificati in tutta l'organizzazione\n- **Linee guida comportamentali** per uso responsabile da parte dei dipendenti\n- **Piano 2024**: progettare soluzioni digitali trasversali per ottimizzazione processi, innovazione prodotti, soddisfazione clienti\n\n**TELECONTROLLO E SMART CITY**\n\n- **9.700 impianti telecontrollati** (+8% vs 2022)\n- **10 sensori gas** per monitoraggio eventi franosi (target 130 al 2027)\n- **Smart lighting**: illuminazione pubblica 4.0 con IA\n- **Progetti Smart City** in diverse città (Bologna, Modena, Ferrara, Forlì)\n\n**RESILIENZA DELLE RETI**\n\n**Rete elettrica**:\n- **55 km rete adeguata** a Modena (82% Piano resilienza)\n- **Target 2024**: 67,5 km (100% Piano)\n- Gestione remota con droni per ispezioni linee aeree\n- Robotizzazione cabine secondarie con fibra ottica\n\n**Rete idrica**:\n- **78% rete** sottoposta a manutenzione predittiva\n- **55% rete** distrettualizzata (16.000 km)\n- **100% rete Emilia-Romagna** con algoritmi predittivi\n- Sensori IoT per rilevazione perdite\n- **Target 2027**: 85% manutenzione predittiva, 73% distrettualizzata\n\n**CYBER SECURITY**\n\nInvestimenti significativi per rafforzare sicurezza informatica:\n- Aumento controlli ambienti cloud\n- Integrazione funzionalità IA per protezione\n- Estensione sonde monitoraggio\n- **4 incidenti registrati nel 2023** (non gravi), tutti gestiti con procedure adeguate\n\n**INIZIATIVE DIGITALI 2023**\n\n- Contatori 2G energia elettrica con analisi consumi avanzate\n- Simulazioni digitali per manutenzione rete gas\n- Dashboard resilienza per reti idriche e cambiamenti climatici\n- Illuminazione pubblica 4.0 con IA\n- Progetti Smart City\n\n**OBIETTIVI FUTURI**\n\n- Sviluppare soluzioni IA per raggiungimento obiettivi strategici business\n- Migliorare livello servizio e promuovere servizi innovativi ai clienti\n- Ottimizzare gestione asset con tecnologie predittive\n- Rendere processi più efficienti ed efficaci\n- Rafforzare collaborazione con partner esterni (open innovation)",
+      "wordCount": 420,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": []
+    },
+    {
+      "id": 10,
+      "title": "Obiettivi Futuri e SDGs",
+      "description": "Target piano industriale 2023-2027, allineamento SDGs, impegni 2030",
+      "content": "**IL NOSTRO IMPEGNO PER IL FUTURO**\n\nIl Gruppo HERA ha definito obiettivi ambiziosi nel Piano Industriale 2023-2027 e nella Roadmap al 2030, allineati agli **SDGs dell'Agenda ONU 2030** e agli **European Sustainability Reporting Standards (ESRS)**.\n\n**PIANO INDUSTRIALE 2023-2027**\n\n**Investimenti totali**: 4,4 miliardi di euro\n- **Oltre 70%** destinati a progetti di sostenibilità\n- **59%** investimenti in attività ammissibili allineate alla Tassonomia UE\n\n**Distribuzione investimenti**:\n- Reti idriche e fognarie: potenziamento infrastrutture, riduzione perdite\n- Reti gas ed energia elettrica: digitalizzazione, resilienza climatica\n- Economia circolare: nuovi impianti trattamento organico, biometano\n- Energie rinnovabili: fotovoltaico, eolico, cogenerazione\n- Innovazione e digitalizzazione: IA, IoT, smart grid\n\n**VALORE CONDIVISO: OBIETTIVI AL 2027**\n\n**MOL CSV (Margine Operativo Lordo a Valore Condiviso)**:\n- **Proiezione**: oltre 1 miliardo di euro (64% del MOL totale)\n- **2023**: 776 milioni (52%)\n- **Crescita media annua attesa**: +16%\n\n**Valore aggiunto distribuito agli stakeholder**:\n- **Target 2027**: 2.400 milioni di euro (+18% vs 2023)\n- **2023**: 2.037 milioni\n\n**OBIETTIVI AMBIENTALI AL 2030**\n\n**CLIMA E ENERGIA**\n- **Emissioni GHG**: -37% rispetto al 2019 (Science-Based Target validato SBTi)\n- **Energia rinnovabile prodotta**: +50% rispetto al 2023\n- **Biometano**: triplicare produzione da 8,5 a 25 milioni mc\n- **Efficienza energetica clienti**: 50% famiglie con soluzioni attive\n- **Energia interna**: 100% da fonti rinnovabili\n\n**ECONOMIA CIRCOLARE**\n- **Riciclo rifiuti urbani**: 65% (da 61% nel 2023)\n- **Discarica**: mantenere <3% (già raggiunto target UE 2035)\n- **Recupero materia ed energia**: >92%\n- **Impianti trattamento organico**: +3 nuovi impianti biodigestione\n\n**ACQUA**\n- **Manutenzione predittiva**: 85% rete idrica Gruppo\n- **Distrettualizzazione**: 73% rete in Emilia-Romagna e Triveneto\n- **Contatori smart**: 310.000 (21% totale)\n- **Perdite idriche**: -15% rispetto al 2023\n- **Resilienza siccità**: completare interconnessioni e potenziamenti fonti\n\n**OBIETTIVI SOCIALI AL 2027**\n\n**PERSONE**\n- **75%** dipendenti con competenze transizione digitale\n- **53%** dipendenti con competenze transizione energetica e ambientale\n- **Formazione**: 35 ore pro capite annue\n- **Salute e sicurezza**: -20% indice frequenza infortuni\n\n**CLIENTI**\n- **45%** clienti con bolletta elettronica\n- **Customer satisfaction**: 76/100\n- **Servizi online**: 50% clienti iscritti\n- **App unificata**: nuova applicazione con funzionalità integrate (2024)\n\n**GOVERNANCE E RATING**\n\n**Certificazioni mantenute/potenziate**:\n- Dow Jones Sustainability Index World & Europe\n- CDP Climate Change: confermare leadership A/A-\n- MSCI ESG Rating: mantenere A\n- S&P Global CSA: top 10% settore utilities\n\n**Tassonomia UE**:\n- **59%** investimenti allineati (da 56% nel 2023)\n\n**CONTRIBUTO AGLI SDGs**\n\nIl Gruppo HERA contribuisce direttamente a **11 dei 17 SDGs** dell'Agenda ONU 2030:\n\n**Prioritari** (massimo impatto):\n- **SDG 7**: Energia pulita e accessibile\n- **SDG 11**: Città e comunità sostenibili\n- **SDG 12**: Consumo e produzione responsabili\n- **SDG 13**: Lotta contro il cambiamento climatico\n\n**Rilevanti**:\n- SDG 3: Salute e benessere\n- SDG 4: Istruzione di qualità\n- SDG 5: Parità di genere\n- SDG 6: Acqua pulita e servizi igienico-sanitari\n- SDG 8: Lavoro dignitoso e crescita economica\n- SDG 9: Industria, innovazione e infrastrutture\n- SDG 17: Partnership per gli obiettivi\n\n**IMPEGNI VERSO UNA JUST TRANSITION**\n\nHERA si impegna a garantire che la transizione ecologica sia **giusta e inclusiva**:\n- Clausola sociale in 100% gare appalti pronto intervento\n- 1.000+ persone svantaggiate inserite al lavoro tramite cooperative sociali\n- Tariffe accessibili e supporto clienti vulnerabili\n- Formazione continua per riqualificazione competenze dipendenti\n- Dialogo costruttivo con stakeholder territoriali (HeraLAB)\n\n**MONITORAGGIO E TRASPARENZA**\n\n- **Bilancio di Sostenibilità annuale** secondo standard GRI e ESRS\n- **Dashboard KPI** pubblici su sito web bs.gruppohera.it\n- **Comitato Etico e Sostenibilità**: supervisione obiettivi ESG\n- **Revisione esterna**: assurance su dati MOL CSV e KPI ambientali\n- **Rendicontazione CSRD**: dal 2024 conformità Direttiva UE 2022/2464",
+      "wordCount": 582,
+      "lastModified": "2025-10-28T10:30:00Z",
+      "isComplete": true,
+      "attachments": []
+    }
+  ],
+  "attachments": [],
+  "kpiSummary": {
+    "environment": {
+      "emissionsReduction": "-14% rispetto al 2019",
+      "recyclingRate": "61%",
+      "renewableEnergy": "100% per consumi interni",
+      "waterConsumptionReduction": "-21,5% rispetto al 2017",
+      "biomethaneProduction": "8,5 milioni mc"
+    },
+    "social": {
+      "employees": 9700,
+      "trainingHours": "31,5 ore pro capite",
+      "womenInManagement": "36%",
+      "workAccidentRate": "10,2",
+      "permanentContracts": "95,4%"
+    },
+    "economic": {
+      "investments": "815,8 milioni di euro",
+      "csvInvestments": "558,4 milioni (69% del totale)",
+      "economicValueDistributed": "2.310 milioni di euro",
+      "esgDebt": "57% del debito finanziato con strumenti ESG"
+    },
+    "customers": {
+      "satisfaction": "73/100",
+      "gasInterventions": "96,5% entro 60 minuti",
+      "deferredPayments": "340 milioni di euro (+10%)"
+    }
+  },
+  "completionPercentage": 90,
+  "version": "1.0.0"
+}

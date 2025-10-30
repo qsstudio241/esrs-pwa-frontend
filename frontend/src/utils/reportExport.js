@@ -6,7 +6,7 @@
  */
 
 import { saveAs } from 'file-saver';
-import { Document, Packer, Paragraph, HeadingLevel, AlignmentType, ImageRun } from 'docx';
+import { Document, Packer, Paragraph, HeadingLevel, AlignmentType, ImageRun, ExternalHyperlink, TextRun } from 'docx';
 
 /**
  * Genera documento Word dal Bilancio di Sostenibilità
@@ -283,13 +283,37 @@ async function generateChapters(chapters, attachments) {
                         );
                     }
                 } else {
-                    // Riferimento a file non-immagine
+                    // File NON-IMMAGINE: Link ipertestuale
+                    const fileUrl = attachment.absolutePath || attachment.path || `file:///${attachment.name}`;
+                    const fileSizeKB = (attachment.size / 1024).toFixed(1);
+                    
                     paragraphs.push(
                         new Paragraph({
-                            text: `📎 ${attachment.name} (${(attachment.size / 1024).toFixed(1)} KB)`,
-                            spacing: { after: 100 },
+                            children: [
+                                new TextRun({
+                                    text: '📎 ',
+                                }),
+                                new ExternalHyperlink({
+                                    children: [
+                                        new TextRun({
+                                            text: attachment.name,
+                                            style: 'Hyperlink',
+                                            color: '0563C1', // Blu Word standard
+                                            underline: {}
+                                        })
+                                    ],
+                                    link: fileUrl
+                                }),
+                                new TextRun({
+                                    text: ` (${fileSizeKB} KB)`,
+                                    italics: true
+                                })
+                            ],
+                            spacing: { after: 100, left: 400 }
                         })
                     );
+                    
+                    console.log(`🔗 Link ipertestuale creato: ${attachment.name} → ${fileUrl}`);
                 }
             }
         }

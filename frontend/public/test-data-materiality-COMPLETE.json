@@ -219,5 +219,156 @@
     }
   },
   "currentSection": 0,
-  "completedSections": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  "completedSections": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "impactScores": {
+    "E1": 4.67,
+    "E2": 4.33,
+    "E3": 3.22,
+    "E4": 2.83,
+    "E5": 4.89,
+    "S1": 4.22,
+    "S2": 3.56,
+    "S3": 3.44,
+    "S4": 4.67,
+    "G1": 4.58
+  },
+  "financialAssessment": {
+    "assessments": {
+      "E1": {
+        "risks": {
+          "probability": 4,
+          "financial_impact": 5,
+          "mitigation_capacity": 4
+        },
+        "opportunities": {
+          "probability": 5,
+          "financial_benefit": 4,
+          "exploitation_ease": 4
+        }
+      },
+      "E2": {
+        "risks": {
+          "probability": 3,
+          "financial_impact": 4,
+          "mitigation_capacity": 4
+        },
+        "opportunities": {
+          "probability": 4,
+          "financial_benefit": 3,
+          "exploitation_ease": 3
+        }
+      },
+      "E3": {
+        "risks": {
+          "probability": 3,
+          "financial_impact": 3,
+          "mitigation_capacity": 3
+        },
+        "opportunities": {
+          "probability": 3,
+          "financial_benefit": 3,
+          "exploitation_ease": 3
+        }
+      },
+      "E4": {
+        "risks": {
+          "probability": 2,
+          "financial_impact": 2,
+          "mitigation_capacity": 4
+        },
+        "opportunities": {
+          "probability": 2,
+          "financial_benefit": 2,
+          "exploitation_ease": 2
+        }
+      },
+      "E5": {
+        "risks": {
+          "probability": 5,
+          "financial_impact": 5,
+          "mitigation_capacity": 4
+        },
+        "opportunities": {
+          "probability": 5,
+          "financial_benefit": 5,
+          "exploitation_ease": 4
+        }
+      },
+      "S1": {
+        "risks": {
+          "probability": 4,
+          "financial_impact": 4,
+          "mitigation_capacity": 4
+        },
+        "opportunities": {
+          "probability": 4,
+          "financial_benefit": 4,
+          "exploitation_ease": 4
+        }
+      },
+      "S2": {
+        "risks": {
+          "probability": 3,
+          "financial_impact": 3,
+          "mitigation_capacity": 3
+        },
+        "opportunities": {
+          "probability": 3,
+          "financial_benefit": 3,
+          "exploitation_ease": 3
+        }
+      },
+      "S3": {
+        "risks": {
+          "probability": 3,
+          "financial_impact": 3,
+          "mitigation_capacity": 3
+        },
+        "opportunities": {
+          "probability": 3,
+          "financial_benefit": 4,
+          "exploitation_ease": 3
+        }
+      },
+      "S4": {
+        "risks": {
+          "probability": 4,
+          "financial_impact": 5,
+          "mitigation_capacity": 4
+        },
+        "opportunities": {
+          "probability": 5,
+          "financial_benefit": 4,
+          "exploitation_ease": 4
+        }
+      },
+      "G1": {
+        "risks": {
+          "probability": 4,
+          "financial_impact": 4,
+          "mitigation_capacity": 5
+        },
+        "opportunities": {
+          "probability": 4,
+          "financial_benefit": 4,
+          "exploitation_ease": 4
+        }
+      }
+    }
+  },
+  "selectedThemes": [
+    { "id": "E1", "label": "Cambiamento climatico" },
+    { "id": "E2", "label": "Inquinamento" },
+    { "id": "E5", "label": "Economia circolare" },
+    { "id": "S1", "label": "Forza lavoro propria" },
+    { "id": "S4", "label": "Consumatori e utilizzatori finali" },
+    { "id": "G1", "label": "Condotta aziendale" }
+  ],
+  "materialityExclusions": {
+    "E3": "Impatto limitato su risorse idriche. Operazioni non in aree a stress idrico elevato.",
+    "E4": "Nessuna operazione diretta in aree protette o ad alta biodiversità.",
+    "S2": "Filiera prevalentemente locale e italiana, basso rischio diritti umani.",
+    "S3": "Limitata interazione diretta con comunità locali. Impatti gestiti attraverso stakeholder engagement."
+  },
+  "threshold": 3.5
 }

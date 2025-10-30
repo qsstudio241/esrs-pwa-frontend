@@ -33,6 +33,9 @@ export function useStorage() {
     saveExport: (payload) => ctx.saveExport(payload),
     ensurePermission: (mode) => ctx.ensurePermission(mode),
     writeBlob: (dir, fileName, blob) => ctx.writeBlob(dir, fileName, blob),
+    saveReportAttachment: (file, chapterId) => ctx.saveReportAttachment(file, chapterId),
+    deleteReportAttachment: (storedName) => ctx.deleteReportAttachment(storedName),
+    getAbsolutePath: (relativePath) => ctx.getAbsolutePath(relativePath),
     reset: () => ctx.resetState(),
     get provider() {
       return ctx;

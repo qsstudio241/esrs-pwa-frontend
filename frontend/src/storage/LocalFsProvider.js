@@ -201,7 +201,7 @@ export class LocalFsProvider {
     const report = await auditDir.getDirectoryHandle("Report", {
       create: true,
     });
-    
+
     // Cartella Allegati dentro Report per allegati bilancio
     const allegati = await report.getDirectoryHandle("Allegati", {
       create: true,
@@ -265,8 +265,7 @@ export class LocalFsProvider {
     }
 
     console.log(
-      `✅ Struttura audit ${
-        mode === "new" ? "creata" : "collegata"
+      `✅ Struttura audit ${mode === "new" ? "creata" : "collegata"
       } per ${clientName}:`,
       {
         client: clientName,
@@ -376,7 +375,7 @@ export class LocalFsProvider {
           } catch (err) {
             alert(
               "Errore durante la riselezione della cartella audit: " +
-                err.message
+              err.message
             );
             throw new Error(
               "Impossibile riselezionare la cartella audit. Ricarica la pagina e seleziona manualmente la cartella."
@@ -546,23 +545,23 @@ export class LocalFsProvider {
    */
   getAbsolutePath(relativePath) {
     const year = this.auditYear || new Date().getFullYear();
-    
+
     // Rimuovi ./ dal path relativo
     const cleanRelative = relativePath.replace(/^\.\//, '');
-    
+
     // Costruisci path base dalla struttura
-    const basePath = this.rootPath || 
+    const basePath = this.rootPath ||
       [this.clientName, `${year}_ESRS_Bilancio`].filter(Boolean).join('/');
-    
+
     // Path completo: base + report + relative
     const fullPath = `${basePath}/Report/${cleanRelative}`;
-    
+
     // Converti in file:// URL
     // Windows: backslash → forward slash, aggiungi file:///
     // Mac/Linux: aggiungi file:///
     const normalizedPath = fullPath.replace(/\\/g, '/');
     const fileUrl = `file:///${normalizedPath}`;
-    
+
     return fileUrl;
   }
 
@@ -577,10 +576,10 @@ export class LocalFsProvider {
 
     try {
       await this.ensurePermission('readwrite');
-      
+
       // Elimina file handle
       await this.subDirs.allegati.removeEntry(storedName);
-      
+
       console.log(`🗑️ Allegato eliminato: ${storedName}`);
       return { success: true };
     } catch (error) {

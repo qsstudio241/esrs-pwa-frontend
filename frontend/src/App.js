@@ -6,13 +6,17 @@ import MaterialityManagement from "./components/MaterialityManagement";
 import ExportProfessional from "./components/ExportProfessional";
 import SustainabilityReportBuilder from "./components/SustainabilityReportBuilder";
 import StorageManager from "./components/StorageManager";
-import { StorageProvider } from "./storage/StorageContext";
+import { StorageProvider, useStorage } from "./storage/StorageContext";
 import { calcolaDimensioneAzienda } from "./utils/auditBusinessLogic";
 import {
   setTelemetryOptIn,
   recordTelemetry,
   dumpTelemetry,
 } from "./utils/telemetry";
+import {
+  createExportPayload,
+  exportWithFallback,
+} from "./utils/exportHelper";
 
 // Componente Settings Panel Collapsabile
 function SettingsPanel({
@@ -411,6 +415,7 @@ function AuditSelector({
 }
 
 function App() {
+  const fsProvider = useStorage();
   const [audits, setAudits] = useState(() => {
     try {
       const saved = localStorage.getItem("audits");
@@ -669,24 +674,34 @@ function App() {
               renderExtra={({ error }) => (
                 <>
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       try {
-                        const blob = new Blob(
-                          [JSON.stringify(currentAudit, null, 2)],
-                          { type: "application/json" }
+                        // Crea payload standardizzato per audit completo
+                        const payload = createExportPayload(
+                          "audit_full_backup",
+                          currentAudit,
+                          currentAudit
                         );
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = `audit_raw_${currentAudit.id}.json`;
-                        a.click();
-                        URL.revokeObjectURL(url);
+
+                        // Export con fallback automatico
+                        await exportWithFallback(
+                          fsProvider,
+                          "audit",
+                          payload,
+                          {
+                            azienda: currentAudit?.azienda,
+                            anno: currentAudit?.anno,
+                          }
+                        );
                       } catch (e) {
-                        console.error("Export raw audit failed", e);
+                        console.error("❌ Export audit backup failed:", e);
+                        alert(
+                          `❌ Errore durante l'export:\n\n${e.message}\n\nVerifica la console per dettagli.`
+                        );
                       }
                     }}
                   >
-                    Esporta dati grezzi
+                    💾 Esporta Backup Audit
                   </button>
                   {error && (
                     <button

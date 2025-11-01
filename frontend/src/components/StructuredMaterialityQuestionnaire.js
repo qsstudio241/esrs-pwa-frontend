@@ -4,6 +4,11 @@ import {
   calculateMaterialityScoring,
 } from "../utils/materialityFrameworkISO26000";
 import { useEvidenceManager } from "../hooks/useEvidenceManager";
+import { useStorage } from "../storage/StorageContext";
+import {
+  createExportPayload,
+  exportWithFallback,
+} from "../utils/exportHelper";
 
 /**
  * Componente per questionario strutturato ISO 26000 basato su Materiality_.txt
@@ -23,6 +28,9 @@ function StructuredMaterialityQuestionnaire({
 
   // Hook per gestione evidenze (file e foto)
   const evidence = useEvidenceManager(audit, onUpdate);
+
+  // Hook per accesso File System Provider
+  const fsProvider = useStorage();
 
   // Chiave per localStorage basata sui temi selezionati
   const storageKey = `iso26000_responses_${JSON.stringify(
@@ -230,7 +238,10 @@ function StructuredMaterialityQuestionnaire({
       <MaterialityResults
         scoring={scoring}
         questionnaire={questionnaire}
+        responses={responses}
         onComplete={onComplete}
+        audit={audit}
+        fsProvider={fsProvider}
       />
     );
   }
@@ -878,7 +889,14 @@ function StructuredMaterialityQuestionnaire({
 /**
  * Componente per visualizzazione risultati materialità
  */
-function MaterialityResults({ scoring, questionnaire, onComplete }) {
+function MaterialityResults({
+  scoring,
+  questionnaire,
+  responses,
+  onComplete,
+  audit,
+  fsProvider
+}) {
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "20px" }}>
       <h2 style={{ color: "#1976d2", marginBottom: "20px" }}>
@@ -1048,28 +1066,41 @@ function MaterialityResults({ scoring, questionnaire, onComplete }) {
         }}
       >
         <button
-          onClick={() => {
-            const results = {
-              timestamp: new Date().toISOString(),
-              questionnaire: questionnaire.title,
-              scoring,
-              summary: {
-                totalThemes: Object.keys(scoring.themeScores).length,
-                topThemes: scoring.overallPriority.slice(0, 5),
-                recommendations: scoring.recommendations,
-              },
-            };
+          onClick={async () => {
+            try {
+              // Prepara dati export
+              const exportData = {
+                questionnaireTitle: questionnaire.title,
+                responses: Object.keys(responses).map((qId) => ({
+                  questionId: qId,
+                  ...responses[qId],
+                })),
+                scoring,
+                summary: {
+                  totalThemes: Object.keys(scoring.themeScores).length,
+                  topThemes: scoring.overallPriority.slice(0, 5),
+                  recommendations: scoring.recommendations,
+                },
+              };
 
-            const blob = new Blob([JSON.stringify(results, null, 2)], {
-              type: "application/json",
-            });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `Materiality_Results_${new Date().toISOString().split("T")[0]
-              }.json`;
-            a.click();
-            URL.revokeObjectURL(url);
+              // Crea payload standardizzato
+              const payload = createExportPayload(
+                "iso26000_results",
+                exportData,
+                audit
+              );
+
+              // Export con fallback automatico
+              await exportWithFallback(fsProvider, "iso26000", payload, {
+                azienda: audit?.azienda,
+                anno: audit?.anno,
+              });
+            } catch (error) {
+              console.error("❌ Errore export ISO 26000:", error);
+              alert(
+                `❌ Errore durante l'export:\n\n${error.message}\n\nVerifica la console per dettagli.`
+              );
+            }
           }}
           style={{
             padding: "12px 24px",

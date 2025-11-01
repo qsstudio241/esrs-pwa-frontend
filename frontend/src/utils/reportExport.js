@@ -10,6 +10,8 @@ import { Document, Packer, Paragraph, HeadingLevel, AlignmentType, ImageRun, Ext
 
 /**
  * Genera documento Word dal Bilancio di Sostenibilità
+ * MODIFICATO: Restituisce il blob senza scaricare automaticamente
+ * (gestione salvataggio affidata al chiamante per supportare Export folder + fallback)
  */
 export async function exportReportToWord(audit, chapters, attachments) {
     console.log('📝 Generazione Word Report - Bilancio di Sostenibilità');
@@ -39,10 +41,10 @@ export async function exportReportToWord(audit, chapters, attachments) {
         const blob = await Packer.toBlob(doc);
         const fileName = `Bilancio-Sostenibilita_${audit.azienda}_${new Date().toISOString().split('T')[0]}.docx`;
 
-        saveAs(blob, fileName);
-        console.log('✅ Word Report esportato:', fileName);
+        console.log('✅ Word Report generato (blob):', fileName);
 
-        return { success: true, fileName };
+        // Restituisce blob + fileName invece di scaricare automaticamente
+        return { success: true, fileName, blob };
     } catch (error) {
         console.error('❌ Errore export Word:', error);
         throw new Error(`Errore durante l'export Word: ${error.message}`);
@@ -286,7 +288,7 @@ async function generateChapters(chapters, attachments) {
                     // File NON-IMMAGINE: Link ipertestuale
                     const fileUrl = attachment.absolutePath || attachment.path || `file:///${attachment.name}`;
                     const fileSizeKB = (attachment.size / 1024).toFixed(1);
-                    
+
                     paragraphs.push(
                         new Paragraph({
                             children: [
@@ -312,7 +314,7 @@ async function generateChapters(chapters, attachments) {
                             spacing: { after: 100, left: 400 }
                         })
                     );
-                    
+
                     console.log(`🔗 Link ipertestuale creato: ${attachment.name} → ${fileUrl}`);
                 }
             }

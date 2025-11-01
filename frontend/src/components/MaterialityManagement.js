@@ -1,5 +1,5 @@
 ﻿/* eslint-disable unicode-bom */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StructuredMaterialityQuestionnaire from "./StructuredMaterialityQuestionnaire";
 import FinancialMaterialityAssessment from "./FinancialMaterialityAssessment";
 import DoubleMaterialityMatrix from "./DoubleMaterialityMatrix";
@@ -7,6 +7,11 @@ import ESRSSDGMapping from "./ESRSSDGMapping";
 import { integrateISO26000Results } from "../utils/materialityIntegration";
 import { useMaterialityData } from "../hooks/useMaterialityData";
 import { getAllESRSMandatoryThemes } from "../utils/materialityFrameworkISO26000";
+import { useStorage } from "../storage/StorageContext";
+import {
+  createExportPayload,
+  exportWithFallback,
+} from "../utils/exportHelper";
 
 function MaterialityManagement({ audit, onUpdate }) {
   const [activeTab, setActiveTab] = useState("structured");
@@ -14,6 +19,32 @@ function MaterialityManagement({ audit, onUpdate }) {
   const [financialResults, setFinancialResults] = useState(null);
   const [showThresholdConfig, setShowThresholdConfig] = useState(false);
   const materialityData = useMaterialityData(audit?.id || "default");
+
+  // Hook per accesso File System Provider
+  const fsProvider = useStorage();
+
+  // ✅ STEP 1: Ri-idrata stato locale da audit quando componente monta
+  useEffect(() => {
+    if (audit?.structuredResults) {
+      console.log("🔄 Ripristino risultati ISO 26000 da audit:", audit.structuredResults);
+      setStructuredResults(audit.structuredResults);
+    }
+
+    if (audit?.financialAssessment) {
+      console.log("🔄 Ripristino analisi finanziaria da audit:", audit.financialAssessment);
+      setFinancialResults(audit.financialAssessment);
+    }
+
+    // Debug completo stato
+    console.log("🔍 DEBUG MaterialityManagement - Stato corrente:", {
+      hasAudit: !!audit,
+      hasStructuredResults: !!audit?.structuredResults,
+      hasImpactScores: !!audit?.impactScores,
+      hasFinancialAssessment: !!audit?.financialAssessment,
+      localStructuredResults: !!structuredResults,
+      localFinancialResults: !!financialResults,
+    });
+  }, [audit?.structuredResults, audit?.financialAssessment]);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -31,6 +62,21 @@ function MaterialityManagement({ audit, onUpdate }) {
                 );
                 alert("Errore: Risultati questionario incompleti. Riprova.");
                 return;
+              }
+
+              // ✅ STEP 2: SALVA NELL'OGGETTO AUDIT
+              const updatedAudit = {
+                ...audit,
+                structuredResults: results, // Risultati completi questionario
+                impactScores: results.scoring.themeScores, // Scores per tema (per compatibilità)
+                isoQuestionnaireCompleted: true,
+                isoCompletedAt: new Date().toISOString(),
+              };
+
+              // ✅ PROPAGA AGGIORNAMENTO A COMPONENTE PADRE
+              if (onUpdate) {
+                onUpdate(updatedAudit);
+                console.log("✅ Audit aggiornato con risultati ISO 26000");
               }
 
               console.log(
@@ -130,19 +176,18 @@ function MaterialityManagement({ audit, onUpdate }) {
         );
 
       case "financial":
-        // Estrai i temi valutati dall'ISO 26000 per l'analisi finanziaria
-        const themesForFinancial = structuredResults?.scoring?.themeScores
-          ? Object.keys(structuredResults.scoring.themeScores).map(
+        // ✅ STEP 3: LEGGI DA AUDIT.IMPACTSCORES (non più da state locale volatile)
+        const themesForFinancial = audit?.impactScores
+          ? Object.keys(audit.impactScores).map(
             (themeName) => ({
               id: themeName,
               name: themeName,
-              impactScore:
-                structuredResults.scoring.themeScores[themeName].score,
+              impactScore: audit.impactScores[themeName].score,
             })
           )
           : [];
 
-        console.log("💰 Temi estratti per analisi finanziaria:", themesForFinancial);
+        console.log("💰 Temi estratti per analisi finanziaria (da audit):", themesForFinancial);
 
         // Se non ci sono temi, mostra messaggio informativo
         if (themesForFinancial.length === 0) {
@@ -178,16 +223,20 @@ function MaterialityManagement({ audit, onUpdate }) {
           <FinancialMaterialityAssessment
             selectedThemes={themesForFinancial}
             existingAssessment={audit?.financialAssessment}
+            audit={audit}
             onComplete={(results) => {
               console.log("💰 Analisi finanziaria completata:", results);
               setFinancialResults(results);
 
-              // Salva nell'audit
+              // ✅ STEP 3: SALVA NELL'AUDIT con flag completamento
               if (onUpdate) {
                 onUpdate({
                   ...audit,
                   financialAssessment: results,
+                  financialAnalysisCompleted: true,
+                  financialCompletedAt: new Date().toISOString(),
                 });
+                console.log("✅ Audit aggiornato con analisi finanziaria");
               }
 
               // Passa automaticamente alla matrice doppia
@@ -292,6 +341,7 @@ function MaterialityManagement({ audit, onUpdate }) {
                 financialScores={financialScores}
                 themes={themesForMatrix}
                 threshold={materialityData.threshold || 3.0}
+                audit={audit}
                 onThemeClick={(theme) => {
                   console.log("Tema selezionato:", theme);
                 }}
@@ -345,20 +395,28 @@ function MaterialityManagement({ audit, onUpdate }) {
           );
         }
 
-        const handleESRSExport = (exportData) => {
-          console.log("📄 Export ESRS + Goal ONU:", exportData);
+        const handleESRSExport = async (exportData) => {
+          try {
+            console.log("📄 Export ESRS + Goal ONU:", exportData);
 
-          // Crea file JSON
-          const jsonStr = JSON.stringify(exportData, null, 2);
-          const blob = new Blob([jsonStr], { type: "application/json" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `ESRS_SDG_Mapping_${audit?.azienda || "export"}_${new Date().toISOString().split('T')[0]}.json`;
-          a.click();
-          URL.revokeObjectURL(url);
+            // Crea payload standardizzato
+            const payload = createExportPayload(
+              "esrs_sdg_mapping",
+              exportData,
+              audit
+            );
 
-          alert("✅ Tabella ESRS + Goal ONU esportata con successo!");
+            // Export con fallback automatico
+            await exportWithFallback(fsProvider, "mapping", payload, {
+              azienda: audit?.azienda,
+              anno: audit?.anno,
+            });
+          } catch (error) {
+            console.error("❌ Errore export ESRS/SDG:", error);
+            alert(
+              `❌ Errore durante l'export:\n\n${error.message}\n\nVerifica la console per dettagli.`
+            );
+          }
         };
 
         return (

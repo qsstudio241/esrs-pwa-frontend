@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useStorage } from "../storage/StorageContext";
+import {
+    createExportPayload,
+    exportWithFallback,
+} from "../utils/exportHelper";
 
 /**
  * Componente Matrice Doppia Materialità
@@ -14,7 +19,10 @@ export default function DoubleMaterialityMatrix({
     onThemeClick,
     onJustificationUpdate, // Callback per salvare giustificazioni esclusioni
     exclusionJustifications = {}, // Giustificazioni esistenti { themeId: "testo..." }
+    audit, // ✅ Aggiunto per export standardizzato
 }) {
+    // Hook per accesso File System Provider
+    const fsProvider = useStorage();
     const [selectedTheme, setSelectedTheme] = useState(null);
     const [quadrantCounts, setQuadrantCounts] = useState({
         highHigh: 0,
@@ -190,16 +198,26 @@ export default function DoubleMaterialityMatrix({
         };
 
         if (format === 'json') {
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-                type: "application/json",
-            });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `materiality-analysis-results_${new Date().toISOString().split("T")[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            console.log("📤 Risultati materialità esportati (JSON):", exportData);
+            // Export JSON standardizzato
+            (async () => {
+                try {
+                    const payload = createExportPayload(
+                        "materiality_matrix",
+                        exportData,
+                        audit
+                    );
+
+                    await exportWithFallback(fsProvider, "matrix", payload, {
+                        azienda: audit?.azienda,
+                        anno: audit?.anno,
+                    });
+                } catch (error) {
+                    console.error("❌ Errore export matrice:", error);
+                    alert(
+                        `❌ Errore durante l'export:\n\n${error.message}\n\nVerifica la console per dettagli.`
+                    );
+                }
+            })();
         } else if (format === 'csv') {
             // CSV semplificato per Excel
             const csvRows = [

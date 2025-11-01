@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useStorage } from "../storage/StorageContext";
+import {
+    createExportPayload,
+    exportWithFallback,
+} from "../utils/exportHelper";
 
 /**
  * Componente per Analisi Rischi/Opportunità Finanziaria
@@ -11,7 +16,10 @@ export default function FinancialMaterialityAssessment({
     existingAssessment = null,
     onComplete,
     onUpdate,
+    audit, // ✅ Aggiunto per export
 }) {
+    // Hook per accesso File System Provider
+    const fsProvider = useStorage();
     const [currentTheme, setCurrentTheme] = useState(0);
     const [assessments, setAssessments] = useState({});
     const [completedThemes, setCompletedThemes] = useState(new Set());
@@ -416,24 +424,38 @@ export default function FinancialMaterialityAssessment({
                     </label>
 
                     <button
-                        onClick={() => {
-                            const exportData = {
-                                assessments,
-                                completedThemes: Array.from(completedThemes),
-                                timestamp: new Date().toISOString(),
-                                themes: selectedThemes.map(t => ({ id: t.id, name: t.name })),
-                            };
+                        onClick={async () => {
+                            try {
+                                // Prepara dati export
+                                const exportData = {
+                                    assessments,
+                                    completedThemes: Array.from(completedThemes),
+                                    themes: selectedThemes.map(t => ({ id: t.id, name: t.name })),
+                                    summary: {
+                                        totalThemes: selectedThemes.length,
+                                        completedCount: completedThemes.size,
+                                        completionPercentage: Math.round((completedThemes.size / selectedThemes.length) * 100),
+                                    },
+                                };
 
-                            const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-                                type: "application/json",
-                            });
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement("a");
-                            a.href = url;
-                            a.download = `analisi-finanziaria_${new Date().toISOString().split("T")[0]}.json`;
-                            a.click();
-                            URL.revokeObjectURL(url);
-                            console.log("📤 Analisi finanziaria esportata:", exportData);
+                                // Crea payload standardizzato
+                                const payload = createExportPayload(
+                                    "financial_assessment",
+                                    exportData,
+                                    audit
+                                );
+
+                                // Export con fallback automatico
+                                await exportWithFallback(fsProvider, "financial", payload, {
+                                    azienda: audit?.azienda,
+                                    anno: audit?.anno,
+                                });
+                            } catch (error) {
+                                console.error("❌ Errore export analisi finanziaria:", error);
+                                alert(
+                                    `❌ Errore durante l'export:\n\n${error.message}\n\nVerifica la console per dettagli.`
+                                );
+                            }
                         }}
                         style={{
                             padding: "6px 12px",

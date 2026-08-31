@@ -466,7 +466,7 @@ const handleImportJSON = async (event) => {
               .map((item, itemIndex) => {
                 const key = `${category}-${item}`;
                 return (
-                  <li key={item} value={itemIndex + 1}>
+                  <li key={`${category}-${itemIndex}-${item}`} value={itemIndex + 1}>
                     {item}
                     <textarea
                       placeholder="Aggiungi evidenze..."
